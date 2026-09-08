@@ -4,9 +4,15 @@ DriveDeck ist ein eigenständiger, für Android-Autoradios entwickelter HOME-Lau
 
 ## Entwicklungsstand
 
-Phase 1 liefert die belastbare Basis: responsives Landscape-Dashboard, HOME-Registrierung, App-Übersicht und -Start, persistente Favoriten und Design-Einstellungen sowie einen abgesicherten Dashboard-Editiermodus. MediaSession, GPS und Hardware-Integrationen folgen bewusst in späteren Phasen.
+Die stabile Phase-1-Basis umfasst das responsive Landscape-Dashboard, HOME-Registrierung, App-Übersicht und -Start, persistente Favoriten sowie Design-Einstellungen. Aus Phase 2 sind außerdem die allgemeine MediaSession-Erkennung, Metadaten, Albumcover, Fortschritt und Transportsteuerung umgesetzt. Dashboard-Anordnung und konfigurierbare Favoritenleiste folgen als nächste Punkte.
 
-> Screenshots werden nach dem ersten Emulator-Release ergänzt.
+## Screenshots
+
+| Dashboard | App-Auswahl |
+| --- | --- |
+| [![DriveDeck Dashboard – responsive Phase-2-Vorschau](docs/screenshots/dashboard-preview.svg)](docs/screenshots/dashboard-preview.svg) | [![DriveDeck Apps – große Kacheln und Favoriten](docs/screenshots/apps-preview.svg)](docs/screenshots/apps-preview.svg) |
+
+*Vektorbasierte UI-Vorschau mit den dokumentierten Demo-Daten; ein Emulator-Capture folgt mit dem ersten Geräte-Release.*
 
 ## Voraussetzungen
 
@@ -39,8 +45,8 @@ Die Module sind nach Verantwortlichkeit getrennt: `core:model`, `core:preference
 
 ## Bekannte Einschränkungen
 
-- Phase 1 steuert noch keine MediaSession; die Medienkarte nutzt klar bezeichnete Demo-/Preview-Daten.
-- Navigation, Telefon und Radio öffnen in Phase 1 eine passende installierte beziehungsweise vom Nutzer favorisierte App, sofern vorhanden.
+- Der Medienzugriff muss einmalig in den Android-Einstellungen freigegeben werden; ohne Freigabe zeigt die Medienkarte klar bezeichnete Preview-Daten und deaktiviert die Steuerung.
+- Navigation, Telefon und Radio besitzen noch keine eigenen Provider; ihre Schnellaktionen führen aktuell zur sicheren App-Auswahl.
 - Dashboard Drag & Drop, GPS, Day/Night-Automatik und Headunit-Adapter sind für spätere Phasen geplant.
 - Manche Hersteller-ROMs behandeln die HOME-Auswahl anders als AOSP.
 

@@ -46,6 +46,7 @@ private enum class Destination { HOME, APPS, SETTINGS }
 
 @Composable
 private fun DriveDeckRoot(container: AppContainer, openHomeSettings: () -> Unit) {
+    val context = androidx.compose.ui.platform.LocalContext.current
     val settingsVm: SettingsViewModel = viewModel(factory = factory { SettingsViewModel(container.preferences) })
     val prefs by settingsVm.preferences.collectAsStateWithLifecycle()
     DriveDeckTheme(darkTheme = when (prefs.themeMode) { ThemeMode.DARK -> true; ThemeMode.LIGHT -> false; ThemeMode.AUTO -> isSystemInDarkTheme() }) {
@@ -55,16 +56,16 @@ private fun DriveDeckRoot(container: AppContainer, openHomeSettings: () -> Unit)
                 Box(Modifier.weight(1f).fillMaxWidth()) {
                     when (destination) {
                         Destination.HOME -> {
-                            val vm: HomeViewModel = viewModel(factory = factory { HomeViewModel(container.preferences) })
+                            val vm: HomeViewModel = viewModel(factory = factory { HomeViewModel(container.preferences, container.media) })
                             val state by vm.state.collectAsStateWithLifecycle()
-                            HomeScreen(state, onNavigation = { destination = Destination.APPS }, onEditMode = vm::toggleEditMode, Modifier.fillMaxSize())
+                            HomeScreen(state, onNavigation = { destination = Destination.APPS }, onEditMode = vm::toggleEditMode, onPlayPause = vm::playPause, onPrevious = vm::previous, onNext = vm::next, modifier = Modifier.fillMaxSize())
                         }
                         Destination.APPS -> {
                             val vm: AppsViewModel = viewModel(factory = factory { AppsViewModel(container.apps, container.preferences) })
                             val state by vm.state.collectAsStateWithLifecycle()
                             AppsScreen(state, vm::search, vm::launch, vm::toggleFavorite, Modifier.fillMaxSize())
                         }
-                        Destination.SETTINGS -> SettingsScreen(prefs, isDefaultHome(), settingsVm::setTheme, openHomeSettings, Modifier.fillMaxSize())
+                        Destination.SETTINGS -> SettingsScreen(prefs, isDefaultHome(), hasMediaAccess(), settingsVm::setTheme, openHomeSettings, { context.startActivity(Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS")) }, Modifier.fillMaxSize())
                     }
                     IconButton(onClick = { destination = Destination.SETTINGS }, Modifier.align(Alignment.TopEnd).padding(14.dp).size(64.dp)) { Icon(Icons.Rounded.Settings, "Einstellungen") }
                 }
@@ -91,6 +92,13 @@ private fun DriveDeckRoot(container: AppContainer, openHomeSettings: () -> Unit)
     return remember(context) {
         val intent = Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_HOME)
         context.packageManager.resolveActivity(intent, 0)?.activityInfo?.packageName == context.packageName
+    }
+}
+@Composable private fun hasMediaAccess(): Boolean {
+    val context = androidx.compose.ui.platform.LocalContext.current
+    return remember(context) {
+        val enabled = Settings.Secure.getString(context.contentResolver, "enabled_notification_listeners").orEmpty()
+        enabled.split(':').any { android.content.ComponentName.unflattenFromString(it)?.packageName == context.packageName }
     }
 }
 private inline fun <reified T : ViewModel> factory(crossinline create: () -> T) = object : ViewModelProvider.Factory {

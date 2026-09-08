@@ -25,3 +25,4 @@ dependencies {
     implementation(libs.coroutines.android)
     debugImplementation(libs.compose.ui.tooling)
 }
+dependencies { implementation(project(":integration:media")) }

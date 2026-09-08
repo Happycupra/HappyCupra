@@ -25,3 +25,4 @@ dependencies {
     implementation(libs.activity.compose); implementation(libs.lifecycle.runtime.compose)
     debugImplementation(libs.compose.ui.tooling)
 }
+dependencies { implementation(project(":integration:media")) }

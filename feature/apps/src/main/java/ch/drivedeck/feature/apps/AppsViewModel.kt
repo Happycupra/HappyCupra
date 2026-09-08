@@ -16,7 +16,7 @@ class AppsViewModel(private val appsRepository: InstalledAppsRepository, private
     private val apps = MutableStateFlow<List<LaunchableApp>>(emptyList())
     private val query = MutableStateFlow("")
     val state = combine(apps, query, preferencesRepository.preferences) { all, term, prefs ->
-        AppsUiState(all.filter { it.label.contains(term, ignoreCase = true) }, prefs.favoritePackages, term, false)
+        AppsUiState(all.filter { it.label.contains(term, ignoreCase = true) }.sortedWith(compareByDescending<LaunchableApp> { it.packageName in prefs.favoritePackages }.thenBy { it.label.lowercase() }), prefs.favoritePackages, term, false)
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), AppsUiState())
     init { viewModelScope.launch { apps.value = appsRepository.installedApps() } }
     fun search(value: String) { query.value = value }

@@ -12,10 +12,10 @@
 
 ## Phase 2 — Medien und Personalisierung
 
-- [ ] MediaSession-Integration und Metadaten/Artwork
-- [ ] universelle Transportsteuerung
-- [ ] Dashboard-Layouts, Größen und Drag & Drop nur im Edit-Mode
-- [ ] konfigurierbare Favoritenleiste
+- [x] MediaSession-Integration und Metadaten/Artwork
+- [x] universelle Transportsteuerung
+- [ ] Dashboard-Layouts, Größen und Drag & Drop nur im Edit-Mode (nächster Punkt)
+- [ ] konfigurierbare Favoritenleiste (nächster Punkt)
 
 ## Phase 3 — Geräteservices
 
