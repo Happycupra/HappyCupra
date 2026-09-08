@@ -14,7 +14,7 @@
 
 - [x] MediaSession-Integration und Metadaten/Artwork
 - [x] universelle Transportsteuerung
-- [ ] Dashboard-Layouts, Größen und Drag & Drop nur im Edit-Mode (nächster Punkt)
+- [x] persistente Dashboard-Elementauswahl, Größen und Drag & Drop nur im Edit-Mode
 - [ ] konfigurierbare Favoritenleiste (nächster Punkt)
 
 ## Phase 3 — Geräteservices

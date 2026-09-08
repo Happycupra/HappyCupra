@@ -58,7 +58,7 @@ private fun DriveDeckRoot(container: AppContainer, openHomeSettings: () -> Unit)
                         Destination.HOME -> {
                             val vm: HomeViewModel = viewModel(factory = factory { HomeViewModel(container.preferences, container.media) })
                             val state by vm.state.collectAsStateWithLifecycle()
-                            HomeScreen(state, onNavigation = { destination = Destination.APPS }, onEditMode = vm::toggleEditMode, onPlayPause = vm::playPause, onPrevious = vm::previous, onNext = vm::next, modifier = Modifier.fillMaxSize())
+                            HomeScreen(state, onNavigation = { destination = Destination.APPS }, onEditMode = vm::toggleEditMode, onPlayPause = vm::playPause, onPrevious = vm::previous, onNext = vm::next, onMoveItem = vm::moveItem, onResizeItem = vm::resizeItem, onToggleItem = vm::toggleItem, modifier = Modifier.fillMaxSize())
                         }
                         Destination.APPS -> {
                             val vm: AppsViewModel = viewModel(factory = factory { AppsViewModel(container.apps, container.preferences) })

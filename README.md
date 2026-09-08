@@ -12,7 +12,9 @@ Die stabile Phase-1-Basis umfasst das responsive Landscape-Dashboard, HOME-Regis
 | --- | --- |
 | [![DriveDeck Dashboard – responsive Phase-2-Vorschau](docs/screenshots/dashboard-preview.svg)](docs/screenshots/dashboard-preview.svg) | [![DriveDeck Apps – große Kacheln und Favoriten](docs/screenshots/apps-preview.svg)](docs/screenshots/apps-preview.svg) |
 
-*Vektorbasierte UI-Vorschau mit den dokumentierten Demo-Daten; ein Emulator-Capture folgt mit dem ersten Geräte-Release.*
+[![DriveDeck Dashboard – sicherer Edit-Modus mit Größenwahl und Drag & Drop](docs/screenshots/edit-mode-preview.svg)](docs/screenshots/edit-mode-preview.svg)
+
+*Vektorbasierte UI-Vorschauen mit den dokumentierten Demo-Daten; Emulator-Captures folgen mit dem ersten Geräte-Release.*
 
 ## Voraussetzungen
 

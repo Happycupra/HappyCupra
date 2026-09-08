@@ -8,6 +8,8 @@ import androidx.datastore.preferences.core.stringSetPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import ch.drivedeck.core.model.ThemeMode
 import ch.drivedeck.core.model.UserPreferences
+import ch.drivedeck.core.model.DashboardItem
+import ch.drivedeck.core.model.DashboardLayoutCodec
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
@@ -18,6 +20,7 @@ interface PreferencesRepository {
     suspend fun toggleFavorite(packageName: String)
     suspend fun setThemeMode(mode: ThemeMode)
     suspend fun setEditMode(enabled: Boolean)
+    suspend fun setDashboardItems(items: List<DashboardItem>)
 }
 
 private val Context.dataStore by preferencesDataStore("drive_deck_preferences")
@@ -30,6 +33,7 @@ class DataStorePreferencesRepository(private val context: Context) : Preferences
                 favoritePackages = values[FAVORITES].orEmpty(),
                 themeMode = values[THEME]?.let { runCatching { ThemeMode.valueOf(it) }.getOrNull() } ?: ThemeMode.DARK,
                 editModeEnabled = values[EDIT_MODE] ?: false,
+                dashboardItems = DashboardLayoutCodec.decode(values[DASHBOARD_ITEMS]),
             )
         }
 
@@ -43,10 +47,14 @@ class DataStorePreferencesRepository(private val context: Context) : Preferences
 
     override suspend fun setThemeMode(mode: ThemeMode) { context.dataStore.edit { it[THEME] = mode.name } }
     override suspend fun setEditMode(enabled: Boolean) { context.dataStore.edit { it[EDIT_MODE] = enabled } }
+    override suspend fun setDashboardItems(items: List<DashboardItem>) {
+        context.dataStore.edit { it[DASHBOARD_ITEMS] = DashboardLayoutCodec.encode(items) }
+    }
 
     private companion object {
         val FAVORITES = stringSetPreferencesKey("favorite_packages")
         val THEME = stringPreferencesKey("theme_mode")
         val EDIT_MODE = booleanPreferencesKey("dashboard_edit_mode")
+        val DASHBOARD_ITEMS = stringPreferencesKey("dashboard_items")
     }
 }
