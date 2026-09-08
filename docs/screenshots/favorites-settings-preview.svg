@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="1920" height="1080" viewBox="0 0 1920 1080">
+  <title>DriveDeck Favoritenleisten-Konfiguration</title>
+  <desc>Skalierbare Vorschau der Einstellungen für fünf frei angeordnete Schnellaktionen.</desc>
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#071014"/><stop offset="1" stop-color="#10242b"/></linearGradient>
+    <filter id="cardShadow" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#000000" flood-opacity="0.35"/></filter>
+    <style>.title{font:600 52px sans-serif;fill:#f2f7f7}.heading{font:600 32px sans-serif;fill:#f2f7f7}.body{font:400 25px sans-serif;fill:#f2f7f7}.muted{font:400 21px sans-serif;fill:#93aeb0}.accent{fill:#47d7c8}.button{fill:#21443f;stroke:#47d7c8;stroke-width:2}.card{fill:#172127;stroke:#2b4148;stroke-width:2}</style>
+  </defs>
+  <rect width="1920" height="1080" rx="36" fill="url(#background)"/>
+  <g font-family="sans-serif">
+    <text class="title" x="54" y="86">Einstellungen</text>
+    <g class="muted">
+      <text x="58" y="160">Dashboard</text><text x="58" y="205">Design</text><text x="58" y="250">Apps</text><text x="58" y="295">Navigation</text><text x="58" y="340">Media</text><text x="58" y="385">Radio</text><text x="58" y="430">Telefon</text><text x="58" y="475">Fahrzeug</text><text x="58" y="520">System</text><text x="58" y="565">Über</text>
+    </g>
+    <rect x="332" y="36" width="1530" height="920" rx="32" fill="#0d1a1f"/>
+    <text class="heading" x="380" y="100">Favoritenleiste</text>
+    <text class="muted" x="380" y="138">Fünf große Schnellaktionen · Reihenfolge und Funktion dauerhaft gespeichert</text>
+    <g filter="url(#cardShadow)">
+      <g transform="translate(380 174)"><rect class="card" width="1430" height="126" rx="26"/><circle cx="62" cy="63" r="34" fill="#21443f"/><path d="M43 67L62 49l19 18v24H68V73H56v18H43z" class="accent"/><text class="muted" x="118" y="50">Position 1</text><text class="body" x="118" y="86">Home</text><rect class="button" x="1190" y="31" width="190" height="64" rx="20"/><text class="body" x="1285" y="72" text-anchor="middle">Ändern</text><text class="accent" x="1085" y="77" font-size="38">←  →</text></g>
+      <g transform="translate(380 318)"><rect class="card" width="1430" height="126" rx="26"/><circle cx="62" cy="63" r="34" fill="#21443f"/><path d="M48 88l14-52 28 14-23 12z" class="accent"/><text class="muted" x="118" y="50">Position 2</text><text class="body" x="118" y="86">Navigation</text><rect class="button" x="1190" y="31" width="190" height="64" rx="20"/><text class="body" x="1285" y="72" text-anchor="middle">Ändern</text><text class="accent" x="1085" y="77" font-size="38">←  →</text></g>
+      <g transform="translate(380 462)"><rect class="card" width="1430" height="126" rx="26"/><circle cx="62" cy="63" r="34" fill="#21443f"/><path d="M56 42v39c-15-5-22 16-7 21 13 4 21-5 21-16V57l20-5v24c-15-5-22 16-7 21 13 4 21-5 21-16V34z" class="accent"/><text class="muted" x="118" y="50">Position 3</text><text class="body" x="118" y="86">Musik</text><rect class="button" x="1190" y="31" width="190" height="64" rx="20"/><text class="body" x="1285" y="72" text-anchor="middle">Ändern</text><text class="accent" x="1085" y="77" font-size="38">←  →</text></g>
+      <g transform="translate(380 606)"><rect class="card" width="1430" height="126" rx="26"/><circle cx="62" cy="63" r="34" fill="#21443f"/><path d="M45 40c14 30 27 43 57 57l10-17-20-12-9 9c-12-8-20-16-28-28l9-9-12-20z" class="accent"/><text class="muted" x="118" y="50">Position 4</text><text class="body" x="118" y="86">Telefon</text><rect class="button" x="1190" y="31" width="190" height="64" rx="20"/><text class="body" x="1285" y="72" text-anchor="middle">Ändern</text><text class="accent" x="1085" y="77" font-size="38">←  →</text></g>
+      <g transform="translate(380 750)"><rect class="card" width="1430" height="126" rx="26"/><circle cx="62" cy="63" r="34" fill="#21443f"/><g class="accent"><rect x="43" y="44" width="15" height="15" rx="3"/><rect x="66" y="44" width="15" height="15" rx="3"/><rect x="89" y="44" width="15" height="15" rx="3"/><rect x="43" y="67" width="15" height="15" rx="3"/><rect x="66" y="67" width="15" height="15" rx="3"/><rect x="89" y="67" width="15" height="15" rx="3"/></g><text class="muted" x="118" y="50">Position 5</text><text class="body" x="118" y="86">Apps</text><rect class="button" x="1190" y="31" width="190" height="64" rx="20"/><text class="body" x="1285" y="72" text-anchor="middle">Ändern</text><text class="accent" x="1085" y="77" font-size="38">←  →</text></g>
+    </g>
+    <rect y="974" width="1920" height="106" fill="#101c21"/>
+    <g text-anchor="middle"><text class="accent" x="192" y="1023" font-size="30">⌂</text><text class="muted" x="192" y="1055">Home</text><text class="accent" x="576" y="1023" font-size="30">➤</text><text class="muted" x="576" y="1055">Navigation</text><text class="accent" x="960" y="1023" font-size="30">♫</text><text class="muted" x="960" y="1055">Musik</text><text class="accent" x="1344" y="1023" font-size="30">☎</text><text class="muted" x="1344" y="1055">Telefon</text><text class="accent" x="1728" y="1023" font-size="30">▦</text><text class="muted" x="1728" y="1055">Apps</text></g>
+  </g>
+</svg>
