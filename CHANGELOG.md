@@ -9,4 +9,6 @@ Alle bemerkenswerten Änderungen werden hier dokumentiert.
 - Universelle MediaSession-Anbindung mit Metadaten, Albumcover, Fortschritt und Transportsteuerung.
 - Verlinkte, binärfreie Dashboard-Vorschauen für die README.
 - Persistierbare Dashboard-Elementauswahl, vier Größen und Drag & Drop ausschließlich im Edit-Modus.
+- Persistierbare Favoritenleiste mit frei sortierbaren, eindeutigen Schnellaktionen.
+- Neu erzeugte, validierte SVG-1.1-Vorschau der Favoritenleisten-Konfiguration.
 - HOME-Launcher-Registrierung und automatisierter Android-Build.

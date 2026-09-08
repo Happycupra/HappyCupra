@@ -4,6 +4,16 @@ data class LaunchableApp(val packageName: String, val activityName: String, val 
 
 enum class ThemeMode { DARK, LIGHT, AUTO }
 
+enum class QuickAction { HOME, NAVIGATION, MUSIC, PHONE, APPS, SETTINGS }
+
+val DefaultQuickActions = listOf(
+    QuickAction.HOME,
+    QuickAction.NAVIGATION,
+    QuickAction.MUSIC,
+    QuickAction.PHONE,
+    QuickAction.APPS,
+)
+
 enum class DashboardElementType { NAVIGATION, MEDIA, PHONE, RADIO, SPEED, WEATHER }
 
 enum class DashboardElementSize {
@@ -31,6 +41,7 @@ data class UserPreferences(
     val themeMode: ThemeMode = ThemeMode.DARK,
     val editModeEnabled: Boolean = false,
     val dashboardItems: List<DashboardItem> = DefaultDashboardItems,
+    val quickActions: List<QuickAction> = DefaultQuickActions,
 )
 
 data class DemoDriveData(

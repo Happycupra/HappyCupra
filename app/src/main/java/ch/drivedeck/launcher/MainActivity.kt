@@ -25,6 +25,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import ch.drivedeck.core.design.DriveDeckTheme
 import ch.drivedeck.core.model.ThemeMode
+import ch.drivedeck.core.model.QuickAction
 import ch.drivedeck.feature.apps.*
 import ch.drivedeck.feature.home.*
 import ch.drivedeck.feature.settings.*
@@ -51,6 +52,7 @@ private fun DriveDeckRoot(container: AppContainer, openHomeSettings: () -> Unit)
     val prefs by settingsVm.preferences.collectAsStateWithLifecycle()
     DriveDeckTheme(darkTheme = when (prefs.themeMode) { ThemeMode.DARK -> true; ThemeMode.LIGHT -> false; ThemeMode.AUTO -> isSystemInDarkTheme() }) {
         var destination by rememberSaveable { mutableStateOf(Destination.HOME) }
+        var selectedAction by rememberSaveable { mutableStateOf(QuickAction.HOME) }
         Surface(Modifier.fillMaxSize()) {
             Column {
                 Box(Modifier.weight(1f).fillMaxWidth()) {
@@ -58,32 +60,39 @@ private fun DriveDeckRoot(container: AppContainer, openHomeSettings: () -> Unit)
                         Destination.HOME -> {
                             val vm: HomeViewModel = viewModel(factory = factory { HomeViewModel(container.preferences, container.media) })
                             val state by vm.state.collectAsStateWithLifecycle()
-                            HomeScreen(state, onNavigation = { destination = Destination.APPS }, onEditMode = vm::toggleEditMode, onPlayPause = vm::playPause, onPrevious = vm::previous, onNext = vm::next, onMoveItem = vm::moveItem, onResizeItem = vm::resizeItem, onToggleItem = vm::toggleItem, modifier = Modifier.fillMaxSize())
+                            HomeScreen(state, onNavigation = { selectedAction = QuickAction.NAVIGATION; destination = Destination.APPS }, onEditMode = vm::toggleEditMode, onPlayPause = vm::playPause, onPrevious = vm::previous, onNext = vm::next, onMoveItem = vm::moveItem, onResizeItem = vm::resizeItem, onToggleItem = vm::toggleItem, modifier = Modifier.fillMaxSize())
                         }
                         Destination.APPS -> {
                             val vm: AppsViewModel = viewModel(factory = factory { AppsViewModel(container.apps, container.preferences) })
                             val state by vm.state.collectAsStateWithLifecycle()
                             AppsScreen(state, vm::search, vm::launch, vm::toggleFavorite, Modifier.fillMaxSize())
                         }
-                        Destination.SETTINGS -> SettingsScreen(prefs, isDefaultHome(), hasMediaAccess(), settingsVm::setTheme, openHomeSettings, { context.startActivity(Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS")) }, Modifier.fillMaxSize())
+                        Destination.SETTINGS -> SettingsScreen(prefs, isDefaultHome(), hasMediaAccess(), settingsVm::setTheme, openHomeSettings, { context.startActivity(Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS")) }, settingsVm::cycleQuickAction, settingsVm::moveQuickAction, Modifier.fillMaxSize())
                     }
-                    IconButton(onClick = { destination = Destination.SETTINGS }, Modifier.align(Alignment.TopEnd).padding(14.dp).size(64.dp)) { Icon(Icons.Rounded.Settings, "Einstellungen") }
+                    IconButton(onClick = { selectedAction = QuickAction.SETTINGS; destination = Destination.SETTINGS }, Modifier.align(Alignment.TopEnd).padding(14.dp).size(64.dp)) { Icon(Icons.Rounded.Settings, "Einstellungen") }
                 }
-                FavoriteBar(destination, onSelect = { destination = it })
+                FavoriteBar(prefs.quickActions, selectedAction) { action ->
+                    selectedAction = action
+                    destination = when (action) {
+                        QuickAction.HOME -> Destination.HOME
+                        QuickAction.SETTINGS -> Destination.SETTINGS
+                        else -> Destination.APPS
+                    }
+                }
             }
         }
     }
 }
 
-@Composable private fun FavoriteBar(selected: Destination, onSelect: (Destination) -> Unit) {
+@Composable private fun FavoriteBar(actions: List<QuickAction>, selected: QuickAction, onSelect: (QuickAction) -> Unit) {
     NavigationBar(modifier = Modifier.height(88.dp), tonalElevation = 0.dp) {
-        BarItem("Home", Icons.Rounded.Home, selected == Destination.HOME) { onSelect(Destination.HOME) }
-        BarItem("Navigation", Icons.Rounded.Navigation, false) { onSelect(Destination.APPS) }
-        BarItem("Musik", Icons.Rounded.MusicNote, false) { onSelect(Destination.APPS) }
-        BarItem("Telefon", Icons.Rounded.Phone, false) { onSelect(Destination.APPS) }
-        BarItem("Apps", Icons.Rounded.Apps, selected == Destination.APPS) { onSelect(Destination.APPS) }
+        actions.forEach { action ->
+            BarItem(action.label, action.icon, action == selected) { onSelect(action) }
+        }
     }
 }
+private val QuickAction.label get() = when (this) { QuickAction.HOME -> "Home"; QuickAction.NAVIGATION -> "Navigation"; QuickAction.MUSIC -> "Musik"; QuickAction.PHONE -> "Telefon"; QuickAction.APPS -> "Apps"; QuickAction.SETTINGS -> "Einstellungen" }
+private val QuickAction.icon get() = when (this) { QuickAction.HOME -> Icons.Rounded.Home; QuickAction.NAVIGATION -> Icons.Rounded.Navigation; QuickAction.MUSIC -> Icons.Rounded.MusicNote; QuickAction.PHONE -> Icons.Rounded.Phone; QuickAction.APPS -> Icons.Rounded.Apps; QuickAction.SETTINGS -> Icons.Rounded.Settings }
 @Composable private fun RowScope.BarItem(label: String, icon: ImageVector, selected: Boolean, action: () -> Unit) {
     NavigationBarItem(selected = selected, onClick = action, icon = { Icon(icon, label, Modifier.size(30.dp)) }, label = { Text(label) }, modifier = Modifier.fillMaxHeight())
 }

@@ -17,6 +17,17 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.10.2'
+      - name: Validate XML and SVG previews
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          from xml.etree import ElementTree
+          for path in [*Path('.').rglob('*.xml'), *Path('docs/screenshots').glob('*.svg')]:
+              root = ElementTree.parse(path).getroot()
+              if path.suffix == '.svg':
+                  assert root.tag == '{http://www.w3.org/2000/svg}svg'
+                  assert all(root.attrib.get(name) for name in ('width', 'height', 'viewBox'))
+          PY
       - name: Unit tests
         run: gradle testDebugUnitTest
       - name: Android lint

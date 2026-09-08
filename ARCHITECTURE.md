@@ -9,7 +9,8 @@ DriveDeck optimiert Startzeit, Fehlertoleranz und Bedienbarkeit im Fahrzeug. UI 
 ```text
 app ─┬─ feature:home ─┬─ core:design
      ├─ feature:apps ─┼─ core:model
-     └─ feature:settings ─ core:preferences
+     ├─ feature:settings ─ core:preferences
+     └─ integration:media
 ```
 
 - **app**: Manifest, Activity, Navigation und manueller Composition Root.
@@ -19,6 +20,7 @@ app ─┬─ feature:home ─┬─ core:design
 - **feature:home**: Dashboard-Zustand, Uhr, Demo-Medienkarte und Edit-Mode.
 - **feature:apps**: gekapselte PackageManager-Abfrage, Start und Favoriten.
 - **feature:settings**: fahrgeeignete Basis-Einstellungen.
+- **integration:media**: fehlertoleranter MediaSession-Zugriff und Transportsteuerung.
 
 Abhängigkeiten zeigen nach innen. Feature-Module kennen sich nicht gegenseitig; die App koordiniert Ziele. Phase-1-Navigation bleibt absichtlich typisiert und klein, statt eine zusätzliche Navigation-Library einzuführen.
 

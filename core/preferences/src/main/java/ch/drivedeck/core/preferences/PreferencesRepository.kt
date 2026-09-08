@@ -10,6 +10,8 @@ import ch.drivedeck.core.model.ThemeMode
 import ch.drivedeck.core.model.UserPreferences
 import ch.drivedeck.core.model.DashboardItem
 import ch.drivedeck.core.model.DashboardLayoutCodec
+import ch.drivedeck.core.model.QuickAction
+import ch.drivedeck.core.model.QuickActionsCodec
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
@@ -21,6 +23,7 @@ interface PreferencesRepository {
     suspend fun setThemeMode(mode: ThemeMode)
     suspend fun setEditMode(enabled: Boolean)
     suspend fun setDashboardItems(items: List<DashboardItem>)
+    suspend fun setQuickActions(actions: List<QuickAction>)
 }
 
 private val Context.dataStore by preferencesDataStore("drive_deck_preferences")
@@ -34,6 +37,7 @@ class DataStorePreferencesRepository(private val context: Context) : Preferences
                 themeMode = values[THEME]?.let { runCatching { ThemeMode.valueOf(it) }.getOrNull() } ?: ThemeMode.DARK,
                 editModeEnabled = values[EDIT_MODE] ?: false,
                 dashboardItems = DashboardLayoutCodec.decode(values[DASHBOARD_ITEMS]),
+                quickActions = QuickActionsCodec.decode(values[QUICK_ACTIONS]),
             )
         }
 
@@ -50,11 +54,15 @@ class DataStorePreferencesRepository(private val context: Context) : Preferences
     override suspend fun setDashboardItems(items: List<DashboardItem>) {
         context.dataStore.edit { it[DASHBOARD_ITEMS] = DashboardLayoutCodec.encode(items) }
     }
+    override suspend fun setQuickActions(actions: List<QuickAction>) {
+        context.dataStore.edit { it[QUICK_ACTIONS] = QuickActionsCodec.encode(actions) }
+    }
 
     private companion object {
         val FAVORITES = stringSetPreferencesKey("favorite_packages")
         val THEME = stringPreferencesKey("theme_mode")
         val EDIT_MODE = booleanPreferencesKey("dashboard_edit_mode")
         val DASHBOARD_ITEMS = stringPreferencesKey("dashboard_items")
+        val QUICK_ACTIONS = stringPreferencesKey("quick_actions")
     }
 }

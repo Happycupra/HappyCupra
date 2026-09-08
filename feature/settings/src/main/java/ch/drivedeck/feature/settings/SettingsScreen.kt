@@ -2,6 +2,7 @@ package ch.drivedeck.feature.settings
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.*
 import androidx.compose.material3.*
@@ -12,6 +13,7 @@ import androidx.compose.ui.unit.dp
 import ch.drivedeck.core.design.AutomotiveCard
 import ch.drivedeck.core.model.ThemeMode
 import ch.drivedeck.core.model.UserPreferences
+import ch.drivedeck.core.model.QuickAction
 
 @Composable
 fun SettingsScreen(
@@ -21,6 +23,8 @@ fun SettingsScreen(
     onTheme: (ThemeMode) -> Unit,
     onOpenHomeSettings: () -> Unit,
     onOpenMediaAccess: () -> Unit,
+    onCycleQuickAction: (Int) -> Unit,
+    onMoveQuickAction: (Int, Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(modifier.padding(24.dp), horizontalArrangement = Arrangement.spacedBy(24.dp)) {
@@ -28,6 +32,19 @@ fun SettingsScreen(
         LazyColumn(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(16.dp)) {
             item { Text("Design", style = MaterialTheme.typography.headlineMedium) }
             item { AutomotiveCard { Column { Text("Darstellung", style = MaterialTheme.typography.titleLarge); Spacer(Modifier.height(12.dp)); Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) { ThemeMode.entries.forEach { mode -> FilterChip(selected = preferences.themeMode == mode, onClick = { onTheme(mode) }, label = { Text(when(mode) { ThemeMode.DARK -> "Nacht"; ThemeMode.LIGHT -> "Tag"; ThemeMode.AUTO -> "Auto" }) }, leadingIcon = { Icon(when(mode) { ThemeMode.DARK -> Icons.Rounded.DarkMode; ThemeMode.LIGHT -> Icons.Rounded.LightMode; ThemeMode.AUTO -> Icons.Rounded.BrightnessAuto }, null) }) } } } } }
+            item { Text("Favoritenleiste", style = MaterialTheme.typography.headlineMedium) }
+            items(preferences.quickActions.size) { index ->
+                val action = preferences.quickActions[index]
+                AutomotiveCard {
+                    Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                        Icon(action.icon, null, Modifier.size(38.dp), tint = MaterialTheme.colorScheme.primary)
+                        Column(Modifier.weight(1f).padding(horizontal = 16.dp)) { Text("Position ${index + 1}", color = MaterialTheme.colorScheme.secondary); Text(action.label, style = MaterialTheme.typography.titleLarge) }
+                        IconButton(onClick = { onMoveQuickAction(index, -1) }, enabled = index > 0, modifier = Modifier.size(56.dp)) { Icon(Icons.Rounded.ArrowBack, "Nach links") }
+                        IconButton(onClick = { onMoveQuickAction(index, 1) }, enabled = index < preferences.quickActions.lastIndex, modifier = Modifier.size(56.dp)) { Icon(Icons.Rounded.ArrowForward, "Nach rechts") }
+                        FilledTonalButton(onClick = { onCycleQuickAction(index) }, modifier = Modifier.heightIn(min = 56.dp)) { Text("Ändern") }
+                    }
+                }
+            }
             item { Text("Media", style = MaterialTheme.typography.headlineMedium) }
             item { AutomotiveCard(onClick = if (hasMediaAccess) null else onOpenMediaAccess, highlighted = !hasMediaAccess) { Row(verticalAlignment = Alignment.CenterVertically) { Icon(if (hasMediaAccess) Icons.Rounded.CheckCircle else Icons.Rounded.NotificationsActive, null, Modifier.size(42.dp), tint = MaterialTheme.colorScheme.primary); Column(Modifier.padding(start = 16.dp)) { Text(if (hasMediaAccess) "Medienzugriff aktiv" else "Medienzugriff erlauben", style = MaterialTheme.typography.titleLarge); Text(if (hasMediaAccess) "Aktive MediaSessions können gesteuert werden." else "Erforderlich für Titel, Albumcover und Wiedergabesteuerung.", color = MaterialTheme.colorScheme.secondary) } } } }
             item { Text("System", style = MaterialTheme.typography.headlineMedium) }
@@ -35,4 +52,21 @@ fun SettingsScreen(
             item { AutomotiveCard { Column { Text("Phase 1", style = MaterialTheme.typography.titleLarge); Text("Radio-, Telefon-, GPS- und Fahrzeugadapter sind bewusst noch nicht aktiv.", color = MaterialTheme.colorScheme.secondary) } } }
         }
     }
+}
+
+private val QuickAction.label get() = when (this) {
+    QuickAction.HOME -> "Home"
+    QuickAction.NAVIGATION -> "Navigation"
+    QuickAction.MUSIC -> "Musik"
+    QuickAction.PHONE -> "Telefon"
+    QuickAction.APPS -> "Apps"
+    QuickAction.SETTINGS -> "Einstellungen"
+}
+private val QuickAction.icon get() = when (this) {
+    QuickAction.HOME -> Icons.Rounded.Home
+    QuickAction.NAVIGATION -> Icons.Rounded.Navigation
+    QuickAction.MUSIC -> Icons.Rounded.MusicNote
+    QuickAction.PHONE -> Icons.Rounded.Phone
+    QuickAction.APPS -> Icons.Rounded.Apps
+    QuickAction.SETTINGS -> Icons.Rounded.Settings
 }

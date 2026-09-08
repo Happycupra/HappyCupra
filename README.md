@@ -4,17 +4,27 @@ DriveDeck ist ein eigenständiger, für Android-Autoradios entwickelter HOME-Lau
 
 ## Entwicklungsstand
 
-Die stabile Phase-1-Basis umfasst das responsive Landscape-Dashboard, HOME-Registrierung, App-Übersicht und -Start, persistente Favoriten sowie Design-Einstellungen. Aus Phase 2 sind außerdem die allgemeine MediaSession-Erkennung, Metadaten, Albumcover, Fortschritt und Transportsteuerung umgesetzt. Dashboard-Anordnung und konfigurierbare Favoritenleiste folgen als nächste Punkte.
+Die stabile Phase-1-Basis umfasst das responsive Landscape-Dashboard, HOME-Registrierung, App-Übersicht und -Start, persistente Favoriten sowie Design-Einstellungen. Phase 2 ist mit allgemeiner MediaSession-Steuerung, persistenter Dashboard-Anordnung und konfigurierbarer Favoritenleiste umgesetzt. Als Nächstes beginnt Phase 3 mit der GPS-Abstraktion und Geschwindigkeitsanzeige.
 
 ## Screenshots
 
-| Dashboard | App-Auswahl |
-| --- | --- |
-| [![DriveDeck Dashboard – responsive Phase-2-Vorschau](docs/screenshots/dashboard-preview.svg)](docs/screenshots/dashboard-preview.svg) | [![DriveDeck Apps – große Kacheln und Favoriten](docs/screenshots/apps-preview.svg)](docs/screenshots/apps-preview.svg) |
+### Dashboard
 
-[![DriveDeck Dashboard – sicherer Edit-Modus mit Größenwahl und Drag & Drop](docs/screenshots/edit-mode-preview.svg)](docs/screenshots/edit-mode-preview.svg)
+[![DriveDeck Dashboard](docs/screenshots/dashboard-preview.svg)](docs/screenshots/dashboard-preview.svg)
 
-*Vektorbasierte UI-Vorschauen mit den dokumentierten Demo-Daten; Emulator-Captures folgen mit dem ersten Geräte-Release.*
+### Dashboard-Edit-Modus
+
+[![DriveDeck Dashboard-Edit-Modus](docs/screenshots/edit-mode-preview.svg)](docs/screenshots/edit-mode-preview.svg)
+
+### App-Auswahl
+
+[![DriveDeck App-Auswahl](docs/screenshots/apps-preview.svg)](docs/screenshots/apps-preview.svg)
+
+### Konfigurierbare Favoritenleiste
+
+[![DriveDeck Favoritenleisten-Konfiguration](docs/screenshots/favorites-settings-preview.svg)](docs/screenshots/favorites-settings-preview.svg)
+
+Die Vorschauen sind gültige, skalierbare SVG-1.1-Dateien mit 1280×720 beziehungsweise 1920×1080 Viewport. Sie bleiben bewusst textbasiert, weil der verwendete Pull-Request-Transport keine binären PNG-Dateien akzeptiert. Hinweise zur Darstellung stehen in [`docs/screenshots/README.md`](docs/screenshots/README.md).
 
 ## Voraussetzungen
 
