@@ -14,15 +14,19 @@ import ch.drivedeck.core.design.AutomotiveCard
 import ch.drivedeck.core.model.ThemeMode
 import ch.drivedeck.core.model.UserPreferences
 import ch.drivedeck.core.model.QuickAction
+import ch.drivedeck.integration.gps.GpsStatus
+import ch.drivedeck.integration.gps.LocationReading
 
 @Composable
 fun SettingsScreen(
     preferences: UserPreferences,
     isDefaultLauncher: Boolean,
     hasMediaAccess: Boolean,
+    location: LocationReading,
     onTheme: (ThemeMode) -> Unit,
     onOpenHomeSettings: () -> Unit,
     onOpenMediaAccess: () -> Unit,
+    onRequestLocationPermission: () -> Unit,
     onCycleQuickAction: (Int) -> Unit,
     onMoveQuickAction: (Int, Int) -> Unit,
     modifier: Modifier = Modifier,
@@ -47,6 +51,19 @@ fun SettingsScreen(
             }
             item { Text("Media", style = MaterialTheme.typography.headlineMedium) }
             item { AutomotiveCard(onClick = if (hasMediaAccess) null else onOpenMediaAccess, highlighted = !hasMediaAccess) { Row(verticalAlignment = Alignment.CenterVertically) { Icon(if (hasMediaAccess) Icons.Rounded.CheckCircle else Icons.Rounded.NotificationsActive, null, Modifier.size(42.dp), tint = MaterialTheme.colorScheme.primary); Column(Modifier.padding(start = 16.dp)) { Text(if (hasMediaAccess) "Medienzugriff aktiv" else "Medienzugriff erlauben", style = MaterialTheme.typography.titleLarge); Text(if (hasMediaAccess) "Aktive MediaSessions können gesteuert werden." else "Erforderlich für Titel, Albumcover und Wiedergabesteuerung.", color = MaterialTheme.colorScheme.secondary) } } } }
+            item { Text("GPS", style = MaterialTheme.typography.headlineMedium) }
+            item {
+                val permissionMissing = location.status == GpsStatus.PERMISSION_REQUIRED
+                AutomotiveCard(onClick = if (permissionMissing) onRequestLocationPermission else null, highlighted = permissionMissing) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(if (location.hasFix) Icons.Rounded.GpsFixed else Icons.Rounded.GpsNotFixed, null, Modifier.size(42.dp), tint = MaterialTheme.colorScheme.primary)
+                        Column(Modifier.padding(start = 16.dp)) {
+                            Text(location.status.title, style = MaterialTheme.typography.titleLarge)
+                            Text(location.status.detail, color = MaterialTheme.colorScheme.secondary)
+                        }
+                    }
+                }
+            }
             item { Text("System", style = MaterialTheme.typography.headlineMedium) }
             item { AutomotiveCard(onClick = if (isDefaultLauncher) null else onOpenHomeSettings, highlighted = !isDefaultLauncher) { Row(verticalAlignment = Alignment.CenterVertically) { Icon(if (isDefaultLauncher) Icons.Rounded.CheckCircle else Icons.Rounded.Home, null, Modifier.size(42.dp), tint = MaterialTheme.colorScheme.primary); Column(Modifier.padding(start = 16.dp)) { Text(if (isDefaultLauncher) "DriveDeck ist Standard-Launcher" else "DriveDeck als Standard festlegen", style = MaterialTheme.typography.titleLarge); Text(if (isDefaultLauncher) "HOME ist korrekt eingerichtet." else "Antippen, um die Android HOME-Einstellungen zu öffnen.", color = MaterialTheme.colorScheme.secondary) } } } }
             item { AutomotiveCard { Column { Text("Phase 1", style = MaterialTheme.typography.titleLarge); Text("Radio-, Telefon-, GPS- und Fahrzeugadapter sind bewusst noch nicht aktiv.", color = MaterialTheme.colorScheme.secondary) } } }
@@ -69,4 +86,18 @@ private val QuickAction.icon get() = when (this) {
     QuickAction.PHONE -> Icons.Rounded.Phone
     QuickAction.APPS -> Icons.Rounded.Apps
     QuickAction.SETTINGS -> Icons.Rounded.Settings
+}
+private val GpsStatus.title get() = when (this) {
+    GpsStatus.PERMISSION_REQUIRED -> "Standortzugriff erlauben"
+    GpsStatus.DISABLED -> "GPS ist ausgeschaltet"
+    GpsStatus.SEARCHING -> "GPS sucht Satelliten"
+    GpsStatus.FIXED -> "GPS-Signal verfügbar"
+    GpsStatus.UNAVAILABLE -> "GPS nicht verfügbar"
+}
+private val GpsStatus.detail get() = when (this) {
+    GpsStatus.PERMISSION_REQUIRED -> "Erforderlich für Geschwindigkeit und Richtung."
+    GpsStatus.DISABLED -> "GPS bitte in den Android-Einstellungen aktivieren."
+    GpsStatus.SEARCHING -> "Für den ersten Fix freie Sicht zum Himmel sicherstellen."
+    GpsStatus.FIXED -> "Geschwindigkeit wird lokal berechnet; kein Netzwerkzugriff."
+    GpsStatus.UNAVAILABLE -> "DriveDeck bleibt ohne GPS vollständig bedienbar."
 }

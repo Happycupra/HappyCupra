@@ -9,6 +9,8 @@ import ch.drivedeck.core.model.DefaultDashboardItems
 import ch.drivedeck.core.preferences.PreferencesRepository
 import ch.drivedeck.integration.media.MediaPlayback
 import ch.drivedeck.integration.media.MediaRepository
+import ch.drivedeck.integration.gps.LocationReading
+import ch.drivedeck.integration.gps.LocationRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -23,12 +25,13 @@ data class HomeUiState(
     val demo: DemoDriveData = DemoDriveData.Preview,
     val media: MediaPlayback = MediaPlayback.Unavailable,
     val editMode: Boolean = false,
+    val location: LocationReading = LocationReading(),
     val dashboardItems: List<DashboardItem> = ch.drivedeck.core.model.DefaultDashboardItems,
 )
-class HomeViewModel(private val preferences: PreferencesRepository, private val mediaRepository: MediaRepository) : ViewModel() {
+class HomeViewModel(private val preferences: PreferencesRepository, private val mediaRepository: MediaRepository, private val locationRepository: LocationRepository) : ViewModel() {
     private val now = MutableStateFlow(LocalDateTime.now())
-    val state = combine(now, preferences.preferences, mediaRepository.playback) { time, prefs, media ->
-        HomeUiState(time, media = media, editMode = prefs.editModeEnabled, dashboardItems = prefs.dashboardItems)
+    val state = combine(now, preferences.preferences, mediaRepository.playback, locationRepository.reading) { time, prefs, media, location ->
+        HomeUiState(time, media = media, location = location, editMode = prefs.editModeEnabled, dashboardItems = prefs.dashboardItems)
     }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), HomeUiState())
     init { viewModelScope.launch { while (isActive) { now.value = LocalDateTime.now(); delay(30_000) } } }

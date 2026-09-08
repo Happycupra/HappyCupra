@@ -26,3 +26,4 @@ dependencies {
     debugImplementation(libs.compose.ui.tooling)
 }
 dependencies { implementation(project(":integration:media")) }
+dependencies { implementation(project(":integration:gps")) }

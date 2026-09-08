@@ -8,3 +8,4 @@ dependencyResolutionManagement {
 rootProject.name = "DriveDeck"
 include(":app", ":core:model", ":core:preferences", ":core:design", ":feature:home", ":feature:apps", ":feature:settings")
 include(":integration:media")
+include(":integration:gps")

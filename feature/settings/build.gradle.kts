@@ -12,6 +12,7 @@ android {
 }
 kotlin { jvmToolchain(17) }
 dependencies {
+    implementation(project(":integration:gps"))
     implementation(project(":core:model"))
     implementation(project(":core:design"))
     implementation(project(":core:preferences"))

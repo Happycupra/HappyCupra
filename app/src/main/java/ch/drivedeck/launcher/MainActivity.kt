@@ -6,6 +6,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.provider.Settings
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.*
@@ -31,12 +33,15 @@ import ch.drivedeck.feature.home.*
 import ch.drivedeck.feature.settings.*
 
 class MainActivity : ComponentActivity() {
+    private val container get() = (application as DriveDeckApplication).container
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        val container = (application as DriveDeckApplication).container
         setContent { DriveDeckRoot(container, ::openHomeSettings) }
     }
+    override fun onStart() { super.onStart(); container.location.start() }
+    override fun onStop() { container.location.stop(); super.onStop() }
     private fun openHomeSettings() {
         val intent = if (android.os.Build.VERSION.SDK_INT >= 29) getSystemService(RoleManager::class.java)?.createRequestRoleIntent(RoleManager.ROLE_HOME) else null
         startActivity(intent ?: Intent(Settings.ACTION_HOME_SETTINGS))
@@ -50,6 +55,8 @@ private fun DriveDeckRoot(container: AppContainer, openHomeSettings: () -> Unit)
     val context = androidx.compose.ui.platform.LocalContext.current
     val settingsVm: SettingsViewModel = viewModel(factory = factory { SettingsViewModel(container.preferences) })
     val prefs by settingsVm.preferences.collectAsStateWithLifecycle()
+    val location by container.location.reading.collectAsStateWithLifecycle()
+    val locationPermission = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { container.location.start() }
     DriveDeckTheme(darkTheme = when (prefs.themeMode) { ThemeMode.DARK -> true; ThemeMode.LIGHT -> false; ThemeMode.AUTO -> isSystemInDarkTheme() }) {
         var destination by rememberSaveable { mutableStateOf(Destination.HOME) }
         var selectedAction by rememberSaveable { mutableStateOf(QuickAction.HOME) }
@@ -58,7 +65,7 @@ private fun DriveDeckRoot(container: AppContainer, openHomeSettings: () -> Unit)
                 Box(Modifier.weight(1f).fillMaxWidth()) {
                     when (destination) {
                         Destination.HOME -> {
-                            val vm: HomeViewModel = viewModel(factory = factory { HomeViewModel(container.preferences, container.media) })
+                            val vm: HomeViewModel = viewModel(factory = factory { HomeViewModel(container.preferences, container.media, container.location) })
                             val state by vm.state.collectAsStateWithLifecycle()
                             HomeScreen(state, onNavigation = { selectedAction = QuickAction.NAVIGATION; destination = Destination.APPS }, onEditMode = vm::toggleEditMode, onPlayPause = vm::playPause, onPrevious = vm::previous, onNext = vm::next, onMoveItem = vm::moveItem, onResizeItem = vm::resizeItem, onToggleItem = vm::toggleItem, modifier = Modifier.fillMaxSize())
                         }
@@ -67,7 +74,7 @@ private fun DriveDeckRoot(container: AppContainer, openHomeSettings: () -> Unit)
                             val state by vm.state.collectAsStateWithLifecycle()
                             AppsScreen(state, vm::search, vm::launch, vm::toggleFavorite, Modifier.fillMaxSize())
                         }
-                        Destination.SETTINGS -> SettingsScreen(prefs, isDefaultHome(), hasMediaAccess(), settingsVm::setTheme, openHomeSettings, { context.startActivity(Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS")) }, settingsVm::cycleQuickAction, settingsVm::moveQuickAction, Modifier.fillMaxSize())
+                        Destination.SETTINGS -> SettingsScreen(prefs, isDefaultHome(), hasMediaAccess(), location, settingsVm::setTheme, openHomeSettings, { context.startActivity(Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS")) }, { locationPermission.launch(android.Manifest.permission.ACCESS_FINE_LOCATION) }, settingsVm::cycleQuickAction, settingsVm::moveQuickAction, Modifier.fillMaxSize())
                     }
                     IconButton(onClick = { selectedAction = QuickAction.SETTINGS; destination = Destination.SETTINGS }, Modifier.align(Alignment.TopEnd).padding(14.dp).size(64.dp)) { Icon(Icons.Rounded.Settings, "Einstellungen") }
                 }

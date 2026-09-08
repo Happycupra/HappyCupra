@@ -27,6 +27,7 @@ import ch.drivedeck.core.model.DashboardElementSize
 import ch.drivedeck.core.model.DashboardElementType
 import ch.drivedeck.core.model.DashboardItem
 import ch.drivedeck.integration.media.MediaPlayback
+import ch.drivedeck.integration.gps.GpsStatus
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.util.Locale
@@ -126,7 +127,7 @@ private fun DashboardTile(
         when (item.type) {
             DashboardElementType.MEDIA -> MediaTile(state, item.size, if (state.editMode) null else onPlayPause, onPrevious, onNext)
             DashboardElementType.NAVIGATION -> ValueTile("NAVIGATION", state.demo.destination, "Bevorzugte App öffnen", Icons.Rounded.Navigation, if (state.editMode) null else onNavigation)
-            DashboardElementType.SPEED -> ValueTile("TEMPO", "${state.demo.speedKmh} km/h", "Demo", Icons.Rounded.Speed)
+            DashboardElementType.SPEED -> ValueTile("TEMPO", state.location.speedKmh?.let { "$it km/h" } ?: "-- km/h", state.location.status.label, Icons.Rounded.Speed)
             DashboardElementType.WEATHER -> ValueTile("WETTER", state.demo.weather, "Demo", Icons.Rounded.WbSunny)
             DashboardElementType.PHONE -> ValueTile("TELEFON", "Verbinden", "Telefon-App auswählen", Icons.Rounded.Phone)
             DashboardElementType.RADIO -> ValueTile("RADIO", "Radio", "Radio-App auswählen", Icons.Rounded.Radio)
@@ -191,6 +192,13 @@ private val DashboardElementType.displayName get() = when (this) {
     DashboardElementType.RADIO -> "Radio"
     DashboardElementType.SPEED -> "Tempo"
     DashboardElementType.WEATHER -> "Wetter"
+}
+private val GpsStatus.label get() = when (this) {
+    GpsStatus.PERMISSION_REQUIRED -> "Standortzugriff fehlt"
+    GpsStatus.DISABLED -> "GPS ausgeschaltet"
+    GpsStatus.SEARCHING -> "GPS-Signal wird gesucht"
+    GpsStatus.FIXED -> "GPS verbunden"
+    GpsStatus.UNAVAILABLE -> "GPS nicht verfügbar"
 }
 
 private fun Modifier.dashboardDrag(enabled: Boolean, movePrevious: () -> Unit, moveNext: () -> Unit): Modifier {

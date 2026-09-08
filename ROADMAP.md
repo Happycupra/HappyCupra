@@ -19,7 +19,7 @@
 
 ## Phase 3 — Geräteservices
 
-- [ ] GPS-Abstraktion, Berechtigungsfluss und Geschwindigkeit
+- [x] GPS-Abstraktion, Berechtigungsfluss, Status und Geschwindigkeit in km/h
 - [ ] automatische Day/Night-Umschaltung
 - [ ] generische Radio- und Telefon-Provider
 

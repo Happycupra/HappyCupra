@@ -5,6 +5,7 @@ import android.content.ComponentName
 import ch.drivedeck.integration.media.AndroidMediaRepository
 import ch.drivedeck.integration.media.DriveDeckNotificationListener
 import ch.drivedeck.integration.media.MediaRepositoryOwner
+import ch.drivedeck.integration.gps.AndroidLocationRepository
 import ch.drivedeck.core.preferences.DataStorePreferencesRepository
 import ch.drivedeck.feature.apps.AndroidInstalledAppsRepository
 
@@ -18,4 +19,5 @@ class AppContainer(application: DriveDeckApplication) {
     val preferences = DataStorePreferencesRepository(application)
     val apps = AndroidInstalledAppsRepository(application)
     val media = application.mediaRepository
+    val location = AndroidLocationRepository(application)
 }

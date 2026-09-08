@@ -4,13 +4,17 @@ DriveDeck ist ein eigenständiger, für Android-Autoradios entwickelter HOME-Lau
 
 ## Entwicklungsstand
 
-Die stabile Phase-1-Basis umfasst das responsive Landscape-Dashboard, HOME-Registrierung, App-Übersicht und -Start, persistente Favoriten sowie Design-Einstellungen. Phase 2 ist mit allgemeiner MediaSession-Steuerung, persistenter Dashboard-Anordnung und konfigurierbarer Favoritenleiste umgesetzt. Als Nächstes beginnt Phase 3 mit der GPS-Abstraktion und Geschwindigkeitsanzeige.
+Die stabile Phase-1-Basis umfasst das responsive Landscape-Dashboard, HOME-Registrierung, App-Übersicht und -Start, persistente Favoriten sowie Design-Einstellungen. Phase 2 ist mit allgemeiner MediaSession-Steuerung, persistenter Dashboard-Anordnung und konfigurierbarer Favoritenleiste umgesetzt. Phase 3 hat mit einer fehlertoleranten GPS-Abstraktion, Berechtigungsführung, GPS-Status und lokaler Geschwindigkeitsanzeige begonnen.
 
 ## Screenshots
 
 ### Dashboard
 
 [![DriveDeck Dashboard](docs/screenshots/dashboard-preview.svg)](docs/screenshots/dashboard-preview.svg)
+
+### GPS und Geschwindigkeit
+
+[![DriveDeck GPS-Dashboard](docs/screenshots/gps-dashboard-preview.svg)](docs/screenshots/gps-dashboard-preview.svg)
 
 ### Dashboard-Edit-Modus
 
