@@ -1,0 +1,52 @@
+package ch.drivedeck.core.preferences
+
+import android.content.Context
+import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.core.stringSetPreferencesKey
+import androidx.datastore.preferences.preferencesDataStore
+import ch.drivedeck.core.model.ThemeMode
+import ch.drivedeck.core.model.UserPreferences
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.map
+import java.io.IOException
+
+interface PreferencesRepository {
+    val preferences: Flow<UserPreferences>
+    suspend fun toggleFavorite(packageName: String)
+    suspend fun setThemeMode(mode: ThemeMode)
+    suspend fun setEditMode(enabled: Boolean)
+}
+
+private val Context.dataStore by preferencesDataStore("drive_deck_preferences")
+
+class DataStorePreferencesRepository(private val context: Context) : PreferencesRepository {
+    override val preferences = context.dataStore.data
+        .catch { error -> if (error is IOException) emit(androidx.datastore.preferences.core.emptyPreferences()) else throw error }
+        .map { values ->
+            UserPreferences(
+                favoritePackages = values[FAVORITES].orEmpty(),
+                themeMode = values[THEME]?.let { runCatching { ThemeMode.valueOf(it) }.getOrNull() } ?: ThemeMode.DARK,
+                editModeEnabled = values[EDIT_MODE] ?: false,
+            )
+        }
+
+    override suspend fun toggleFavorite(packageName: String) {
+        context.dataStore.edit { values ->
+            val updated = values[FAVORITES].orEmpty().toMutableSet()
+            if (!updated.add(packageName)) updated.remove(packageName)
+            values[FAVORITES] = updated
+        }
+    }
+
+    override suspend fun setThemeMode(mode: ThemeMode) { context.dataStore.edit { it[THEME] = mode.name } }
+    override suspend fun setEditMode(enabled: Boolean) { context.dataStore.edit { it[EDIT_MODE] = enabled } }
+
+    private companion object {
+        val FAVORITES = stringSetPreferencesKey("favorite_packages")
+        val THEME = stringPreferencesKey("theme_mode")
+        val EDIT_MODE = booleanPreferencesKey("dashboard_edit_mode")
+    }
+}

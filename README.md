@@ -1,16 +1,55 @@
-## Hi there 👋
+# DriveDeck
 
-<!--
-**Happycupra/HappyCupra** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
+DriveDeck ist ein eigenständiger, für Android-Autoradios entwickelter HOME-Launcher. Das Projekt folgt dem Leitbild **„Maximale Funktion mit minimaler Bedienkomplexität“**: große Ziele, hoher Kontrast und die wichtigsten Aktionen in höchstens zwei Berührungen.
 
-Here are some ideas to get you started:
+## Entwicklungsstand
 
-- 🔭 I’m currently working on ...
-- 🌱 I’m currently learning ...
-- 👯 I’m looking to collaborate on ...
-- 🤔 I’m looking for help with ...
-- 💬 Ask me about ...
-- 📫 How to reach me: ...
-- 😄 Pronouns: ...
-- ⚡ Fun fact: ...
--->
+Die stabile Phase-1-Basis umfasst das responsive Landscape-Dashboard, HOME-Registrierung, App-Übersicht und -Start, persistente Favoriten sowie Design-Einstellungen. Aus Phase 2 sind außerdem die allgemeine MediaSession-Erkennung, Metadaten, Albumcover, Fortschritt und Transportsteuerung umgesetzt. Dashboard-Anordnung und konfigurierbare Favoritenleiste folgen als nächste Punkte.
+
+## Screenshots
+
+| Dashboard | App-Auswahl |
+| --- | --- |
+| [![DriveDeck Dashboard – responsive Phase-2-Vorschau](docs/screenshots/dashboard-preview.svg)](docs/screenshots/dashboard-preview.svg) | [![DriveDeck Apps – große Kacheln und Favoriten](docs/screenshots/apps-preview.svg)](docs/screenshots/apps-preview.svg) |
+
+*Vektorbasierte UI-Vorschau mit den dokumentierten Demo-Daten; ein Emulator-Capture folgt mit dem ersten Geräte-Release.*
+
+## Voraussetzungen
+
+- Android Studio Ladybug oder neuer
+- Android SDK 35 (minSdk 29)
+- JDK 17
+- Gradle 8.10.2 (der CI-Build installiert diese Version automatisch)
+
+## Bauen und testen
+
+```bash
+gradle test
+gradle lint
+gradle assembleDebug
+```
+
+Die APK liegt danach unter `app/build/outputs/apk/debug/app-debug.apk`.
+
+## Installation und HOME-Auswahl
+
+```bash
+adb install -r app/build/outputs/apk/debug/app-debug.apk
+```
+
+Nach dem Druck auf die Home-Taste DriveDeck auswählen und **Immer** bestätigen. Alternativ führt der Hinweis unter **Einstellungen → System** zu den HOME-Einstellungen. Die Anwendung ist primär für Landscape konfiguriert.
+
+## Architektur
+
+Die Module sind nach Verantwortlichkeit getrennt: `core:model`, `core:preferences` und `core:design` enthalten stabile Grundlagen; `feature:home`, `feature:apps` und `feature:settings` enthalten UI und ViewModels; `app` bildet den Composition Root. Details stehen in [ARCHITECTURE.md](ARCHITECTURE.md), Entscheidungen in [`docs/decisions`](docs/decisions) und der Plan in [ROADMAP.md](ROADMAP.md).
+
+## Bekannte Einschränkungen
+
+- Der Medienzugriff muss einmalig in den Android-Einstellungen freigegeben werden; ohne Freigabe zeigt die Medienkarte klar bezeichnete Preview-Daten und deaktiviert die Steuerung.
+- Navigation, Telefon und Radio besitzen noch keine eigenen Provider; ihre Schnellaktionen führen aktuell zur sicheren App-Auswahl.
+- Dashboard Drag & Drop, GPS, Day/Night-Automatik und Headunit-Adapter sind für spätere Phasen geplant.
+- Manche Hersteller-ROMs behandeln die HOME-Auswahl anders als AOSP.
+
+## Mitarbeit
+
+Entwicklung erfolgt über kurze Feature-Branches und Pull Requests gegen `main`. Änderungen müssen Tests, Lint und den Debug-Build bestehen.
