@@ -1,0 +1,41 @@
+name: Windows Production Planner
+
+on:
+  push:
+    branches:
+      - feature/windows-produktionsplanung-mvp
+    paths:
+      - 'windows-production-planner/**'
+      - '.github/workflows/windows-production-planner.yml'
+  pull_request:
+    paths:
+      - 'windows-production-planner/**'
+      - '.github/workflows/windows-production-planner.yml'
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore
+        run: dotnet restore windows-production-planner/Produktionsplanung.sln
+
+      - name: Build
+        run: dotnet build windows-production-planner/Produktionsplanung.sln --configuration Release --no-restore
+
+      - name: Publish Windows x64
+        run: dotnet publish windows-production-planner/src/Produktionsplanung.App/Produktionsplanung.App.csproj --configuration Release --runtime win-x64 --self-contained false -p:PublishSingleFile=false --output windows-production-planner/artifacts/win-x64
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: produktionsplanung-win-x64
+          path: windows-production-planner/artifacts/win-x64
