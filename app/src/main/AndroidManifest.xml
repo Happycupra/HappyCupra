@@ -65,6 +65,9 @@
         <package android:name="net.easyconn.carman" />
         <package android:name="com.hur.headunit" />
         <package android:name="com.hur.reloaded" />
+
+        <!-- YMusic (ymusic.io): explicit visibility for reliable autostart on Android 11+. -->
+        <package android:name="com.kapp.youtube.final" />
     </queries>
 
     <application

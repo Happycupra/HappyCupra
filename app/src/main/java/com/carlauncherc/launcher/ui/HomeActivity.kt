@@ -1,6 +1,7 @@
 package com.carlauncherc.launcher.ui
 
 import android.Manifest
+import android.content.ComponentName
 import android.content.Intent
 import android.media.AudioManager
 import android.os.Bundle
@@ -312,13 +313,21 @@ class HomeActivity : AppCompatActivity() {
         app.musicAutoStartDone = true
 
         binding.root.postDelayed({
-            if (!IntentUtil.launchStored(this, stored, null)) {
+            val packageName = IntentUtil.packageOf(stored)
+            val launched = if (packageName == YMUSIC_PACKAGE) {
+                launchYMusic()
+            } else {
+                IntentUtil.launchStored(this, stored, null)
+            }
+
+            if (!launched) {
                 Prefs.musicPackage = null
                 toast(getString(R.string.app_not_installed))
                 return@postDelayed
             }
+
             if (Prefs.musicAutoPlay) {
-                scheduleMediaPlayRetries()
+                scheduleMediaPlayRetries(packageName)
             }
         }, MUSIC_START_DELAY_MS)
     }
@@ -330,10 +339,54 @@ class HomeActivity : AppCompatActivity() {
      * PLAY is intentionally retried instead of PLAY_PAUSE: repeated PLAY commands are harmless
      * once playback has already started, while PLAY_PAUSE could toggle it back off.
      */
-    private fun scheduleMediaPlayRetries() {
+    private fun launchYMusic(): Boolean {
+        val intent = Intent(Intent.ACTION_MAIN).apply {
+            addCategory(Intent.CATEGORY_LAUNCHER)
+            component = ComponentName(YMUSIC_PACKAGE, YMUSIC_MAIN_ACTIVITY)
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED)
+        }
+        return try {
+            startActivity(intent)
+            true
+        } catch (_: Exception) {
+            IntentUtil.launchPackage(this, YMUSIC_PACKAGE)
+        }
+    }
+
+    private fun scheduleMediaPlayRetries(packageName: String) {
         val handler = Handler(Looper.getMainLooper())
         MUSIC_PLAY_RETRY_DELAYS_MS.forEach { delayMs ->
-            handler.postDelayed({ dispatchMediaPlay() }, delayMs)
+            handler.postDelayed({
+                if (packageName == YMUSIC_PACKAGE) {
+                    dispatchYMusicPlay()
+                }
+                dispatchMediaPlay()
+            }, delayMs)
+        }
+    }
+
+    private fun dispatchYMusicPlay() {
+        val eventTime = SystemClock.uptimeMillis()
+        val down = KeyEvent(
+            eventTime, eventTime, KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_PLAY, 0
+        )
+        val up = KeyEvent(
+            eventTime, eventTime, KeyEvent.ACTION_UP, KeyEvent.KEYCODE_MEDIA_PLAY, 0
+        )
+
+        runCatching {
+            sendBroadcast(
+                Intent(Intent.ACTION_MEDIA_BUTTON)
+                    .setPackage(YMUSIC_PACKAGE)
+                    .addFlags(Intent.FLAG_RECEIVER_FOREGROUND)
+                    .putExtra(Intent.EXTRA_KEY_EVENT, down)
+            )
+            sendBroadcast(
+                Intent(Intent.ACTION_MEDIA_BUTTON)
+                    .setPackage(YMUSIC_PACKAGE)
+                    .addFlags(Intent.FLAG_RECEIVER_FOREGROUND)
+                    .putExtra(Intent.EXTRA_KEY_EVENT, up)
+            )
         }
     }
 
@@ -389,6 +442,8 @@ class HomeActivity : AppCompatActivity() {
         const val DASHCAM_START_DELAY_MS = 1_500L
         const val DASHCAM_RETURN_DELAY_MS = 3_000L
         const val MUSIC_START_DELAY_MS = 5_000L
+        const val YMUSIC_PACKAGE = "com.kapp.youtube.final"
+        const val YMUSIC_MAIN_ACTIVITY = "com.kapp.youtube.ui.MainActivity"
         val MUSIC_PLAY_RETRY_DELAYS_MS = longArrayOf(1_500L, 4_000L, 7_000L, 10_000L)
     }
 }
