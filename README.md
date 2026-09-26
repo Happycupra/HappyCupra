@@ -39,11 +39,12 @@ GitHub-Actions-Artefakt `carlauncher-c-debug` verfügbar.
 | Area | Behaviour |
 |---|---|
 | **Dashboard** | GPS speedometer (tap to toggle KM/H ↔ MPH), compass heading as a cardinal point, large clock, day and date. |
-| **Quick cards** | Phone projection (ZLink / AutoKit / EasyConnection / Headunit Reloaded), navigation, music. Tap launches, long-press re-assigns. |
+| **Clock shortcut** | Tap the clock to launch a user-selected app such as CarLink/ZLink; long-press to change the shortcut. |
+| **Quick cards** | Navigation plus a wide YMusic now-playing panel with album art, progress and Previous / Play-Pause / Next controls. |
 | **Dock** | Four user-assignable slots plus three fixed actions: all-apps, system settings (long-press → launcher settings), about/update. |
 | **App drawer** | Grid of every launchable app, type-to-filter search, long-press to pin to the dock. |
 | **Updater** | Polls the GitHub releases API, compares semantic versions, badges the info icon, downloads with a progress bar and hands the APK to the system installer. |
-| **Themes** | Dark cockpit, light cockpit, or follow system. |
+| **Themes** | Dark cockpit, Red / Carbon, light cockpit, or follow system. Hold the compass for 1.5 seconds to cycle themes. |
 
 Everything except the updater works with **zero connectivity**.
 

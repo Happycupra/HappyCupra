@@ -35,6 +35,7 @@ object Prefs {
     const val KEY_CACHED_URL = "pref_cached_latest_url"
     const val KEY_PENDING_APK = "pref_pending_apk_path"
     const val KEY_FIRST_RUN_DONE = "pref_first_run_done"
+    const val KEY_LAST_SHOWN_VERSION_CODE = "pref_last_shown_version_code"
 
     const val THEME_RED_CARBON = 1000
 
@@ -134,4 +135,8 @@ object Prefs {
     var firstRunDone: Boolean
         get() = sp.getBoolean(KEY_FIRST_RUN_DONE, false)
         set(value) = sp.edit().putBoolean(KEY_FIRST_RUN_DONE, value).apply()
+
+    var lastShownVersionCode: Int
+        get() = sp.getInt(KEY_LAST_SHOWN_VERSION_CODE, 0)
+        set(value) = sp.edit().putInt(KEY_LAST_SHOWN_VERSION_CODE, value).apply()
 }

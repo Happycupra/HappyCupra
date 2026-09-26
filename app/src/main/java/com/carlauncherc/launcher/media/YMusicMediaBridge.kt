@@ -71,6 +71,12 @@ object YMusicMediaBridge {
         _nowPlaying.value = NowPlayingInfo()
     }
 
+    fun play(): Boolean {
+        val c = controller ?: return false
+        c.transportControls.play()
+        return true
+    }
+
     fun previous(): Boolean {
         val c = controller ?: return false
         c.transportControls.skipToPrevious()

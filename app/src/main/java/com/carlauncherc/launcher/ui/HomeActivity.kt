@@ -1,7 +1,6 @@
 package com.carlauncherc.launcher.ui
 
 import android.Manifest
-import android.content.ComponentName
 import android.content.Intent
 import android.app.role.RoleManager
 import android.media.AudioManager
@@ -11,6 +10,7 @@ import android.os.Looper
 import android.os.SystemClock
 import android.view.HapticFeedbackConstants
 import android.view.KeyEvent
+import android.view.MotionEvent
 import android.view.View
 import android.content.res.ColorStateList
 import android.widget.Toast
@@ -18,10 +18,13 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.carlauncherc.launcher.BuildConfig
 import com.carlauncherc.launcher.CarLauncherApp
 import com.carlauncherc.launcher.R
 import com.carlauncherc.launcher.core.Format
@@ -110,6 +113,7 @@ class HomeActivity : AppCompatActivity() {
         cards.bind()
 
         bindDashboardClicks()
+        bindCompassThemeCycle()
         bindClockShortcut()
         bindDockActions()
         bindMusicControls()
@@ -118,6 +122,8 @@ class HomeActivity : AppCompatActivity() {
 
         if (!Prefs.firstRunDone) {
             binding.root.post { startFirstRunSetup() }
+        } else {
+            binding.root.post { maybeShowVersionLog() }
         }
     }
 
@@ -164,6 +170,78 @@ class HomeActivity : AppCompatActivity() {
                     render(viewModel.vehicle.value)
                 }
             }
+        }
+    }
+
+    private fun bindCompassThemeCycle() {
+        binding.gaugeCompass.isClickable = true
+        binding.gaugeCompass.isFocusable = true
+
+        var switchTriggered = false
+        val switchTheme = Runnable {
+            switchTriggered = true
+            binding.gaugeCompass.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
+            cycleToNextTheme()
+        }
+
+        binding.gaugeCompass.setOnClickListener {
+            toast(getString(R.string.compass_theme_hold_hint))
+        }
+
+        binding.gaugeCompass.setOnTouchListener { view, event ->
+            when (event.actionMasked) {
+                MotionEvent.ACTION_DOWN -> {
+                    switchTriggered = false
+                    view.postDelayed(switchTheme, THEME_HOLD_MS)
+                    true
+                }
+                MotionEvent.ACTION_UP -> {
+                    view.removeCallbacks(switchTheme)
+                    if (!switchTriggered) view.performClick()
+                    true
+                }
+                MotionEvent.ACTION_CANCEL -> {
+                    view.removeCallbacks(switchTheme)
+                    true
+                }
+                else -> true
+            }
+        }
+    }
+
+    private fun cycleToNextTheme() {
+        val next = when (Prefs.themeMode) {
+            AppCompatDelegate.MODE_NIGHT_YES -> Prefs.THEME_RED_CARBON
+            Prefs.THEME_RED_CARBON -> AppCompatDelegate.MODE_NIGHT_NO
+            AppCompatDelegate.MODE_NIGHT_NO -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+            else -> AppCompatDelegate.MODE_NIGHT_YES
+        }
+
+        Prefs.themeMode = next
+        toast(
+            getString(
+                R.string.theme_switched,
+                getString(
+                    when (next) {
+                        Prefs.THEME_RED_CARBON -> R.string.theme_red_carbon
+                        AppCompatDelegate.MODE_NIGHT_NO -> R.string.theme_light
+                        AppCompatDelegate.MODE_NIGHT_YES -> R.string.theme_dark
+                        else -> R.string.theme_system
+                    }
+                )
+            )
+        )
+
+        val effective = if (next == Prefs.THEME_RED_CARBON) {
+            AppCompatDelegate.MODE_NIGHT_YES
+        } else {
+            next
+        }
+
+        if (AppCompatDelegate.getDefaultNightMode() == effective) {
+            recreate()
+        } else {
+            AppCompatDelegate.setDefaultNightMode(effective)
         }
     }
 
@@ -508,10 +586,25 @@ class HomeActivity : AppCompatActivity() {
 
     private fun finishFirstRunSetup() {
         Prefs.firstRunDone = true
+        Prefs.lastShownVersionCode = BuildConfig.VERSION_CODE
         firstRunSetupActive = false
         firstRunLocationRequested = false
         firstRunMediaAccessRequested = false
         toast(getString(R.string.first_run_done))
+    }
+
+    private fun maybeShowVersionLog() {
+        val currentVersion = BuildConfig.VERSION_CODE
+        if (Prefs.lastShownVersionCode >= currentVersion) return
+
+        // Mark before showing so a configuration change cannot display the dialog twice.
+        Prefs.lastShownVersionCode = currentVersion
+
+        AlertDialog.Builder(this)
+            .setTitle(getString(R.string.changelog_title, BuildConfig.VERSION_NAME))
+            .setMessage(R.string.changelog_current)
+            .setPositiveButton(R.string.action_close, null)
+            .show()
     }
 
     // ------------------------------------------------------------------ lifecycle
@@ -585,13 +678,22 @@ class HomeActivity : AppCompatActivity() {
 
         binding.root.postDelayed({
             val packageName = IntentUtil.packageOf(stored)
-            val launched = if (packageName == YMUSIC_PACKAGE) {
-                launchYMusic()
-            } else {
-                IntentUtil.launchStored(this, stored, null)
+
+            if (packageName == YMUSIC_PACKAGE) {
+                // YMusic stays in the background. Its MediaSession / media-button receiver is
+                // used directly, so the launcher remains visible during boot.
+                if (!app.appRepository.isInstalled(packageName)) {
+                    Prefs.musicPackage = null
+                    toast(getString(R.string.app_not_installed))
+                    return@postDelayed
+                }
+                if (Prefs.musicAutoPlay) {
+                    scheduleMediaPlayRetries(packageName)
+                }
+                return@postDelayed
             }
 
-            if (!launched) {
+            if (!IntentUtil.launchStored(this, stored, null)) {
                 Prefs.musicPackage = null
                 toast(getString(R.string.app_not_installed))
                 return@postDelayed
@@ -610,28 +712,17 @@ class HomeActivity : AppCompatActivity() {
      * PLAY is intentionally retried instead of PLAY_PAUSE: repeated PLAY commands are harmless
      * once playback has already started, while PLAY_PAUSE could toggle it back off.
      */
-    private fun launchYMusic(): Boolean {
-        val intent = Intent(Intent.ACTION_MAIN).apply {
-            addCategory(Intent.CATEGORY_LAUNCHER)
-            component = ComponentName(YMUSIC_PACKAGE, YMUSIC_MAIN_ACTIVITY)
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED)
-        }
-        return try {
-            startActivity(intent)
-            true
-        } catch (_: Exception) {
-            IntentUtil.launchPackage(this, YMUSIC_PACKAGE)
-        }
-    }
-
     private fun scheduleMediaPlayRetries(packageName: String) {
         val handler = Handler(Looper.getMainLooper())
         MUSIC_PLAY_RETRY_DELAYS_MS.forEach { delayMs ->
             handler.postDelayed({
                 if (packageName == YMUSIC_PACKAGE) {
-                    dispatchYMusicPlay()
+                    if (!YMusicMediaBridge.play()) {
+                        dispatchYMusicPlay()
+                    }
+                } else {
+                    dispatchMediaPlay()
                 }
-                dispatchMediaPlay()
             }, delayMs)
         }
     }
@@ -714,7 +805,7 @@ class HomeActivity : AppCompatActivity() {
         const val DASHCAM_RETURN_DELAY_MS = 3_000L
         const val MUSIC_START_DELAY_MS = 5_000L
         const val YMUSIC_PACKAGE = "com.kapp.youtube.final"
-        const val YMUSIC_MAIN_ACTIVITY = "com.kapp.youtube.ui.MainActivity"
-        val MUSIC_PLAY_RETRY_DELAYS_MS = longArrayOf(1_500L, 4_000L, 7_000L, 10_000L)
+        const val THEME_HOLD_MS = 1_500L
+        val MUSIC_PLAY_RETRY_DELAYS_MS = longArrayOf(1_000L, 2_500L, 5_000L, 8_000L)
     }
 }
