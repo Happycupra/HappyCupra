@@ -1,9 +1,9 @@
 # CarLauncher C
 
 
-> **CarLauncher C customization branch**
+> **CarLauncher C**
 >
-> This branch is based on Breakeridis/open-car-launcher under the MIT License. It keeps the
+> This project is based on Breakeridis/open-car-launcher under the MIT License. It keeps the
 > upstream LICENSE and attribution, uses the separate Android application id
 > `com.carlauncherc.launcher`, and adds configurable music-app autostart plus automatic PLAY.
 > The original upstream in-app updater is intentionally disabled until this launcher has its own
