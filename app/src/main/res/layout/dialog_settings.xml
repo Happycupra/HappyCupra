@@ -125,6 +125,47 @@
             style="@style/Text.Caption"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:text="@string/settings_music_start" />
+
+        <Button
+            android:id="@+id/btnMusicApp"
+            style="?attr/materialButtonOutlinedStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp" />
+
+        <CheckBox
+            android:id="@+id/checkMusicAutostart"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp"
+            android:text="@string/settings_music_autostart" />
+
+        <CheckBox
+            android:id="@+id/checkMusicAutoplay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp"
+            android:text="@string/settings_music_autoplay" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/settings_music_autostart_hint"
+            android:textColor="@color/cockpit_text_dim"
+            android:textSize="12sp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="12dp"
+            android:background="@color/cockpit_divider" />
+
+        <TextView
+            style="@style/Text.Caption"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:text="@string/settings_dashcam" />
 
         <Button
