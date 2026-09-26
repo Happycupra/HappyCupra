@@ -1,5 +1,15 @@
 # Minimal Car Launcher
 
+
+> **HappyCupra customization branch**
+>
+> This branch is based on Breakeridis/open-car-launcher under the MIT License. It keeps the
+> upstream LICENSE and attribution, uses the separate Android application id
+> `com.happycupra.carlauncher`, and adds configurable music-app autostart plus automatic PLAY.
+> The original upstream in-app updater is intentionally disabled until this launcher has its own
+> dedicated repository and permanent release-signing key.
+
+
 A distraction-free Android **home launcher** for automotive head units, dashboard tablets and
 landscape screens. Kotlin + XML views, `minSdk 29`, no Google Play Services, no Compose.
 
