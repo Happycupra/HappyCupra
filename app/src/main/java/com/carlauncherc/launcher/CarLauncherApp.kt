@@ -42,7 +42,10 @@ class CarLauncherApp : Application() {
 
         // Applied before any activity exists, so the very first inflate already uses the
         // right resources - no theme flash, no recreate at boot.
-        AppCompatDelegate.setDefaultNightMode(Prefs.themeMode)
+        AppCompatDelegate.setDefaultNightMode(
+            if (Prefs.themeMode == Prefs.THEME_RED_CARBON) AppCompatDelegate.MODE_NIGHT_YES
+            else Prefs.themeMode
+        )
 
         installCrashLogger()
 

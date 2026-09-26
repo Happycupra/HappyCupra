@@ -69,9 +69,13 @@ class HomeActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        if (Prefs.themeMode == Prefs.THEME_RED_CARBON) {
+            setTheme(R.style.Theme_CarLauncher_RedCarbon_Home)
+        }
         super.onCreate(savedInstanceState)
         binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        applyThemeVisuals()
 
         val repository = app.appRepository
 
@@ -89,6 +93,33 @@ class HomeActivity : AppCompatActivity() {
         bindDockActions()
         bindBackBehaviour()
         observe()
+    }
+
+    // ------------------------------------------------------------------ theme
+
+    private fun applyThemeVisuals() {
+        if (Prefs.themeMode != Prefs.THEME_RED_CARBON) return
+
+        binding.root.setBackgroundResource(R.drawable.bg_carbon)
+        binding.dashboard.setBackgroundResource(R.drawable.bg_carbon)
+
+        binding.gaugeSpeed.setBackgroundResource(R.drawable.bg_gauge_red_carbon)
+        binding.gaugeClock.setBackgroundResource(R.drawable.bg_gauge_red_carbon)
+        binding.gaugeCompass.setBackgroundResource(R.drawable.bg_gauge_red_carbon)
+
+        binding.cardProjection.setBackgroundResource(R.drawable.bg_card_red_carbon)
+        binding.cardNav.setBackgroundResource(R.drawable.bg_card_red_carbon)
+        binding.cardMusic.setBackgroundResource(R.drawable.bg_card_red_carbon)
+        binding.dockStrip.root.setBackgroundResource(R.drawable.bg_dock_red_carbon)
+
+        val red = getColor(R.color.carbon_red_bright)
+        val softRed = getColor(R.color.carbon_red)
+        binding.textSpeed.setTextColor(red)
+        binding.clockTime.setTextColor(red)
+        binding.clockDay.setTextColor(softRed)
+        binding.titleProjection.setTextColor(red)
+        binding.titleNav.setTextColor(red)
+        binding.titleMusic.setTextColor(red)
     }
 
     // ------------------------------------------------------------------ wiring

@@ -32,6 +32,7 @@ object SettingsDialog {
 
         themeGroup.check(
             when (Prefs.themeMode) {
+                Prefs.THEME_RED_CARBON -> R.id.themeRedCarbon
                 AppCompatDelegate.MODE_NIGHT_NO -> R.id.themeLight
                 AppCompatDelegate.MODE_NIGHT_YES -> R.id.themeDark
                 else -> R.id.themeSystem
@@ -61,6 +62,7 @@ object SettingsDialog {
 
         themeGroup.setOnCheckedChangeListener { _, checkedId ->
             val mode = when (checkedId) {
+                R.id.themeRedCarbon -> Prefs.THEME_RED_CARBON
                 R.id.themeLight -> AppCompatDelegate.MODE_NIGHT_NO
                 R.id.themeDark -> AppCompatDelegate.MODE_NIGHT_YES
                 else -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
@@ -68,10 +70,13 @@ object SettingsDialog {
             if (mode == Prefs.themeMode) return@setOnCheckedChangeListener
             Prefs.themeMode = mode
             dialog.dismiss()
-            // AppCompat walks its live delegates and recreates started activities itself -
-            // do NOT call recreate() here, and keep uiMode out of the activity's configChanges
-            // or this path is bypassed and half the views keep the old colours.
-            AppCompatDelegate.setDefaultNightMode(mode)
+
+            if (mode == Prefs.THEME_RED_CARBON) {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                activity.recreate()
+            } else {
+                AppCompatDelegate.setDefaultNightMode(mode)
+            }
         }
 
         // --- music at startup ---

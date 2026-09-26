@@ -35,6 +35,8 @@ object Prefs {
     const val KEY_PENDING_APK = "pref_pending_apk_path"
     const val KEY_FIRST_RUN_DONE = "pref_first_run_done"
 
+    const val THEME_RED_CARBON = 1000
+
     const val COMPASS_AUTO = "auto"
     const val COMPASS_GPS = "gps"
     const val COMPASS_SENSOR = "sensor"

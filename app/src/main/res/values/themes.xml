@@ -48,4 +48,28 @@
         <item name="android:singleLine">true</item>
     </style>
 
+    <style name="Theme.CarLauncher.RedCarbon" parent="Theme.Material3.Dark.NoActionBar">
+        <item name="colorPrimary">@color/carbon_red_bright</item>
+        <item name="colorOnPrimary">@color/carbon_bg</item>
+        <item name="colorSecondary">@color/carbon_red</item>
+        <item name="colorOnSecondary">@color/carbon_text</item>
+        <item name="colorSurface">@color/carbon_surface</item>
+        <item name="colorOnSurface">@color/carbon_text</item>
+        <item name="colorSurfaceVariant">@color/carbon_surface_alt</item>
+        <item name="colorOnSurfaceVariant">@color/carbon_text_secondary</item>
+        <item name="colorOutline">@color/carbon_red_dark</item>
+        <item name="colorError">@color/carbon_red_bright</item>
+        <item name="android:colorBackground">@color/carbon_bg</item>
+        <item name="android:textColorPrimary">@color/carbon_text</item>
+        <item name="android:textColorSecondary">@color/carbon_text_secondary</item>
+        <item name="android:windowBackground">@drawable/bg_carbon</item>
+    </style>
+
+    <style name="Theme.CarLauncher.RedCarbon.Home" parent="Theme.CarLauncher.RedCarbon">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowBackground">@drawable/bg_carbon</item>
+        <item name="android:windowContentTransitions">false</item>
+        <item name="android:windowAnimationStyle">@null</item>
+    </style>
+
 </resources>

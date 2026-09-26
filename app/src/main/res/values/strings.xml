@@ -65,6 +65,7 @@
     <string name="theme_dark">Dark cockpit</string>
     <string name="theme_light">Light cockpit</string>
     <string name="theme_system">Follow system</string>
+    <string name="theme_red_carbon">Red / Carbon</string>
     <string name="settings_units">Speed units</string>
     <string name="settings_compass">Compass detail</string>
     <string name="compass_8">8 points (N, NE, E…)</string>

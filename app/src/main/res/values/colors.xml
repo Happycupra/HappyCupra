@@ -20,4 +20,17 @@
 
     <color name="cockpit_scrim">#F2F2F4F7</color>
     <color name="cockpit_ripple">#33101418</color>
+    <!-- Red / Carbon theme -->
+    <color name="carbon_bg">#FF080808</color>
+    <color name="carbon_surface">#FF141414</color>
+    <color name="carbon_surface_alt">#FF201719</color>
+    <color name="carbon_line">#FF2A2A2A</color>
+    <color name="carbon_line_soft">#FF111111</color>
+    <color name="carbon_red">#FFB11F2E</color>
+    <color name="carbon_red_bright">#FFE43B4D</color>
+    <color name="carbon_red_dark">#FF67121B</color>
+    <color name="carbon_text">#FFF4F4F4</color>
+    <color name="carbon_text_secondary">#FFC6C6C6</color>
+    <color name="carbon_text_dim">#FF8C8C8C</color>
+    <color name="carbon_divider">#66B11F2E</color>
 </resources>
