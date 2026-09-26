@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Minimal Car Launcher</string>
+    <string name="app_name">HappyCupra Car Launcher</string>
 
     <!-- Dashboard -->
     <string name="speed_placeholder">--</string>
@@ -69,6 +69,12 @@
     <string name="settings_compass">Compass detail</string>
     <string name="compass_8">8 points (N, NE, E…)</string>
     <string name="compass_16">16 points (N, NNE, NE…)</string>
+    <string name="settings_music_start">Music at startup</string>
+    <string name="settings_music_app">Music app: %1$s</string>
+    <string name="settings_music_none">none</string>
+    <string name="settings_music_autostart">Open music app when launcher starts</string>
+    <string name="settings_music_autoplay">Start playback automatically</string>
+    <string name="settings_music_autostart_hint">Waits 5 seconds after launcher startup, opens the selected music app and sends PLAY 1.5 seconds later.</string>
     <string name="settings_dashcam">Dashcam / DVR</string>
     <string name="settings_dashcam_app">Dashcam app: %1$s</string>
     <string name="settings_dashcam_none">none</string>
