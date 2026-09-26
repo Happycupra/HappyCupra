@@ -2,9 +2,11 @@ package com.minimal.carlauncher.ui
 
 import android.Manifest
 import android.content.Intent
+import android.media.AudioManager
 import android.os.Bundle
 import android.os.SystemClock
 import android.view.HapticFeedbackConstants
+import android.view.KeyEvent
 import android.view.View
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
@@ -269,6 +271,7 @@ class HomeActivity : AppCompatActivity() {
         cards.refreshLabels()
         render(viewModel.vehicle.value)
         maybeAutoStartDashcam()
+        maybeAutoStartMusic()
     }
 
     /**
@@ -293,6 +296,40 @@ class HomeActivity : AppCompatActivity() {
                 binding.root.postDelayed({ returnToDashboard() }, DASHCAM_RETURN_DELAY_MS)
             }
         }, DASHCAM_START_DELAY_MS)
+    }
+
+
+    /**
+     * Opens the selected music app once per launcher process and, optionally, sends an explicit
+     * MEDIA_PLAY key shortly afterwards. Using PLAY rather than PLAY_PAUSE avoids accidentally
+     * pausing a player that already resumed by itself.
+     */
+    private fun maybeAutoStartMusic() {
+        if (app.musicAutoStartDone || !Prefs.musicAutoStart) return
+        val stored = Prefs.musicPackage ?: return
+        app.musicAutoStartDone = true
+
+        binding.root.postDelayed({
+            if (!IntentUtil.launchStored(this, stored, null)) {
+                Prefs.musicPackage = null
+                toast(getString(R.string.app_not_installed))
+                return@postDelayed
+            }
+            if (Prefs.musicAutoPlay) {
+                binding.root.postDelayed({ dispatchMediaPlay() }, MUSIC_PLAY_DELAY_MS)
+            }
+        }, MUSIC_START_DELAY_MS)
+    }
+
+    private fun dispatchMediaPlay() {
+        val audio = getSystemService(AudioManager::class.java) ?: return
+        val eventTime = SystemClock.uptimeMillis()
+        audio.dispatchMediaKeyEvent(
+            KeyEvent(eventTime, eventTime, KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_PLAY, 0)
+        )
+        audio.dispatchMediaKeyEvent(
+            KeyEvent(eventTime, eventTime, KeyEvent.ACTION_UP, KeyEvent.KEYCODE_MEDIA_PLAY, 0)
+        )
     }
 
     private fun returnToDashboard() {
@@ -333,5 +370,7 @@ class HomeActivity : AppCompatActivity() {
         const val STALE_RETURN_MS = 30_000L
         const val DASHCAM_START_DELAY_MS = 1_500L
         const val DASHCAM_RETURN_DELAY_MS = 3_000L
+        const val MUSIC_START_DELAY_MS = 5_000L
+        const val MUSIC_PLAY_DELAY_MS = 1_500L
     }
 }
