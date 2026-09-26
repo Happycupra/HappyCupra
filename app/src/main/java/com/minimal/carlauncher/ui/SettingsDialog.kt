@@ -74,6 +74,42 @@ object SettingsDialog {
             AppCompatDelegate.setDefaultNightMode(mode)
         }
 
+        // --- music at startup ---
+        val musicButton = view.findViewById<Button>(R.id.btnMusicApp)
+        val musicAutostart = view.findViewById<CheckBox>(R.id.checkMusicAutostart)
+        val musicAutoplay = view.findViewById<CheckBox>(R.id.checkMusicAutoplay)
+
+        fun renderMusicLabel() {
+            val stored = Prefs.musicPackage
+            val label = if (stored == null) {
+                activity.getString(R.string.settings_music_none)
+            } else {
+                val pkg = IntentUtil.packageOf(stored)
+                repository.findByPackage(pkg)?.label ?: pkg
+            }
+            musicButton.text = activity.getString(R.string.settings_music_app, label)
+        }
+        renderMusicLabel()
+
+        musicAutostart.isChecked = Prefs.musicAutoStart
+        musicAutoplay.isChecked = Prefs.musicAutoPlay
+        musicAutoplay.isEnabled = Prefs.musicAutoStart
+
+        musicButton.setOnClickListener {
+            AppPicker.show(activity, repository, scope, R.string.pick_music_app) { entry ->
+                Prefs.musicPackage = entry.component.flattenToShortString()
+                renderMusicLabel()
+                onPrefsChanged()
+            }
+        }
+        musicAutostart.setOnCheckedChangeListener { _, checked ->
+            Prefs.musicAutoStart = checked
+            musicAutoplay.isEnabled = checked
+        }
+        musicAutoplay.setOnCheckedChangeListener { _, checked ->
+            Prefs.musicAutoPlay = checked
+        }
+
         // --- dashcam / DVR ---
         val dashcamButton = view.findViewById<Button>(R.id.btnDashcamApp)
         val autostart = view.findViewById<CheckBox>(R.id.checkDashcamAutostart)
