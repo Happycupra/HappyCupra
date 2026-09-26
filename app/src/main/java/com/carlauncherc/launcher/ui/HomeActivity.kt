@@ -55,6 +55,8 @@ class HomeActivity : AppCompatActivity() {
     private var lastCardinal: String? = null
     private var leftAtElapsedMs = 0L
     private var firstRunSetupActive = false
+    private var firstRunLocationRequested = false
+    private var firstRunMediaAccessRequested = false
 
     private val locationPermission = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
@@ -385,14 +387,16 @@ class HomeActivity : AppCompatActivity() {
         val hasCoarse = checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) ==
             android.content.pm.PackageManager.PERMISSION_GRANTED
 
-        if (!hasFine || !hasCoarse) {
+        if ((!hasFine || !hasCoarse) && !firstRunLocationRequested) {
+            firstRunLocationRequested = true
             requestLocation()
             return
         }
 
         val mediaAccessEnabled =
             NotificationManagerCompat.getEnabledListenerPackages(this).contains(packageName)
-        if (!mediaAccessEnabled) {
+        if (!mediaAccessEnabled && !firstRunMediaAccessRequested) {
+            firstRunMediaAccessRequested = true
             toast(getString(R.string.first_run_media_access))
             mediaAccessSetup.launch(IntentUtil.notificationListenerSettingsIntent())
             return
@@ -423,6 +427,8 @@ class HomeActivity : AppCompatActivity() {
     private fun finishFirstRunSetup() {
         Prefs.firstRunDone = true
         firstRunSetupActive = false
+        firstRunLocationRequested = false
+        firstRunMediaAccessRequested = false
         toast(getString(R.string.first_run_done))
     }
 
