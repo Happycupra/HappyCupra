@@ -84,6 +84,9 @@
     <string name="media_play_pause">Play or pause</string>
     <string name="media_next">Next track</string>
     <string name="settings_music_autostart_hint">Waits 5 seconds after launcher startup, opens the selected music app and retries PLAY several times. YMusic (ymusic.io) is controlled with a dedicated launch and media-command path.</string>
+    <string name="first_run_media_access">Next: allow CarLauncher C media access for YMusic title and controls.</string>
+    <string name="first_run_home_role">Next: choose CarLauncher C as your default Home launcher.</string>
+    <string name="first_run_done">CarLauncher C setup completed.</string>
     <string name="settings_dashcam">Dashcam / DVR</string>
     <string name="settings_dashcam_app">Dashcam app: %1$s</string>
     <string name="settings_dashcam_none">none</string>

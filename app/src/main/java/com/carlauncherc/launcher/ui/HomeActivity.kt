@@ -3,6 +3,7 @@ package com.carlauncherc.launcher.ui
 import android.Manifest
 import android.content.ComponentName
 import android.content.Intent
+import android.app.role.RoleManager
 import android.media.AudioManager
 import android.os.Bundle
 import android.os.Handler
@@ -53,11 +54,25 @@ class HomeActivity : AppCompatActivity() {
 
     private var lastCardinal: String? = null
     private var leftAtElapsedMs = 0L
+    private var firstRunSetupActive = false
 
     private val locationPermission = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { _ ->
         viewModel.onPermissionResult()
+        if (firstRunSetupActive) continueFirstRunSetup()
+    }
+
+    private val mediaAccessSetup = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) {
+        if (firstRunSetupActive) continueFirstRunSetup()
+    }
+
+    private val homeRoleSetup = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) {
+        finishFirstRunSetup()
     }
 
     private val unknownSources = registerForActivityResult(
@@ -96,6 +111,10 @@ class HomeActivity : AppCompatActivity() {
         bindMusicControls()
         bindBackBehaviour()
         observe()
+
+        if (!Prefs.firstRunDone) {
+            binding.root.post { startFirstRunSetup() }
+        }
     }
 
     // ------------------------------------------------------------------ theme
@@ -339,6 +358,72 @@ class HomeActivity : AppCompatActivity() {
                 Manifest.permission.ACCESS_COARSE_LOCATION
             )
         )
+    }
+
+    // ------------------------------------------------------------ first-run setup
+
+    private fun startFirstRunSetup() {
+        if (Prefs.firstRunDone || firstRunSetupActive) return
+        firstRunSetupActive = true
+        continueFirstRunSetup()
+    }
+
+    /**
+     * Runs the Android-owned setup prompts one after another:
+     * 1) location for speed/heading
+     * 2) notification-listener access for YMusic title/transport controls
+     * 3) HOME role so CarLauncher C becomes the default launcher
+     *
+     * Storage is intentionally not requested: this app uses its private app storage and
+     * FileProvider for APK updates, so Android 10+ does not require broad storage access.
+     */
+    private fun continueFirstRunSetup() {
+        if (!firstRunSetupActive) return
+
+        val hasFine = checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) ==
+            android.content.pm.PackageManager.PERMISSION_GRANTED
+        val hasCoarse = checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) ==
+            android.content.pm.PackageManager.PERMISSION_GRANTED
+
+        if (!hasFine || !hasCoarse) {
+            requestLocation()
+            return
+        }
+
+        val mediaAccessEnabled =
+            NotificationManagerCompat.getEnabledListenerPackages(this).contains(packageName)
+        if (!mediaAccessEnabled) {
+            toast(getString(R.string.first_run_media_access))
+            mediaAccessSetup.launch(IntentUtil.notificationListenerSettingsIntent())
+            return
+        }
+
+        requestHomeRoleOrFinish()
+    }
+
+    private fun requestHomeRoleOrFinish() {
+        val roleManager = getSystemService(RoleManager::class.java)
+        if (roleManager != null &&
+            roleManager.isRoleAvailable(RoleManager.ROLE_HOME) &&
+            !roleManager.isRoleHeld(RoleManager.ROLE_HOME)
+        ) {
+            toast(getString(R.string.first_run_home_role))
+            homeRoleSetup.launch(roleManager.createRequestRoleIntent(RoleManager.ROLE_HOME))
+            return
+        }
+
+        // Some head-unit ROMs do not expose ROLE_HOME correctly. Fall back to the system's
+        // default-home screen, then consider first-run setup complete.
+        if (roleManager == null || !roleManager.isRoleHeld(RoleManager.ROLE_HOME)) {
+            IntentUtil.openHomeSettings(this)
+        }
+        finishFirstRunSetup()
+    }
+
+    private fun finishFirstRunSetup() {
+        Prefs.firstRunDone = true
+        firstRunSetupActive = false
+        toast(getString(R.string.first_run_done))
     }
 
     // ------------------------------------------------------------------ lifecycle
