@@ -74,7 +74,7 @@
     <string name="settings_music_none">none</string>
     <string name="settings_music_autostart">Open music app when launcher starts</string>
     <string name="settings_music_autoplay">Start playback automatically</string>
-    <string name="settings_music_autostart_hint">Waits 5 seconds after launcher startup, opens the selected music app and sends PLAY 1.5 seconds later.</string>
+    <string name="settings_music_autostart_hint">Waits 5 seconds after launcher startup, opens the selected music app and retries PLAY several times while the player initializes.</string>
     <string name="settings_dashcam">Dashcam / DVR</string>
     <string name="settings_dashcam_app">Dashcam app: %1$s</string>
     <string name="settings_dashcam_none">none</string>
