@@ -32,6 +32,9 @@ class CarLauncherApp : Application() {
      */
     var dashcamAutoStartDone = false
 
+    /** Held in memory so music autostart only runs once per launcher process / boot. */
+    var musicAutoStartDone = false
+
     override fun onCreate() {
         super.onCreate()
 
