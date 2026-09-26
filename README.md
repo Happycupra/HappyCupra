@@ -27,6 +27,13 @@ landscape screens. Kotlin + XML views, `minSdk 29`, no Google Play Services, no 
 └──────────────────────────────────────────┘
 ```
 
+## APK
+
+Die jeweils zuletzt erfolgreich gebaute APK wird automatisch im `main`-Branch unter
+[`apk/CarLauncher-C.apk`](apk/CarLauncher-C.apk) abgelegt. Zusätzlich bleibt der Build als
+GitHub-Actions-Artefakt `carlauncher-c-debug` verfügbar.
+
+
 ## Features
 
 | Area | Behaviour |
