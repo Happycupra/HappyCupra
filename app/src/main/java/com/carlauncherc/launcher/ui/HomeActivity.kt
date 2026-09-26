@@ -4,6 +4,8 @@ import android.Manifest
 import android.content.Intent
 import android.media.AudioManager
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.os.SystemClock
 import android.view.HapticFeedbackConstants
 import android.view.KeyEvent
@@ -316,20 +318,36 @@ class HomeActivity : AppCompatActivity() {
                 return@postDelayed
             }
             if (Prefs.musicAutoPlay) {
-                binding.root.postDelayed({ dispatchMediaPlay() }, MUSIC_PLAY_DELAY_MS)
+                scheduleMediaPlayRetries()
             }
         }, MUSIC_START_DELAY_MS)
+    }
+
+    /**
+     * Media apps often create their MediaSession asynchronously after their activity appears.
+     * A single PLAY shortly after launch is therefore unreliable on slower head units.
+     *
+     * PLAY is intentionally retried instead of PLAY_PAUSE: repeated PLAY commands are harmless
+     * once playback has already started, while PLAY_PAUSE could toggle it back off.
+     */
+    private fun scheduleMediaPlayRetries() {
+        val handler = Handler(Looper.getMainLooper())
+        MUSIC_PLAY_RETRY_DELAYS_MS.forEach { delayMs ->
+            handler.postDelayed({ dispatchMediaPlay() }, delayMs)
+        }
     }
 
     private fun dispatchMediaPlay() {
         val audio = getSystemService(AudioManager::class.java) ?: return
         val eventTime = SystemClock.uptimeMillis()
-        audio.dispatchMediaKeyEvent(
-            KeyEvent(eventTime, eventTime, KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_PLAY, 0)
-        )
-        audio.dispatchMediaKeyEvent(
-            KeyEvent(eventTime, eventTime, KeyEvent.ACTION_UP, KeyEvent.KEYCODE_MEDIA_PLAY, 0)
-        )
+        runCatching {
+            audio.dispatchMediaKeyEvent(
+                KeyEvent(eventTime, eventTime, KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_PLAY, 0)
+            )
+            audio.dispatchMediaKeyEvent(
+                KeyEvent(eventTime, eventTime, KeyEvent.ACTION_UP, KeyEvent.KEYCODE_MEDIA_PLAY, 0)
+            )
+        }
     }
 
     private fun returnToDashboard() {
@@ -371,6 +389,6 @@ class HomeActivity : AppCompatActivity() {
         const val DASHCAM_START_DELAY_MS = 1_500L
         const val DASHCAM_RETURN_DELAY_MS = 3_000L
         const val MUSIC_START_DELAY_MS = 5_000L
-        const val MUSIC_PLAY_DELAY_MS = 1_500L
+        val MUSIC_PLAY_RETRY_DELAYS_MS = longArrayOf(1_500L, 4_000L, 7_000L, 10_000L)
     }
 }
