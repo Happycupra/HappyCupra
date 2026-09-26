@@ -21,6 +21,8 @@ object Prefs {
     const val KEY_COMPASS_16 = "pref_compass_16point"
     const val KEY_NAV_PACKAGE = "pref_nav_package"
     const val KEY_MUSIC_PACKAGE = "pref_music_package"
+    const val KEY_MUSIC_AUTOSTART = "pref_music_autostart"
+    const val KEY_MUSIC_AUTOPLAY = "pref_music_autoplay"
     const val KEY_PROJECTION_PACKAGE = "pref_projection_package"
     const val KEY_DOCK_SLOTS = "pref_dock_slots"
     const val KEY_DASHCAM_PACKAGE = "pref_dashcam_package"
@@ -67,6 +69,14 @@ object Prefs {
     var musicPackage: String?
         get() = sp.getString(KEY_MUSIC_PACKAGE, null)?.ifBlank { null }
         set(value) = sp.edit().putString(KEY_MUSIC_PACKAGE, value).apply()
+
+    var musicAutoStart: Boolean
+        get() = sp.getBoolean(KEY_MUSIC_AUTOSTART, false)
+        set(value) = sp.edit().putBoolean(KEY_MUSIC_AUTOSTART, value).apply()
+
+    var musicAutoPlay: Boolean
+        get() = sp.getBoolean(KEY_MUSIC_AUTOPLAY, true)
+        set(value) = sp.edit().putBoolean(KEY_MUSIC_AUTOPLAY, value).apply()
 
     var projectionPackage: String?
         get() = sp.getString(KEY_PROJECTION_PACKAGE, null)?.ifBlank { null }
