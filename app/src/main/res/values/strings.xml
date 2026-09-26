@@ -93,19 +93,20 @@
     <string name="media_next">Next track</string>
     <string name="media_album_art">Album cover</string>
     <string name="media_time_zero">0:00</string>
-    <string name="settings_music_autostart_hint">Waits 5 seconds after launcher startup. YMusic stays in the background and playback is started through its MediaSession/media controls; other music apps open normally.</string>
+    <string name="settings_music_autostart_hint">YMusic starts in the background with a startup watchdog: CarLauncher C waits briefly, then retries MediaSession and media-button PLAY until playback is actually detected. Other music apps open normally.</string>
     <string name="first_run_media_access">Next: allow CarLauncher C media access for YMusic title and controls.</string>
     <string name="first_run_home_role">Next: choose CarLauncher C as your default Home launcher.</string>
     <string name="first_run_done">CarLauncher C setup completed.</string>
     <string name="changelog_title">What’s new in CarLauncher C %1$s</string>
-    <string name="changelog_current">• YMusic now starts and plays in the background while the launcher stays visible.
-• Larger YMusic player with album cover, title, artist, progress and time.
+    <string name="changelog_current">• Autostart made substantially more robust.
+• YMusic now uses a 30-second playback watchdog and stays in the background.
+• MediaSession, YMusic media-button and system PLAY fallbacks work together.
+• CarLauncher C receives an additional best-effort boot start when already selected as Home.
+• YMusic player shows album cover, title, artist, progress and time.
 • Large Previous / Play-Pause / Next controls.
-• Phone-Link tile removed; clock can open any selected app such as CarLink/ZLink.
-• Red / Carbon design added.
-• Hold the compass for 1.5 seconds to cycle through the designs.
-• Guided first-start setup for location, media access and default Home launcher.
-• Build and APK publishing workflow improved.</string>
+• Clock opens your selected app such as CarLink/ZLink.
+• Red / Carbon design and 1.5-second compass theme switching.
+• Guided permission/default-launcher setup and improved APK publishing.</string>
     <string name="settings_dashcam">Dashcam / DVR</string>
     <string name="settings_dashcam_app">Dashcam app: %1$s</string>
     <string name="settings_dashcam_none">none</string>

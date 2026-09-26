@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.12 — 2026-09-26
+
+- Strengthened launcher startup on head units with a best-effort boot receiver when CarLauncher C already owns the HOME role.
+- Reworked YMusic autostart into a 30-second watchdog.
+- Autostart is only marked successful after actual YMusic playback is observed.
+- Direct MediaSession PLAY, YMusic-targeted media-button broadcasts and periodic system PLAY fallback are combined.
+- YMusic stays in the background; CarLauncher C remains visible.
+- If startup times out, a later launcher resume can retry instead of being permanently marked done.
+- Updated in-app version log.
+
 ## 0.11 — 2026-09-26
 
 - YMusic autostart changed to background playback so CarLauncher C remains visible.

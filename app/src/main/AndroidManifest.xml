@@ -4,6 +4,7 @@
     <!-- Updater only. Everything else works with zero connectivity. -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <!-- GPS speed + bearing. COARSE must also be declared or the API 31+ runtime dialog rejects
          a FINE-only request. No BACKGROUND_LOCATION: we only read location while visible. -->
@@ -105,6 +106,16 @@
                 <category android:name="android.intent.category.MONKEY" />
             </intent-filter>
         </activity>
+
+        <receiver
+            android:name=".boot.BootReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.LOCKED_BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
 
         <service
             android:name=".media.YMusicNotificationListener"

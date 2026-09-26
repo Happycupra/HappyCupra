@@ -672,28 +672,27 @@ class HomeActivity : AppCompatActivity() {
      * pausing a player that already resumed by itself.
      */
     private fun maybeAutoStartMusic() {
-        if (app.musicAutoStartDone || !Prefs.musicAutoStart) return
+        if (app.musicAutoStartDone || app.musicAutoStartInProgress || !Prefs.musicAutoStart) return
         val stored = Prefs.musicPackage ?: return
-        app.musicAutoStartDone = true
+        val packageName = IntentUtil.packageOf(stored)
+
+        app.musicAutoStartInProgress = true
+
+        if (packageName == YMUSIC_PACKAGE) {
+            if (!app.appRepository.isInstalled(packageName)) {
+                app.musicAutoStartInProgress = false
+                Prefs.musicPackage = null
+                toast(getString(R.string.app_not_installed))
+                return
+            }
+            binding.root.postDelayed({ startYMusicWatchdog() }, MUSIC_START_DELAY_MS)
+            return
+        }
 
         binding.root.postDelayed({
-            val packageName = IntentUtil.packageOf(stored)
-
-            if (packageName == YMUSIC_PACKAGE) {
-                // YMusic stays in the background. Its MediaSession / media-button receiver is
-                // used directly, so the launcher remains visible during boot.
-                if (!app.appRepository.isInstalled(packageName)) {
-                    Prefs.musicPackage = null
-                    toast(getString(R.string.app_not_installed))
-                    return@postDelayed
-                }
-                if (Prefs.musicAutoPlay) {
-                    scheduleMediaPlayRetries(packageName)
-                }
-                return@postDelayed
-            }
-
-            if (!IntentUtil.launchStored(this, stored, null)) {
+            val launched = IntentUtil.launchStored(this, stored, null)
+            if (!launched) {
+                app.musicAutoStartInProgress = false
                 Prefs.musicPackage = null
                 toast(getString(R.string.app_not_installed))
                 return@postDelayed
@@ -702,7 +701,57 @@ class HomeActivity : AppCompatActivity() {
             if (Prefs.musicAutoPlay) {
                 scheduleMediaPlayRetries(packageName)
             }
+            app.musicAutoStartDone = true
+            app.musicAutoStartInProgress = false
         }, MUSIC_START_DELAY_MS)
+    }
+
+    private fun startYMusicWatchdog() {
+        val handler = Handler(Looper.getMainLooper())
+        var attempt = 0
+
+        fun finish(success: Boolean) {
+            handler.removeCallbacksAndMessages(YMUSIC_WATCHDOG_TOKEN)
+            app.musicAutoStartDone = success
+            app.musicAutoStartInProgress = false
+        }
+
+        val watchdog = object : Runnable {
+            override fun run() {
+                val info = YMusicMediaBridge.nowPlaying.value
+                if (info.isPlaying) {
+                    finish(true)
+                    return
+                }
+
+                if (attempt >= YMUSIC_WATCHDOG_MAX_ATTEMPTS) {
+                    finish(false)
+                    return
+                }
+
+                attempt++
+
+                // Prefer the direct MediaSession when Android has exposed it.
+                val sessionCommandSent = YMusicMediaBridge.play()
+
+                // Also wake YMusic's manifest media-button path. This works before the
+                // MediaSession exists on many head units and does not bring YMusic to front.
+                dispatchYMusicPlay()
+
+                // Every third pass add a generic system PLAY as a second fallback.
+                if (!sessionCommandSent && attempt % 3 == 0) {
+                    dispatchMediaPlay()
+                }
+
+                handler.postAtTime(
+                    this,
+                    YMUSIC_WATCHDOG_TOKEN,
+                    SystemClock.uptimeMillis() + YMUSIC_WATCHDOG_INTERVAL_MS
+                )
+            }
+        }
+
+        handler.postAtTime(watchdog, YMUSIC_WATCHDOG_TOKEN, SystemClock.uptimeMillis())
     }
 
     /**
@@ -803,9 +852,12 @@ class HomeActivity : AppCompatActivity() {
         const val STALE_RETURN_MS = 30_000L
         const val DASHCAM_START_DELAY_MS = 1_500L
         const val DASHCAM_RETURN_DELAY_MS = 3_000L
-        const val MUSIC_START_DELAY_MS = 5_000L
+        const val MUSIC_START_DELAY_MS = 3_000L
         const val YMUSIC_PACKAGE = "com.kapp.youtube.final"
         const val THEME_HOLD_MS = 1_500L
+        const val YMUSIC_WATCHDOG_INTERVAL_MS = 2_000L
+        const val YMUSIC_WATCHDOG_MAX_ATTEMPTS = 15
+        val YMUSIC_WATCHDOG_TOKEN = Any()
         val MUSIC_PLAY_RETRY_DELAYS_MS = longArrayOf(1_000L, 2_500L, 5_000L, 8_000L)
     }
 }
