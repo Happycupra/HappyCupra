@@ -2,7 +2,7 @@ name: CarLauncher C CI
 
 on:
   push:
-    branches: [minimal-car-launcher]
+    branches: [main]
   workflow_dispatch:
 
 permissions:
