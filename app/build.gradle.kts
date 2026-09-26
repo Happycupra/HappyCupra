@@ -27,7 +27,7 @@ android {
         versionName = "0.10"
 
         // TODO: point these at the repository that hosts the release APKs.
-        buildConfigField("String", "GITHUB_OWNER", "\"TODO_HAPPYCUPRA\"")
+        buildConfigField("String", "GITHUB_OWNER", "\"TODO_OWNER\"")
         buildConfigField("String", "GITHUB_REPO", "\"TODO_MINIMAL_CAR_LAUNCHER\"")
 
     }

@@ -14,5 +14,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "MinimalCarLauncher"
+rootProject.name = "CarLauncherC"
 include(":app")
