@@ -10,7 +10,7 @@ class YMusicNotificationListener : NotificationListenerService() {
     private lateinit var sessionManager: MediaSessionManager
 
     private val sessionListener = MediaSessionManager.OnActiveSessionsChangedListener { controllers ->
-        attachYMusic(controllers)
+        attachYMusic(controllers.orEmpty())
     }
 
     override fun onListenerConnected() {
