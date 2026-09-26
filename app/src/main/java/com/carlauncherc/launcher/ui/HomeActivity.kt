@@ -12,6 +12,7 @@ import android.os.SystemClock
 import android.view.HapticFeedbackConstants
 import android.view.KeyEvent
 import android.view.View
+import android.content.res.ColorStateList
 import android.widget.Toast
 import androidx.core.app.NotificationManagerCompat
 import androidx.activity.OnBackPressedCallback
@@ -143,6 +144,10 @@ class HomeActivity : AppCompatActivity() {
         binding.clockDay.setTextColor(softRed)
         binding.titleNav.setTextColor(red)
         binding.titleMusic.setTextColor(red)
+        binding.musicProgress.progressTintList = ColorStateList.valueOf(red)
+        binding.musicProgress.progressBackgroundTintList = ColorStateList.valueOf(
+            getColor(R.color.carbon_red_dark)
+        )
     }
 
     // ------------------------------------------------------------------ wiring
@@ -224,7 +229,14 @@ class HomeActivity : AppCompatActivity() {
         }
     }
 
-    private fun renderNowPlaying(title: String, artist: String, isPlaying: Boolean) {
+    private fun renderNowPlaying(
+        title: String,
+        artist: String,
+        isPlaying: Boolean,
+        artwork: android.graphics.Bitmap?,
+        durationMs: Long,
+        positionMs: Long
+    ) {
         val selectedPackage = Prefs.musicPackage?.let(IntentUtil::packageOf)
         val isYMusic = selectedPackage == YMUSIC_PACKAGE
         binding.musicControls.visibility = if (isYMusic) View.VISIBLE else View.GONE
@@ -232,11 +244,19 @@ class HomeActivity : AppCompatActivity() {
         if (!isYMusic) {
             binding.textNowPlayingTitle.visibility = View.GONE
             binding.textNowPlayingArtist.visibility = View.GONE
+            binding.imageAlbumArt.visibility = View.GONE
+            binding.musicProgress.visibility = View.GONE
+            binding.textElapsed.visibility = View.GONE
+            binding.textDuration.visibility = View.GONE
             return
         }
 
         binding.textNowPlayingTitle.visibility = View.VISIBLE
         binding.textNowPlayingArtist.visibility = View.VISIBLE
+        binding.imageAlbumArt.visibility = View.VISIBLE
+        binding.musicProgress.visibility = View.VISIBLE
+        binding.textElapsed.visibility = View.VISIBLE
+        binding.textDuration.visibility = View.VISIBLE
 
         val accessEnabled =
             NotificationManagerCompat.getEnabledListenerPackages(this).contains(packageName)
@@ -247,9 +267,35 @@ class HomeActivity : AppCompatActivity() {
             else -> getString(R.string.media_title_unavailable)
         }
         binding.textNowPlayingArtist.text = artist
+
+        if (artwork != null) {
+            binding.imageAlbumArt.setPadding(0, 0, 0, 0)
+            binding.imageAlbumArt.setImageBitmap(artwork)
+        } else {
+            binding.imageAlbumArt.setPadding(24, 24, 24, 24)
+            binding.imageAlbumArt.setImageResource(R.drawable.ic_music)
+        }
+
+        val safeDuration = durationMs.coerceAtLeast(0L)
+        val safePosition = positionMs.coerceAtLeast(0L).let {
+            if (safeDuration > 0L) it.coerceAtMost(safeDuration) else it
+        }
+        binding.musicProgress.progress =
+            if (safeDuration > 0L) ((safePosition * 1000L) / safeDuration).toInt() else 0
+        binding.textElapsed.text = formatMediaTime(safePosition)
+        binding.textDuration.text = formatMediaTime(safeDuration)
+
         binding.btnMusicPlayPause.setImageResource(
             if (isPlaying) R.drawable.ic_media_pause else R.drawable.ic_media_play
         )
+    }
+
+    private fun formatMediaTime(ms: Long): String {
+        if (ms <= 0L) return "0:00"
+        val totalSeconds = ms / 1000L
+        val minutes = totalSeconds / 60L
+        val seconds = totalSeconds % 60L
+        return "%d:%02d".format(minutes, seconds)
     }
 
     /** A launcher must never finish itself - on some ROMs that leaves a blank screen. */
@@ -301,7 +347,14 @@ class HomeActivity : AppCompatActivity() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 YMusicMediaBridge.nowPlaying.collect { info ->
-                    renderNowPlaying(info.title, info.artist, info.isPlaying)
+                    renderNowPlaying(
+                        info.title,
+                        info.artist,
+                        info.isPlaying,
+                        info.artwork,
+                        info.durationMs,
+                        info.positionMs
+                    )
                 }
             }
         }
@@ -481,11 +534,16 @@ class HomeActivity : AppCompatActivity() {
         viewModel.refreshPrefs()
         cards.refreshLabels()
         render(viewModel.vehicle.value)
-        renderNowPlaying(
-            YMusicMediaBridge.nowPlaying.value.title,
-            YMusicMediaBridge.nowPlaying.value.artist,
-            YMusicMediaBridge.nowPlaying.value.isPlaying
-        )
+        YMusicMediaBridge.nowPlaying.value.let { info ->
+            renderNowPlaying(
+                info.title,
+                info.artist,
+                info.isPlaying,
+                info.artwork,
+                info.durationMs,
+                info.positionMs
+            )
+        }
         maybeAutoStartDashcam()
         maybeAutoStartMusic()
     }
