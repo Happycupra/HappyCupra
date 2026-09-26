@@ -80,6 +80,29 @@ object SettingsDialog {
             }
         }
 
+        // --- clock shortcut ---
+        val clockButton = view.findViewById<Button>(R.id.btnClockApp)
+
+        fun renderClockLabel() {
+            val stored = Prefs.clockPackage
+            val label = if (stored == null) {
+                activity.getString(R.string.settings_clock_none)
+            } else {
+                val pkg = IntentUtil.packageOf(stored)
+                repository.findByPackage(pkg)?.label ?: pkg
+            }
+            clockButton.text = activity.getString(R.string.settings_clock_app, label)
+        }
+        renderClockLabel()
+
+        clockButton.setOnClickListener {
+            AppPicker.show(activity, repository, scope, R.string.pick_clock_app) { entry ->
+                Prefs.clockPackage = entry.component.flattenToShortString()
+                renderClockLabel()
+                onPrefsChanged()
+            }
+        }
+
         // --- music at startup ---
         val musicButton = view.findViewById<Button>(R.id.btnMusicApp)
         val musicAutostart = view.findViewById<CheckBox>(R.id.checkMusicAutostart)

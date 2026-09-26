@@ -17,7 +17,7 @@
     <dimen name="card_label_text">22sp</dimen>
     <dimen name="card_sub_text">14sp</dimen>
     <dimen name="card_icon">44dp</dimen>
-    <dimen name="card_height">148dp</dimen>
+    <dimen name="card_height">168dp</dimen>
 
     <dimen name="dock_height">76dp</dimen>
     <dimen name="dock_icon">44dp</dimen>

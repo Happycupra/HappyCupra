@@ -20,6 +20,7 @@ object Prefs {
     const val KEY_COMPASS_SOURCE = "pref_compass_source"
     const val KEY_COMPASS_16 = "pref_compass_16point"
     const val KEY_NAV_PACKAGE = "pref_nav_package"
+    const val KEY_CLOCK_PACKAGE = "pref_clock_package"
     const val KEY_MUSIC_PACKAGE = "pref_music_package"
     const val KEY_MUSIC_AUTOSTART = "pref_music_autostart"
     const val KEY_MUSIC_AUTOPLAY = "pref_music_autoplay"
@@ -67,6 +68,10 @@ object Prefs {
     var navPackage: String?
         get() = sp.getString(KEY_NAV_PACKAGE, null)?.ifBlank { null }
         set(value) = sp.edit().putString(KEY_NAV_PACKAGE, value).apply()
+
+    var clockPackage: String?
+        get() = sp.getString(KEY_CLOCK_PACKAGE, null)?.ifBlank { null }
+        set(value) = sp.edit().putString(KEY_CLOCK_PACKAGE, value).apply()
 
     var musicPackage: String?
         get() = sp.getString(KEY_MUSIC_PACKAGE, null)?.ifBlank { null }

@@ -70,6 +70,12 @@
     <string name="settings_compass">Compass detail</string>
     <string name="compass_8">8 points (N, NE, E…)</string>
     <string name="compass_16">16 points (N, NNE, NE…)</string>
+    <string name="settings_clock_shortcut">Clock shortcut</string>
+    <string name="settings_clock_app">Clock opens: %1$s</string>
+    <string name="settings_clock_none">none</string>
+    <string name="settings_clock_shortcut_hint">Tap the clock to open this app. Long-press the clock to change it directly.</string>
+    <string name="pick_clock_app">Choose app for clock</string>
+    <string name="clock_shortcut_saved">Clock shortcut: %1$s</string>
     <string name="settings_music_start">Music at startup</string>
     <string name="settings_music_app">Music app: %1$s</string>
     <string name="settings_music_none">none</string>

@@ -179,56 +179,10 @@
             android:orientation="horizontal">
 
             <LinearLayout
-                android:id="@+id/cardProjection"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="@drawable/bg_card"
-                android:clickable="true"
-                android:focusable="true"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:padding="12dp">
-
-                <ImageView
-                    android:id="@+id/iconProjection"
-                    android:layout_width="@dimen/card_icon"
-                    android:layout_height="@dimen/card_icon"
-                    android:contentDescription="@null"
-                    android:src="@drawable/ic_phone_link" />
-
-                <TextView
-                    android:id="@+id/titleProjection"
-                    style="@style/Text.Gauge"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:ellipsize="end"
-                    android:gravity="center"
-                    android:text="@string/card_projection"
-                    android:textSize="@dimen/card_label_text" />
-
-                <TextView
-                    android:id="@+id/subtitleProjection"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:ellipsize="end"
-                    android:gravity="center"
-                    android:singleLine="true"
-                    android:text="@string/projection_hint"
-                    android:textColor="@color/cockpit_text_dim"
-                    android:textSize="@dimen/card_sub_text" />
-            </LinearLayout>
-
-            <Space
-                android:layout_width="@dimen/gap"
-                android:layout_height="match_parent" />
-
-            <LinearLayout
                 android:id="@+id/cardNav"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
+                android:layout_weight="0.8"
                 android:background="@drawable/bg_card"
                 android:clickable="true"
                 android:focusable="true"
@@ -274,7 +228,7 @@
                 android:id="@+id/cardMusic"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
+                android:layout_weight="1.7"
                 android:background="@drawable/bg_card"
                 android:clickable="true"
                 android:focusable="true"
@@ -290,8 +244,8 @@
 
                     <ImageView
                         android:id="@+id/iconMusic"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
                         android:contentDescription="@null"
                         android:src="@drawable/ic_music" />
 
@@ -304,7 +258,7 @@
                         android:ellipsize="end"
                         android:gravity="center"
                         android:text="@string/card_music"
-                        android:textSize="18sp" />
+                        android:textSize="22sp" />
                 </LinearLayout>
 
                 <TextView
@@ -316,7 +270,7 @@
                     android:singleLine="true"
                     android:text="@string/card_not_set"
                     android:textColor="@color/cockpit_text_dim"
-                    android:textSize="11sp" />
+                    android:textSize="13sp" />
 
                 <TextView
                     android:id="@+id/textNowPlayingTitle"
@@ -328,7 +282,7 @@
                     android:maxLines="1"
                     android:text="@string/media_title_unavailable"
                     android:textColor="@color/cockpit_text_primary"
-                    android:textSize="14sp"
+                    android:textSize="20sp"
                     android:textStyle="bold" />
 
                 <TextView
@@ -339,43 +293,43 @@
                     android:gravity="center"
                     android:maxLines="1"
                     android:textColor="@color/cockpit_text_secondary"
-                    android:textSize="11sp" />
+                    android:textSize="14sp" />
 
                 <LinearLayout
                     android:id="@+id/musicControls"
                     android:layout_width="match_parent"
-                    android:layout_height="34dp"
-                    android:layout_marginTop="2dp"
+                    android:layout_height="52dp"
+                    android:layout_marginTop="6dp"
                     android:gravity="center"
                     android:orientation="horizontal">
 
                     <ImageButton
                         android:id="@+id/btnMusicPrevious"
-                        android:layout_width="48dp"
-                        android:layout_height="34dp"
+                        android:layout_width="68dp"
+                        android:layout_height="50dp"
                         android:background="@drawable/bg_dock_item"
                         android:contentDescription="@string/media_previous"
-                        android:padding="7dp"
+                        android:padding="10dp"
                         android:src="@drawable/ic_media_previous" />
 
                     <ImageButton
                         android:id="@+id/btnMusicPlayPause"
-                        android:layout_width="48dp"
-                        android:layout_height="34dp"
-                        android:layout_marginStart="6dp"
-                        android:layout_marginEnd="6dp"
+                        android:layout_width="68dp"
+                        android:layout_height="50dp"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="10dp"
                         android:background="@drawable/bg_dock_item"
                         android:contentDescription="@string/media_play_pause"
-                        android:padding="7dp"
+                        android:padding="10dp"
                         android:src="@drawable/ic_media_play" />
 
                     <ImageButton
                         android:id="@+id/btnMusicNext"
-                        android:layout_width="48dp"
-                        android:layout_height="34dp"
+                        android:layout_width="68dp"
+                        android:layout_height="50dp"
                         android:background="@drawable/bg_dock_item"
                         android:contentDescription="@string/media_next"
-                        android:padding="7dp"
+                        android:padding="10dp"
                         android:src="@drawable/ic_media_next" />
                 </LinearLayout>
             </LinearLayout>

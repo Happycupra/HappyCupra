@@ -109,6 +109,7 @@ class HomeActivity : AppCompatActivity() {
         cards.bind()
 
         bindDashboardClicks()
+        bindClockShortcut()
         bindDockActions()
         bindMusicControls()
         bindBackBehaviour()
@@ -131,7 +132,6 @@ class HomeActivity : AppCompatActivity() {
         binding.gaugeClock.setBackgroundResource(R.drawable.bg_gauge_red_carbon)
         binding.gaugeCompass.setBackgroundResource(R.drawable.bg_gauge_red_carbon)
 
-        binding.cardProjection.setBackgroundResource(R.drawable.bg_card_red_carbon)
         binding.cardNav.setBackgroundResource(R.drawable.bg_card_red_carbon)
         binding.cardMusic.setBackgroundResource(R.drawable.bg_card_red_carbon)
         binding.dockStrip.root.setBackgroundResource(R.drawable.bg_dock_red_carbon)
@@ -141,7 +141,6 @@ class HomeActivity : AppCompatActivity() {
         binding.textSpeed.setTextColor(red)
         binding.clockTime.setTextColor(red)
         binding.clockDay.setTextColor(softRed)
-        binding.titleProjection.setTextColor(red)
         binding.titleNav.setTextColor(red)
         binding.titleMusic.setTextColor(red)
     }
@@ -160,6 +159,36 @@ class HomeActivity : AppCompatActivity() {
                     render(viewModel.vehicle.value)
                 }
             }
+        }
+    }
+
+    private fun bindClockShortcut() {
+        binding.gaugeClock.isClickable = true
+        binding.gaugeClock.isFocusable = true
+
+        binding.gaugeClock.setOnClickListener { view ->
+            val stored = Prefs.clockPackage
+            if (stored.isNullOrBlank()) {
+                pickClockShortcut()
+                return@setOnClickListener
+            }
+            if (!IntentUtil.launchStored(this, stored, view)) {
+                Prefs.clockPackage = null
+                toast(getString(R.string.app_not_installed))
+                pickClockShortcut()
+            }
+        }
+
+        binding.gaugeClock.setOnLongClickListener {
+            pickClockShortcut()
+            true
+        }
+    }
+
+    private fun pickClockShortcut() {
+        AppPicker.show(this, app.appRepository, lifecycleScope, R.string.pick_clock_app) { entry ->
+            Prefs.clockPackage = entry.component.flattenToShortString()
+            toast(getString(R.string.clock_shortcut_saved, entry.label))
         }
     }
 

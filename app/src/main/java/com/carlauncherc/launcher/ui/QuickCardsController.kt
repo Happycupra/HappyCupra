@@ -6,7 +6,6 @@ import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import com.carlauncherc.launcher.R
-import com.carlauncherc.launcher.core.Constants
 import com.carlauncherc.launcher.core.Prefs
 import com.carlauncherc.launcher.data.AppRepository
 import com.carlauncherc.launcher.databinding.ActivityHomeBinding
@@ -14,7 +13,7 @@ import com.carlauncherc.launcher.util.IntentUtil
 import kotlinx.coroutines.CoroutineScope
 
 /**
- * The three big quick-launch cards. Tap launches, long-press re-assigns.
+ * Navigation and music quick-launch cards. Tap launches, long-press re-assigns.
  *
  * Every launch path ends in a picker rather than a dead end: on a head unit the "right"
  * package name is firmware dependent, so the user must always be able to point at whatever
@@ -28,12 +27,6 @@ class QuickCardsController(
 ) {
 
     fun bind() {
-        binding.cardProjection.setOnClickListener { launchProjection() }
-        binding.cardProjection.setOnLongClickListener {
-            pickProjection()
-            true
-        }
-
         binding.cardNav.setOnClickListener { launchStoredOrPick(it, Slot.NAV) }
         binding.cardNav.setOnLongClickListener {
             pick(Slot.NAV)
@@ -53,57 +46,12 @@ class QuickCardsController(
         bindSubtitle(binding.subtitleNav, Prefs.navPackage, R.string.card_not_set)
         bindSubtitle(binding.subtitleMusic, Prefs.musicPackage, R.string.card_not_set)
 
-        val projection = Prefs.projectionPackage ?: firstInstalledProjection()
-        if (projection == null) {
-            binding.subtitleProjection.setText(R.string.projection_hint)
-        } else {
-            bindSubtitle(binding.subtitleProjection, projection, R.string.projection_hint)
-        }
     }
 
     fun onPackageRemoved(packageName: String) {
         if (Prefs.navPackage?.let { IntentUtil.packageOf(it) } == packageName) Prefs.navPackage = null
         if (Prefs.musicPackage?.let { IntentUtil.packageOf(it) } == packageName) Prefs.musicPackage = null
-        if (Prefs.projectionPackage == packageName) Prefs.projectionPackage = null
         refreshLabels()
-    }
-
-    // ------------------------------------------------------------------ projection
-
-    private fun launchProjection() {
-        Prefs.projectionPackage?.let { stored ->
-            if (IntentUtil.launchPackage(activity, stored)) return
-            Prefs.projectionPackage = null   // it was uninstalled
-        }
-
-        val found = firstInstalledProjection()
-        if (found != null) {
-            Prefs.projectionPackage = found  // cache the winner for a one-call launch next time
-            if (IntentUtil.launchPackage(activity, found)) {
-                refreshLabels()
-                return
-            }
-        }
-
-        toast(R.string.no_projection_app)
-        pickProjection()
-    }
-
-    /** Walks the candidate table in order; these apps are rebranded per dongle vendor. */
-    private fun firstInstalledProjection(): String? {
-        for (target in Constants.PROJECTION_TARGETS) {
-            for (candidate in target.candidates) {
-                if (repository.isInstalled(candidate)) return candidate
-            }
-        }
-        return null
-    }
-
-    private fun pickProjection() {
-        AppPicker.show(activity, repository, scope, R.string.pick_projection_app) { entry ->
-            Prefs.projectionPackage = entry.packageName
-            refreshLabels()
-        }
     }
 
     // --------------------------------------------------------------- nav and music

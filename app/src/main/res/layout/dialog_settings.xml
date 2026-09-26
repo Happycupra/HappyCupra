@@ -132,6 +132,33 @@
             style="@style/Text.Caption"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:text="@string/settings_clock_shortcut" />
+
+        <Button
+            android:id="@+id/btnClockApp"
+            style="?attr/materialButtonOutlinedStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/settings_clock_shortcut_hint"
+            android:textColor="@color/cockpit_text_dim"
+            android:textSize="12sp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="12dp"
+            android:background="@color/cockpit_divider" />
+
+        <TextView
+            style="@style/Text.Caption"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:text="@string/settings_music_start" />
 
         <Button
