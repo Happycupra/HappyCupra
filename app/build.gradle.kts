@@ -18,7 +18,7 @@ android {
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.minimal.carlauncher"
+        applicationId = "com.happycupra.carlauncher"
         minSdk = 29
         // NOTE: deliberately NOT targetSdk 36. Android 16 ignores android:screenOrientation for
         // apps targeting 36 on displays with smallestWidth >= 600dp - which is exactly a head unit.
@@ -27,8 +27,8 @@ android {
         versionName = "0.10"
 
         // TODO: point these at the repository that hosts the release APKs.
-        buildConfigField("String", "GITHUB_OWNER", "\"Breakeridis\"")
-        buildConfigField("String", "GITHUB_REPO", "\"open-car-launcher\"")
+        buildConfigField("String", "GITHUB_OWNER", "\"TODO_HAPPYCUPRA\"")
+        buildConfigField("String", "GITHUB_REPO", "\"TODO_MINIMAL_CAR_LAUNCHER\"")
 
     }
 
