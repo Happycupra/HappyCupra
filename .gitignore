@@ -1,9 +1,12 @@
 *.iml
 .gradle/
-.idea/
 local.properties
-**/build/
-captures/
+.idea/
 .DS_Store
+build/
+captures/
+.externalNativeBuild
+.cxx
+keystore.properties
 *.jks
 *.keystore
