@@ -7,6 +7,10 @@ on:
       - 'apk/CarLauncher-C.apk'
   workflow_dispatch:
 
+concurrency:
+  group: carlauncher-c-main
+  cancel-in-progress: true
+
 permissions:
   contents: write
 
@@ -45,17 +49,33 @@ jobs:
 
       - name: Store latest APK in main
         run: |
-          mkdir -p apk
-          cp app/build/outputs/apk/debug/app-debug.apk apk/CarLauncher-C.apk
+          cp app/build/outputs/apk/debug/app-debug.apk /tmp/CarLauncher-C.apk
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add apk/CarLauncher-C.apk
-          if git diff --cached --quiet; then
-            echo "APK unchanged"
-          else
+
+          for attempt in 1 2 3; do
+            git fetch origin main
+            git checkout -B main origin/main
+            mkdir -p apk
+            cp /tmp/CarLauncher-C.apk apk/CarLauncher-C.apk
+            git add apk/CarLauncher-C.apk
+
+            if git diff --cached --quiet; then
+              echo "APK unchanged"
+              exit 0
+            fi
+
             git commit -m "Update CarLauncher C APK [skip ci]"
-            git push origin HEAD:main
-          fi
+            if git push origin HEAD:main; then
+              exit 0
+            fi
+
+            echo "main changed while publishing; retrying ($attempt/3)"
+            sleep 2
+          done
+
+          echo "Could not publish APK after 3 attempts"
+          exit 1
 
       - name: Remove old migration branch
         run: |
