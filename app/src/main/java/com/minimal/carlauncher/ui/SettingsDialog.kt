@@ -1,4 +1,4 @@
-package com.minimal.carlauncher.ui
+package com.carlauncherc.launcher.ui
 
 import android.app.Activity
 import android.view.LayoutInflater
@@ -8,11 +8,11 @@ import android.widget.RadioGroup
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDelegate
-import com.minimal.carlauncher.R
-import com.minimal.carlauncher.core.Format
-import com.minimal.carlauncher.core.Prefs
-import com.minimal.carlauncher.data.AppRepository
-import com.minimal.carlauncher.util.IntentUtil
+import com.carlauncherc.launcher.R
+import com.carlauncherc.launcher.core.Format
+import com.carlauncherc.launcher.core.Prefs
+import com.carlauncherc.launcher.data.AppRepository
+import com.carlauncherc.launcher.util.IntentUtil
 import kotlinx.coroutines.CoroutineScope
 
 object SettingsDialog {

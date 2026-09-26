@@ -1,6 +1,6 @@
-package com.minimal.carlauncher
+package com.carlauncherc.launcher
 
-import com.minimal.carlauncher.core.DockCodec
+import com.carlauncherc.launcher.core.DockCodec
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test

@@ -1,4 +1,4 @@
-package com.minimal.carlauncher.ui
+package com.carlauncherc.launcher.ui
 
 import android.Manifest
 import android.content.Intent
@@ -16,16 +16,16 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.minimal.carlauncher.CarLauncherApp
-import com.minimal.carlauncher.R
-import com.minimal.carlauncher.core.Format
-import com.minimal.carlauncher.core.Prefs
-import com.minimal.carlauncher.databinding.ActivityHomeBinding
-import com.minimal.carlauncher.location.HeadingSource
-import com.minimal.carlauncher.location.VehicleState
-import com.minimal.carlauncher.update.ApkInstaller
-import com.minimal.carlauncher.update.UpdateState
-import com.minimal.carlauncher.util.IntentUtil
+import com.carlauncherc.launcher.CarLauncherApp
+import com.carlauncherc.launcher.R
+import com.carlauncherc.launcher.core.Format
+import com.carlauncherc.launcher.core.Prefs
+import com.carlauncherc.launcher.databinding.ActivityHomeBinding
+import com.carlauncherc.launcher.location.HeadingSource
+import com.carlauncherc.launcher.location.VehicleState
+import com.carlauncherc.launcher.update.ApkInstaller
+import com.carlauncherc.launcher.update.UpdateState
+import com.carlauncherc.launcher.util.IntentUtil
 import kotlinx.coroutines.launch
 
 /**

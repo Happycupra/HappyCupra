@@ -1,4 +1,4 @@
-package com.minimal.carlauncher.core
+package com.carlauncherc.launcher.core
 
 import android.content.Context
 import android.content.SharedPreferences

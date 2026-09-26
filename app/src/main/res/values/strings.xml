@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">HappyCupra Car Launcher</string>
+    <string name="app_name">CarLauncher C</string>
 
     <!-- Dashboard -->
     <string name="speed_placeholder">--</string>

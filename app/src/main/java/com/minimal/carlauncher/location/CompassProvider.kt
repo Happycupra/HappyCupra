@@ -1,4 +1,4 @@
-package com.minimal.carlauncher.location
+package com.carlauncherc.launcher.location
 
 import android.content.Context
 import android.hardware.Sensor

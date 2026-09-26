@@ -1,17 +1,17 @@
-package com.minimal.carlauncher.ui
+package com.carlauncherc.launcher.ui
 
 import android.app.Application
 import android.location.Location
 import android.os.SystemClock
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.minimal.carlauncher.core.Constants
-import com.minimal.carlauncher.core.Format
-import com.minimal.carlauncher.core.Prefs
-import com.minimal.carlauncher.location.CompassProvider
-import com.minimal.carlauncher.location.HeadingSource
-import com.minimal.carlauncher.location.SpeedProvider
-import com.minimal.carlauncher.location.VehicleState
+import com.carlauncherc.launcher.core.Constants
+import com.carlauncherc.launcher.core.Format
+import com.carlauncherc.launcher.core.Prefs
+import com.carlauncherc.launcher.location.CompassProvider
+import com.carlauncherc.launcher.location.HeadingSource
+import com.carlauncherc.launcher.location.SpeedProvider
+import com.carlauncherc.launcher.location.VehicleState
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow

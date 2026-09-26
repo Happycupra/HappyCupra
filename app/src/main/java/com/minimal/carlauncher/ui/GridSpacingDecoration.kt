@@ -1,4 +1,4 @@
-package com.minimal.carlauncher.ui
+package com.carlauncherc.launcher.ui
 
 import android.graphics.Rect
 import android.view.View

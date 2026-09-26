@@ -1,11 +1,11 @@
-package com.minimal.carlauncher.update
+package com.carlauncherc.launcher.update
 
 import android.content.Context
 import android.net.ConnectivityManager
-import com.minimal.carlauncher.BuildConfig
-import com.minimal.carlauncher.core.Constants
-import com.minimal.carlauncher.core.Prefs
-import com.minimal.carlauncher.core.SemVer
+import com.carlauncherc.launcher.BuildConfig
+import com.carlauncherc.launcher.core.Constants
+import com.carlauncherc.launcher.core.Prefs
+import com.carlauncherc.launcher.core.SemVer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow

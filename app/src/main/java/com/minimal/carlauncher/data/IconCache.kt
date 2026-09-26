@@ -1,4 +1,4 @@
-package com.minimal.carlauncher.data
+package com.carlauncherc.launcher.data
 
 import android.content.ComponentName
 import android.content.Context
@@ -9,7 +9,7 @@ import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.os.Process
 import android.util.LruCache
-import com.minimal.carlauncher.R
+import com.carlauncherc.launcher.R
 
 /**
  * Pre-rasterises launcher icons to exactly the display size and caches the bitmaps.

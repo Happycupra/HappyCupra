@@ -1,6 +1,6 @@
-package com.minimal.carlauncher
+package com.carlauncherc.launcher
 
-import com.minimal.carlauncher.update.ReleaseInfo
+import com.carlauncherc.launcher.update.ReleaseInfo
 import org.json.JSONObject
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse

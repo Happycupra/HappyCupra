@@ -1,6 +1,6 @@
-package com.minimal.carlauncher.core
+package com.carlauncherc.launcher.core
 
-import com.minimal.carlauncher.BuildConfig
+import com.carlauncherc.launcher.BuildConfig
 
 /** A rebranded projection product: one display name, several candidate package ids. */
 data class ProjectionTarget(val displayName: String, val candidates: List<String>)

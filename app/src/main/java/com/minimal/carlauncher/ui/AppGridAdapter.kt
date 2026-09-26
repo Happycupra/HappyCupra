@@ -1,4 +1,4 @@
-package com.minimal.carlauncher.ui
+package com.carlauncherc.launcher.ui
 
 import android.graphics.Bitmap
 import android.view.LayoutInflater
@@ -9,9 +9,9 @@ import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.minimal.carlauncher.R
-import com.minimal.carlauncher.data.AppEntry
-import com.minimal.carlauncher.data.IconCache
+import com.carlauncherc.launcher.R
+import com.carlauncherc.launcher.data.AppEntry
+import com.carlauncherc.launcher.data.IconCache
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job

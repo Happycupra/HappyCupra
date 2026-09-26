@@ -1,6 +1,6 @@
-package com.minimal.carlauncher
+package com.carlauncherc.launcher
 
-import com.minimal.carlauncher.core.Format
+import com.carlauncherc.launcher.core.Format
 import org.junit.Assert.assertEquals
 import org.junit.Test
 

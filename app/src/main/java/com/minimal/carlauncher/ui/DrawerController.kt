@@ -1,4 +1,4 @@
-package com.minimal.carlauncher.ui
+package com.carlauncherc.launcher.ui
 
 import android.app.Activity
 import android.content.Context
@@ -8,11 +8,11 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.GridLayoutManager
-import com.minimal.carlauncher.R
-import com.minimal.carlauncher.data.AppEntry
-import com.minimal.carlauncher.data.AppRepository
-import com.minimal.carlauncher.databinding.ActivityHomeBinding
-import com.minimal.carlauncher.util.IntentUtil
+import com.carlauncherc.launcher.R
+import com.carlauncherc.launcher.data.AppEntry
+import com.carlauncherc.launcher.data.AppRepository
+import com.carlauncherc.launcher.databinding.ActivityHomeBinding
+import com.carlauncherc.launcher.util.IntentUtil
 import kotlinx.coroutines.CoroutineScope
 
 /**

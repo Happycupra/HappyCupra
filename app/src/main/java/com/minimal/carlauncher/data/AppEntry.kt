@@ -1,4 +1,4 @@
-package com.minimal.carlauncher.data
+package com.carlauncherc.launcher.data
 
 import android.content.ComponentName
 

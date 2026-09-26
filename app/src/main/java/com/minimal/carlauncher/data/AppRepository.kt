@@ -1,4 +1,4 @@
-package com.minimal.carlauncher.data
+package com.carlauncherc.launcher.data
 
 import android.content.ComponentName
 import android.content.Context
@@ -8,7 +8,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Process
 import android.os.UserHandle
-import com.minimal.carlauncher.BuildConfig
+import com.carlauncherc.launcher.BuildConfig
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job

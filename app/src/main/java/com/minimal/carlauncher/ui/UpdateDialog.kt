@@ -1,4 +1,4 @@
-package com.minimal.carlauncher.ui
+package com.carlauncherc.launcher.ui
 
 import android.view.LayoutInflater
 import android.view.View
@@ -10,12 +10,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.minimal.carlauncher.R
-import com.minimal.carlauncher.core.Format
-import com.minimal.carlauncher.update.ApkInstaller
-import com.minimal.carlauncher.update.ReleaseInfo
-import com.minimal.carlauncher.update.UpdateRepository
-import com.minimal.carlauncher.update.UpdateState
+import com.carlauncherc.launcher.R
+import com.carlauncherc.launcher.core.Format
+import com.carlauncherc.launcher.update.ApkInstaller
+import com.carlauncherc.launcher.update.ReleaseInfo
+import com.carlauncherc.launcher.update.UpdateRepository
+import com.carlauncherc.launcher.update.UpdateState
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 

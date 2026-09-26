@@ -1,11 +1,11 @@
 # Minimal Car Launcher
 
 
-> **HappyCupra customization branch**
+> **CarLauncher C customization branch**
 >
 > This branch is based on Breakeridis/open-car-launcher under the MIT License. It keeps the
 > upstream LICENSE and attribution, uses the separate Android application id
-> `com.happycupra.carlauncher`, and adds configurable music-app autostart plus automatic PLAY.
+> `com.carlauncherc.launcher`, and adds configurable music-app autostart plus automatic PLAY.
 > The original upstream in-app updater is intentionally disabled until this launcher has its own
 > dedicated repository and permanent release-signing key.
 
@@ -122,7 +122,7 @@ long-press the dock's settings icon → *Set as Home app*.
 adb shell cmd package resolve-activity -c android.intent.category.HOME -a android.intent.action.MAIN
 adb shell cmd package set-home-activity com.android.launcher3/com.android.launcher3.Launcher
 adb shell am start -a android.settings.HOME_SETTINGS
-adb shell pm uninstall com.minimal.carlauncher     # frees the default-home association
+adb shell pm uninstall com.carlauncherc.launcher     # frees the default-home association
 ```
 
 Booting into **Safe Mode** (long-press Power → long-press *Power off*) disables third-party
@@ -136,15 +136,15 @@ system image** (which also proves the zero-GMS claim).
 | Feature | Check |
 |---|---|
 | Home registration | `adb shell dumpsys package preferred-activities`; press HOME from inside the drawer → returns to the dashboard with the search box cleared. |
-| Speedometer | Emulator → Extended controls → Location, or `geo fix <lon> <lat> <alt> <sats> <velocity>`. Expect `--` before a fix, `0` at standstill. `adb shell pm revoke com.minimal.carlauncher android.permission.ACCESS_FINE_LOCATION` to retest the permission path. |
+| Speedometer | Emulator → Extended controls → Location, or `geo fix <lon> <lat> <alt> <sats> <velocity>`. Expect `--` before a fix, `0` at standstill. `adb shell pm revoke com.carlauncherc.launcher android.permission.ACCESS_FINE_LOCATION` to retest the permission path. |
 | GPS is released | Launch another app, then `adb shell dumpsys location \| grep carlauncher` → no active request. |
 | Compass | Extended controls → Virtual sensors → rotate. `adb shell dumpsys sensorservice` to confirm `TYPE_ROTATION_VECTOR` exists; the gauge must degrade to `--` where it does not. |
 | Drawer visibility | **Run on API 30+.** An empty or one-item drawer means the `<queries>` block is wrong. |
-| Scroll smoothness | `adb shell dumpsys gfxinfo com.minimal.carlauncher framestats` while flinging. |
-| Dock persistence | `adb shell run-as com.minimal.carlauncher cat /data/data/com.minimal.carlauncher/shared_prefs/car_launcher.xml` |
+| Scroll smoothness | `adb shell dumpsys gfxinfo com.carlauncherc.launcher framestats` while flinging. |
+| Dock persistence | `adb shell run-as com.carlauncherc.launcher cat /data/data/com.carlauncherc.launcher/shared_prefs/car_launcher.xml` |
 | Dock self-heal | Uninstall a docked app; the slot must clear itself. |
 | Updater | Temporarily set `versionName = "0.0.1"` to force an update. Check the badge, the progress bar, reopening the dialog mid-download, airplane mode, and revoking *Install unknown apps*. |
-| Crash resilience | `adb shell am crash com.minimal.carlauncher` while it is the default home. The stack trace lands in the About dialog's crash log. |
+| Crash resilience | `adb shell am crash com.carlauncherc.launcher` while it is the default home. The stack trace lands in the About dialog's crash log. |
 
 ## Design notes
 

@@ -1,4 +1,4 @@
-package com.minimal.carlauncher.core
+package com.carlauncherc.launcher.core
 
 /**
  * Semantic-version comparison tolerant of everything GitHub tags actually contain:

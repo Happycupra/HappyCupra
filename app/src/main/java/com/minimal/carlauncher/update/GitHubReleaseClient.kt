@@ -1,7 +1,7 @@
-package com.minimal.carlauncher.update
+package com.carlauncherc.launcher.update
 
-import com.minimal.carlauncher.BuildConfig
-import com.minimal.carlauncher.core.Constants
+import com.carlauncherc.launcher.BuildConfig
+import com.carlauncherc.launcher.core.Constants
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONArray

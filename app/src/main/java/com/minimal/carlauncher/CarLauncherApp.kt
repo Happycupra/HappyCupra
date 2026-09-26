@@ -1,10 +1,10 @@
-package com.minimal.carlauncher
+package com.carlauncherc.launcher
 
 import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
-import com.minimal.carlauncher.core.Prefs
-import com.minimal.carlauncher.data.AppRepository
-import com.minimal.carlauncher.update.UpdateRepository
+import com.carlauncherc.launcher.core.Prefs
+import com.carlauncherc.launcher.data.AppRepository
+import com.carlauncherc.launcher.update.UpdateRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.Dispatchers

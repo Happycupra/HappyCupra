@@ -14,11 +14,11 @@ val keystoreProps = Properties().apply {
 }
 
 android {
-    namespace = "com.minimal.carlauncher"
+    namespace = "com.carlauncherc.launcher"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.happycupra.carlauncher"
+        applicationId = "com.carlauncherc.launcher"
         minSdk = 29
         // NOTE: deliberately NOT targetSdk 36. Android 16 ignores android:screenOrientation for
         // apps targeting 36 on displays with smallestWidth >= 600dp - which is exactly a head unit.

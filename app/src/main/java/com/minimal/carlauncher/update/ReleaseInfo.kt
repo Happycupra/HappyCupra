@@ -1,4 +1,4 @@
-package com.minimal.carlauncher.update
+package com.carlauncherc.launcher.update
 
 import org.json.JSONObject
 

@@ -1,4 +1,4 @@
-package com.minimal.carlauncher.update
+package com.carlauncherc.launcher.update
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ensureActive

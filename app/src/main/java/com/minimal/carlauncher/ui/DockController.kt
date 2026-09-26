@@ -1,4 +1,4 @@
-package com.minimal.carlauncher.ui
+package com.carlauncherc.launcher.ui
 
 import android.app.Activity
 import android.content.ComponentName
@@ -7,14 +7,14 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import com.minimal.carlauncher.R
-import com.minimal.carlauncher.core.Constants
-import com.minimal.carlauncher.core.DockCodec
-import com.minimal.carlauncher.core.Prefs
-import com.minimal.carlauncher.data.AppEntry
-import com.minimal.carlauncher.data.AppRepository
-import com.minimal.carlauncher.databinding.ViewDockBinding
-import com.minimal.carlauncher.util.IntentUtil
+import com.carlauncherc.launcher.R
+import com.carlauncherc.launcher.core.Constants
+import com.carlauncherc.launcher.core.DockCodec
+import com.carlauncherc.launcher.core.Prefs
+import com.carlauncherc.launcher.data.AppEntry
+import com.carlauncherc.launcher.data.AppRepository
+import com.carlauncherc.launcher.databinding.ViewDockBinding
+import com.carlauncherc.launcher.util.IntentUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

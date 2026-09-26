@@ -1,4 +1,4 @@
-package com.minimal.carlauncher.ui
+package com.carlauncherc.launcher.ui
 
 import android.app.Activity
 import android.text.Editable
@@ -7,9 +7,9 @@ import android.view.LayoutInflater
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.minimal.carlauncher.R
-import com.minimal.carlauncher.data.AppEntry
-import com.minimal.carlauncher.data.AppRepository
+import com.carlauncherc.launcher.R
+import com.carlauncherc.launcher.data.AppEntry
+import com.carlauncherc.launcher.data.AppRepository
 import kotlinx.coroutines.CoroutineScope
 import java.util.Locale
 

@@ -1,12 +1,12 @@
-package com.minimal.carlauncher.update
+package com.carlauncherc.launcher.update
 
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
 import androidx.core.content.FileProvider
-import com.minimal.carlauncher.BuildConfig
-import com.minimal.carlauncher.core.Constants
+import com.carlauncherc.launcher.BuildConfig
+import com.carlauncherc.launcher.core.Constants
 import java.io.File
 
 object ApkInstaller {

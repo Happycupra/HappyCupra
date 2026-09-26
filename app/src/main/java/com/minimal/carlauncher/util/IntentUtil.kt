@@ -1,4 +1,4 @@
-package com.minimal.carlauncher.util
+package com.carlauncherc.launcher.util
 
 import android.app.ActivityOptions
 import android.content.ActivityNotFoundException

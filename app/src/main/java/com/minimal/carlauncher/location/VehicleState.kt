@@ -1,4 +1,4 @@
-package com.minimal.carlauncher.location
+package com.carlauncherc.launcher.location
 
 enum class HeadingSource { NONE, GPS, SENSOR }
 

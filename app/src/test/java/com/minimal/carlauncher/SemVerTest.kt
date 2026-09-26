@@ -1,6 +1,6 @@
-package com.minimal.carlauncher
+package com.carlauncherc.launcher
 
-import com.minimal.carlauncher.core.SemVer
+import com.carlauncherc.launcher.core.SemVer
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
