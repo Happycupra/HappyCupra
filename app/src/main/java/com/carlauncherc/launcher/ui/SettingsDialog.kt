@@ -8,6 +8,7 @@ import android.widget.RadioGroup
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.app.NotificationManagerCompat
 import com.carlauncherc.launcher.R
 import com.carlauncherc.launcher.core.Format
 import com.carlauncherc.launcher.core.Prefs
@@ -113,6 +114,18 @@ object SettingsDialog {
         }
         musicAutoplay.setOnCheckedChangeListener { _, checked ->
             Prefs.musicAutoPlay = checked
+        }
+
+        val mediaAccessButton = view.findViewById<Button>(R.id.btnMediaAccess)
+        val mediaAccessEnabled =
+            NotificationManagerCompat.getEnabledListenerPackages(activity)
+                .contains(activity.packageName)
+        mediaAccessButton.text = activity.getString(
+            if (mediaAccessEnabled) R.string.settings_media_access_enabled
+            else R.string.settings_media_access_enable
+        )
+        mediaAccessButton.setOnClickListener {
+            IntentUtil.openNotificationListenerSettings(activity)
         }
 
         // --- dashcam / DVR ---

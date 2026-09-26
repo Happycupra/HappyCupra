@@ -12,6 +12,7 @@ import android.view.HapticFeedbackConstants
 import android.view.KeyEvent
 import android.view.View
 import android.widget.Toast
+import androidx.core.app.NotificationManagerCompat
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -26,6 +27,7 @@ import com.carlauncherc.launcher.core.Prefs
 import com.carlauncherc.launcher.databinding.ActivityHomeBinding
 import com.carlauncherc.launcher.location.HeadingSource
 import com.carlauncherc.launcher.location.VehicleState
+import com.carlauncherc.launcher.media.YMusicMediaBridge
 import com.carlauncherc.launcher.update.ApkInstaller
 import com.carlauncherc.launcher.update.UpdateState
 import com.carlauncherc.launcher.util.IntentUtil
@@ -91,6 +93,7 @@ class HomeActivity : AppCompatActivity() {
 
         bindDashboardClicks()
         bindDockActions()
+        bindMusicControls()
         bindBackBehaviour()
         observe()
     }
@@ -153,6 +156,52 @@ class HomeActivity : AppCompatActivity() {
         binding.dockStrip.btnAbout.setOnClickListener { openAbout() }
     }
 
+    private fun bindMusicControls() {
+        binding.btnMusicPrevious.setOnClickListener {
+            if (!YMusicMediaBridge.previous()) {
+                dispatchYMusicMediaKey(KeyEvent.KEYCODE_MEDIA_PREVIOUS)
+            }
+        }
+        binding.btnMusicPlayPause.setOnClickListener {
+            if (!YMusicMediaBridge.togglePlayPause()) {
+                dispatchYMusicMediaKey(KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE)
+            }
+        }
+        binding.btnMusicNext.setOnClickListener {
+            if (!YMusicMediaBridge.next()) {
+                dispatchYMusicMediaKey(KeyEvent.KEYCODE_MEDIA_NEXT)
+            }
+        }
+    }
+
+    private fun renderNowPlaying(title: String, artist: String, isPlaying: Boolean) {
+        val selectedPackage = Prefs.musicPackage?.let(IntentUtil::packageOf)
+        val isYMusic = selectedPackage == YMUSIC_PACKAGE
+        binding.musicControls.visibility = if (isYMusic) View.VISIBLE else View.GONE
+
+        if (!isYMusic) {
+            binding.textNowPlayingTitle.visibility = View.GONE
+            binding.textNowPlayingArtist.visibility = View.GONE
+            return
+        }
+
+        binding.textNowPlayingTitle.visibility = View.VISIBLE
+        binding.textNowPlayingArtist.visibility = View.VISIBLE
+
+        val accessEnabled =
+            NotificationManagerCompat.getEnabledListenerPackages(this).contains(packageName)
+
+        binding.textNowPlayingTitle.text = when {
+            title.isNotBlank() -> title
+            !accessEnabled -> getString(R.string.media_access_required)
+            else -> getString(R.string.media_title_unavailable)
+        }
+        binding.textNowPlayingArtist.text = artist
+        binding.btnMusicPlayPause.setImageResource(
+            if (isPlaying) R.drawable.ic_media_pause else R.drawable.ic_media_play
+        )
+    }
+
     /** A launcher must never finish itself - on some ROMs that leaves a blank screen. */
     private fun bindBackBehaviour() {
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
@@ -195,6 +244,14 @@ class HomeActivity : AppCompatActivity() {
                 app.updateRepository.badgeVisible.collect { visible ->
                     binding.dockStrip.updateBadge.visibility =
                         if (visible) View.VISIBLE else View.GONE
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                YMusicMediaBridge.nowPlaying.collect { info ->
+                    renderNowPlaying(info.title, info.artist, info.isPlaying)
                 }
             }
         }
@@ -304,6 +361,11 @@ class HomeActivity : AppCompatActivity() {
         viewModel.refreshPrefs()
         cards.refreshLabels()
         render(viewModel.vehicle.value)
+        renderNowPlaying(
+            YMusicMediaBridge.nowPlaying.value.title,
+            YMusicMediaBridge.nowPlaying.value.artist,
+            YMusicMediaBridge.nowPlaying.value.isPlaying
+        )
         maybeAutoStartDashcam()
         maybeAutoStartMusic()
     }
@@ -397,13 +459,13 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun dispatchYMusicPlay() {
+        dispatchYMusicMediaKey(KeyEvent.KEYCODE_MEDIA_PLAY)
+    }
+
+    private fun dispatchYMusicMediaKey(keyCode: Int) {
         val eventTime = SystemClock.uptimeMillis()
-        val down = KeyEvent(
-            eventTime, eventTime, KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_PLAY, 0
-        )
-        val up = KeyEvent(
-            eventTime, eventTime, KeyEvent.ACTION_UP, KeyEvent.KEYCODE_MEDIA_PLAY, 0
-        )
+        val down = KeyEvent(eventTime, eventTime, KeyEvent.ACTION_DOWN, keyCode, 0)
+        val up = KeyEvent(eventTime, eventTime, KeyEvent.ACTION_UP, keyCode, 0)
 
         runCatching {
             sendBroadcast(

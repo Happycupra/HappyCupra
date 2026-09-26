@@ -75,6 +75,14 @@
     <string name="settings_music_none">none</string>
     <string name="settings_music_autostart">Open music app when launcher starts</string>
     <string name="settings_music_autoplay">Start playback automatically</string>
+    <string name="settings_media_access_enable">Enable title + media controls</string>
+    <string name="settings_media_access_enabled">Title + media controls enabled</string>
+    <string name="media_listener_name">CarLauncher C media information</string>
+    <string name="media_title_unavailable">Title unavailable</string>
+    <string name="media_access_required">Enable media access in launcher settings</string>
+    <string name="media_previous">Previous track</string>
+    <string name="media_play_pause">Play or pause</string>
+    <string name="media_next">Next track</string>
     <string name="settings_music_autostart_hint">Waits 5 seconds after launcher startup, opens the selected music app and retries PLAY several times. YMusic (ymusic.io) is controlled with a dedicated launch and media-command path.</string>
     <string name="settings_dashcam">Dashcam / DVR</string>
     <string name="settings_dashcam_app">Dashcam app: %1$s</string>

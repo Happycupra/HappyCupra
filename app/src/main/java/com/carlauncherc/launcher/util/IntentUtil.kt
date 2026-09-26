@@ -87,4 +87,7 @@ object IntentUtil {
 
     fun openHomeSettings(context: Context): Boolean =
         startSafely(context, Intent(Settings.ACTION_HOME_SETTINGS))
+
+    fun openNotificationListenerSettings(context: Context): Boolean =
+        startSafely(context, Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))
 }
