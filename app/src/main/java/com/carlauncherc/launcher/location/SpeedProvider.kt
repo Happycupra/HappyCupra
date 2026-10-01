@@ -143,17 +143,18 @@ class SpeedProvider(context: Context) {
             location.hasSpeedAccuracy() &&
             location.speedAccuracyMetersPerSecond > DIRECT_ACCURACY_POOR_MPS
 
-        val chosen = when {
-            direct != null && derived != null && looksLikeVendorUnitBug(direct, derived) -> derived
+        val useDerived = when {
+            direct != null && derived != null && looksLikeVendorUnitBug(direct, derived) -> true
             direct != null && derived != null && poorDirectAccuracy &&
-                abs(direct - derived) > DIRECT_DERIVED_DISAGREEMENT_MPS -> derived
-            direct != null -> direct
-            derived != null -> derived
-            else -> 0f
+                abs(direct - derived) > DIRECT_DERIVED_DISAGREEMENT_MPS -> true
+            direct == null && derived != null -> true
+            else -> false
         }
 
+        val chosen = if (useDerived) derived ?: 0f else direct ?: 0f
+
         // Derived position-delta speed is naturally noisier, so only smooth that fallback.
-        val output = if (derived != null && chosen === derived) {
+        val output = if (useDerived) {
             val previous = lastDerivedSpeedMps
             val filtered = if (previous == null || chosen < Constants.SPEED_NOISE_GATE_MPS) {
                 chosen
