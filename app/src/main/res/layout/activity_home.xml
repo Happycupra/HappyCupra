@@ -4,7 +4,7 @@
   fragment or second activity: opening it is then a visibility flip with no transaction, no
   window animation and no risk of the home task stacking.
 -->
-<androidx.constraintlayout.widget.ConstraintLayout
+<com.carlauncherc.launcher.ui.ImmersiveConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -128,7 +128,8 @@
                 android:layout_width="@dimen/gap"
                 android:layout_height="match_parent" />
 
-            <!-- Compass -->
+            <!-- Round Qibla compass. The legacy text fields stay in the hierarchy (GONE) so
+                 the existing dashboard renderer remains source-compatible. -->
             <LinearLayout
                 android:id="@+id/gaugeCompass"
                 android:layout_width="0dp"
@@ -137,7 +138,14 @@
                 android:background="@drawable/bg_gauge"
                 android:gravity="center"
                 android:orientation="vertical"
-                android:padding="8dp">
+                android:padding="4dp">
+
+                <com.carlauncherc.launcher.ui.QiblaCompassView
+                    android:id="@+id/qiblaCompass"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:contentDescription="Qibla compass" />
 
                 <TextView
                     android:id="@+id/textCardinal"
@@ -146,6 +154,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/speed_placeholder"
                     android:textSize="@dimen/cardinal_text"
+                    android:visibility="gone"
                     tools:text="NE" />
 
                 <TextView
@@ -155,6 +164,7 @@
                     android:layout_height="wrap_content"
                     android:textColor="@color/cockpit_text_secondary"
                     android:textSize="@dimen/degrees_text"
+                    android:visibility="gone"
                     tools:text="43°" />
 
                 <TextView
@@ -163,7 +173,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:text="@string/heading" />
+                    android:text="@string/heading"
+                    android:visibility="gone" />
             </LinearLayout>
         </LinearLayout>
 
@@ -478,4 +489,4 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</com.carlauncherc.launcher.ui.ImmersiveConstraintLayout>
