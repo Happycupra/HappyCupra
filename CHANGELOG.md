@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.13 — 2026-10-31
+
+- Added YMusic v4 package (`io.ymusic.android`) and debug package support, retaining legacy YMusic.
+- The launcher recognises v4 media sessions for song title, artist, playback state, progress and transport controls.
+- Media-button commands target the active or configured YMusic package rather than hard-coded legacy YMusic.
+- Migrates legacy music shortcuts to v4 if installed when the old app is removed.
+- Declares v4 packages for visibility on Android 11+.
+
 ## 0.12 — 2026-09-26
 
 - Strengthened launcher startup on head units with a best-effort boot receiver when CarLauncher C already owns the HOME role.
