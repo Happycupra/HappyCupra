@@ -9,6 +9,7 @@ import com.carlauncherc.launcher.R
 import com.carlauncherc.launcher.core.Prefs
 import com.carlauncherc.launcher.data.AppRepository
 import com.carlauncherc.launcher.databinding.ActivityHomeBinding
+import com.carlauncherc.launcher.media.YMusicPackages
 import com.carlauncherc.launcher.util.IntentUtil
 import kotlinx.coroutines.CoroutineScope
 
@@ -50,7 +51,12 @@ class QuickCardsController(
 
     fun onPackageRemoved(packageName: String) {
         if (Prefs.navPackage?.let { IntentUtil.packageOf(it) } == packageName) Prefs.navPackage = null
-        if (Prefs.musicPackage?.let { IntentUtil.packageOf(it) } == packageName) Prefs.musicPackage = null
+        if (Prefs.musicPackage?.let { IntentUtil.packageOf(it) } == packageName) {
+            Prefs.musicPackage = if (packageName == YMusicPackages.LEGACY) {
+                listOf(YMusicPackages.V4, YMusicPackages.V4_DEBUG)
+                    .firstOrNull(repository::isInstalled)
+            } else null
+        }
         refreshLabels()
     }
 

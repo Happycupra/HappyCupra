@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.14 — 2026-10-31
+
+- Added Android Share target for supported YouTube / YouTube Music track and playlist URLs.
+- Added startup selection: resume last YMusic queue, open the saved link once then resume, or always open it.
+- Song links are sent to YMusic v4 for playback; playlist-only links open the playlist screen because v4 does not yet auto-play them from an external VIEW link.
+- Share receiver saves the link and enables YMusic v4 autostart when v4 is installed on the same Android device.
+- The launcher returns to the dashboard after starting a linked track when supported by the head-unit ROM.
+
+## 0.13 — 2026-10-31
+
+- Added YMusic v4 package (`io.ymusic.android`) and debug package support, retaining legacy YMusic.
+- The launcher recognises v4 media sessions for song title, artist, playback state, progress and transport controls.
+- Media-button commands target the active or configured YMusic package rather than hard-coded legacy YMusic.
+- Migrates legacy music shortcuts to v4 if installed when the old app is removed.
+- Declares v4 packages for visibility on Android 11+.
+
 ## 0.12 — 2026-09-26
 
 - Strengthened launcher startup on head units with a best-effort boot receiver when CarLauncher C already owns the HOME role.

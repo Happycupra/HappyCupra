@@ -182,6 +182,59 @@
             android:minHeight="48dp"
             android:text="@string/settings_music_autoplay" />
 
+        <TextView
+            style="@style/Text.Caption"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="@string/music_start_mode_label" />
+
+        <RadioGroup
+            android:id="@+id/groupMusicStartMode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <RadioButton
+                android:id="@+id/musicResumeLast"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:text="@string/music_start_resume" />
+            <RadioButton
+                android:id="@+id/musicStartOnce"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:text="@string/music_start_once" />
+            <RadioButton
+                android:id="@+id/musicStartAlways"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:text="@string/music_start_always" />
+        </RadioGroup>
+
+        <TextView
+            android:id="@+id/textMusicStartLink"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/cockpit_text_dim"
+            android:textSize="12sp" />
+
+        <Button
+            android:id="@+id/btnClearMusicStartLink"
+            style="?attr/materialButtonOutlinedStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/music_start_link_clear" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/music_start_link_hint"
+            android:textColor="@color/cockpit_text_dim"
+            android:textSize="12sp" />
+
         <Button
             android:id="@+id/btnMediaAccess"
             style="?attr/materialButtonOutlinedStyle"

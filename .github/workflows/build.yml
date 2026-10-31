@@ -5,10 +5,12 @@ on:
     branches: [main]
     paths-ignore:
       - 'apk/CarLauncher-C.apk'
+  pull_request:
+    branches: [main]
   workflow_dispatch:
 
 concurrency:
-  group: carlauncher-c-main
+  group: carlauncher-c-${{ github.ref }}
   cancel-in-progress: true
 
 permissions:
@@ -48,6 +50,7 @@ jobs:
           if-no-files-found: error
 
       - name: Store latest APK in main
+        if: github.event_name != 'pull_request'
         run: |
           cp app/build/outputs/apk/debug/app-debug.apk /tmp/CarLauncher-C.apk
           git config user.name "github-actions[bot]"
@@ -78,6 +81,7 @@ jobs:
           exit 1
 
       - name: Remove old migration branch
+        if: github.event_name != 'pull_request'
         run: |
           git push origin --delete minimal-car-launcher || true
 

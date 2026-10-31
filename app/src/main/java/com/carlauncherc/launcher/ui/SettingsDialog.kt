@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.RadioGroup
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDelegate
@@ -13,6 +14,7 @@ import com.carlauncherc.launcher.R
 import com.carlauncherc.launcher.core.Format
 import com.carlauncherc.launcher.core.Prefs
 import com.carlauncherc.launcher.data.AppRepository
+import com.carlauncherc.launcher.media.MusicStartLink
 import com.carlauncherc.launcher.util.IntentUtil
 import kotlinx.coroutines.CoroutineScope
 
@@ -137,6 +139,46 @@ object SettingsDialog {
         }
         musicAutoplay.setOnCheckedChangeListener { _, checked ->
             Prefs.musicAutoPlay = checked
+        }
+
+        // Starting a saved link is a YMusic v4 feature; resume uses its own Play Again history.
+        val startGroup = view.findViewById<RadioGroup>(R.id.groupMusicStartMode)
+        val savedLink = view.findViewById<TextView>(R.id.textMusicStartLink)
+        val clearLink = view.findViewById<Button>(R.id.btnClearMusicStartLink)
+        fun renderStartLink() {
+            val link = MusicStartLink.parse(Prefs.musicStartLink)
+            savedLink.text = if (link == null) activity.getString(R.string.music_start_link_none)
+                else activity.getString(R.string.music_start_link_saved, link.url)
+            clearLink.isEnabled = link != null
+        }
+        renderStartLink()
+        startGroup.check(when (Prefs.musicStartMode) {
+            Prefs.MUSIC_START_ONCE -> R.id.musicStartOnce
+            Prefs.MUSIC_START_ALWAYS -> R.id.musicStartAlways
+            else -> R.id.musicResumeLast
+        })
+        startGroup.setOnCheckedChangeListener { _, checked ->
+            val mode = when (checked) {
+                R.id.musicStartOnce -> Prefs.MUSIC_START_ONCE
+                R.id.musicStartAlways -> Prefs.MUSIC_START_ALWAYS
+                else -> Prefs.MUSIC_START_RESUME
+            }
+            if (mode != Prefs.MUSIC_START_RESUME && MusicStartLink.parse(Prefs.musicStartLink) == null) {
+                Toast.makeText(activity, R.string.music_start_link_none, Toast.LENGTH_SHORT).show()
+                startGroup.check(R.id.musicResumeLast)
+                return@setOnCheckedChangeListener
+            }
+            if (mode == Prefs.MUSIC_START_ONCE && Prefs.musicStartMode != mode) {
+                Prefs.musicStartLinkUsed = false
+            }
+            Prefs.musicStartMode = mode
+        }
+        clearLink.setOnClickListener {
+            Prefs.musicStartLink = null
+            Prefs.musicStartLinkUsed = false
+            Prefs.musicStartMode = Prefs.MUSIC_START_RESUME
+            startGroup.check(R.id.musicResumeLast)
+            renderStartLink()
         }
 
         val mediaAccessButton = view.findViewById<Button>(R.id.btnMediaAccess)

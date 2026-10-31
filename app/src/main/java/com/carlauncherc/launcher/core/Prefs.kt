@@ -24,6 +24,9 @@ object Prefs {
     const val KEY_MUSIC_PACKAGE = "pref_music_package"
     const val KEY_MUSIC_AUTOSTART = "pref_music_autostart"
     const val KEY_MUSIC_AUTOPLAY = "pref_music_autoplay"
+    const val KEY_MUSIC_START_LINK = "pref_music_start_link"
+    const val KEY_MUSIC_START_MODE = "pref_music_start_mode"
+    const val KEY_MUSIC_START_LINK_USED = "pref_music_start_link_used"
     const val KEY_PROJECTION_PACKAGE = "pref_projection_package"
     const val KEY_DOCK_SLOTS = "pref_dock_slots"
     const val KEY_DASHCAM_PACKAGE = "pref_dashcam_package"
@@ -85,6 +88,22 @@ object Prefs {
     var musicAutoPlay: Boolean
         get() = sp.getBoolean(KEY_MUSIC_AUTOPLAY, true)
         set(value) = sp.edit().putBoolean(KEY_MUSIC_AUTOPLAY, value).apply()
+
+    const val MUSIC_START_RESUME = "resume"
+    const val MUSIC_START_ONCE = "once"
+    const val MUSIC_START_ALWAYS = "always"
+
+    var musicStartLink: String?
+        get() = sp.getString(KEY_MUSIC_START_LINK, null)?.ifBlank { null }
+        set(value) = sp.edit().putString(KEY_MUSIC_START_LINK, value).apply()
+
+    var musicStartMode: String
+        get() = sp.getString(KEY_MUSIC_START_MODE, MUSIC_START_RESUME) ?: MUSIC_START_RESUME
+        set(value) = sp.edit().putString(KEY_MUSIC_START_MODE, value).apply()
+
+    var musicStartLinkUsed: Boolean
+        get() = sp.getBoolean(KEY_MUSIC_START_LINK_USED, false)
+        set(value) = sp.edit().putBoolean(KEY_MUSIC_START_LINK_USED, value).apply()
 
     var projectionPackage: String?
         get() = sp.getString(KEY_PROJECTION_PACKAGE, null)?.ifBlank { null }

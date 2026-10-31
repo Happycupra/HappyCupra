@@ -79,6 +79,23 @@
     <string name="pick_clock_app">Choose app for clock</string>
     <string name="clock_shortcut_saved">Clock shortcut: %1$s</string>
     <string name="settings_music_start">Music at startup</string>
+    <string name="music_start_mode_label">YMusic v4 start behaviour</string>
+    <string name="music_start_resume">Resume last YMusic queue</string>
+    <string name="music_start_once">Open saved song/playlist once, then resume</string>
+    <string name="music_start_always">Always open saved song/playlist link</string>
+    <string name="music_start_link_none">No start link saved. Share a YouTube or YouTube Music link to CarLauncher C first.</string>
+    <string name="music_start_link_saved">Saved link: %1$s</string>
+    <string name="music_start_link_clear">Clear saved link</string>
+    <string name="music_start_link_hint">From YouTube or YouTube Music, choose Share → CarLauncher C. Song links start playback. Playlist-only links open the playlist in YMusic v4, where you must tap Play. Resume uses YMusic Play Again.</string>
+    <string name="music_start_link_could_not_open">Could not open the saved link in YMusic v4</string>
+    <string name="music_share_target">CarLauncher C — Save as start music</string>
+    <string name="music_share_title">Save as start music?</string>
+    <string name="music_share_track">Save this song as the start link? It will open once, then YMusic will resume the last queue at future starts.</string>
+    <string name="music_share_playlist">Save this playlist? YMusic v4 opens its playlist page; tap Play there. After that it can resume the last queue.</string>
+    <string name="music_share_save">Save and enable autostart</string>
+    <string name="music_share_saved">Start music saved in CarLauncher C</string>
+    <string name="music_share_no_link">Only YouTube or YouTube Music song/playlist links are supported.</string>
+    <string name="music_share_no_ymusic">Link saved. Install YMusic v4 on this device and select it in CarLauncher C settings.</string>
     <string name="settings_music_app">Music app: %1$s</string>
     <string name="settings_music_none">none</string>
     <string name="settings_music_autostart">Open music app when launcher starts</string>
@@ -98,7 +115,12 @@
     <string name="first_run_home_role">Next: choose CarLauncher C as your default Home launcher.</string>
     <string name="first_run_done">CarLauncher C setup completed.</string>
     <string name="changelog_title">What’s new in CarLauncher C %1$s</string>
-    <string name="changelog_current">• Autostart made substantially more robust.
+    <string name="changelog_current">• Save a song or playlist link through Android Share → CarLauncher C.
+• Choose resume, open the saved link once, or open it on every start.
+• YMusic v4 resumes its own last queue; playlist-only links open the playlist page.
+• YMusic v4: song title, artist, playback controls and autostart recognise the new app.
+• Legacy YMusic is still supported; stale selections migrate to v4 when possible.
+• Autostart made substantially more robust.
 • YMusic now uses a 30-second playback watchdog and stays in the background.
 • MediaSession, YMusic media-button and system PLAY fallbacks work together.
 • CarLauncher C receives an additional best-effort boot start when already selected as Home.

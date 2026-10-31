@@ -4,6 +4,8 @@ import android.content.ComponentName
 import android.media.session.MediaController
 import android.media.session.MediaSessionManager
 import android.service.notification.NotificationListenerService
+import com.carlauncherc.launcher.core.Prefs
+import com.carlauncherc.launcher.util.IntentUtil
 
 class YMusicNotificationListener : NotificationListenerService() {
 
@@ -37,8 +39,10 @@ class YMusicNotificationListener : NotificationListenerService() {
     }
 
     private fun attachYMusic(controllers: List<MediaController>) {
-        YMusicMediaBridge.attach(
-            controllers.firstOrNull { it.packageName == YMusicMediaBridge.YMUSIC_PACKAGE }
+        val selectedPackage = Prefs.musicPackage?.let(IntentUtil::packageOf)
+        val activePackage = YMusicPackages.selectSessionPackage(
+            controllers.map { it.packageName }, selectedPackage
         )
+        YMusicMediaBridge.attach(controllers.firstOrNull { it.packageName == activePackage })
     }
 }
