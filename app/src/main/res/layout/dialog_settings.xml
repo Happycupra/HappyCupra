@@ -64,6 +64,83 @@
             style="@style/Text.Caption"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:text="@string/dashboard_layout_heading" />
+
+        <RadioGroup
+            android:id="@+id/groupDashboardPreset"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <RadioButton
+                android:id="@+id/dashboardClassic"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:text="@string/dashboard_classic" />
+
+            <RadioButton
+                android:id="@+id/dashboardNavigation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:text="@string/dashboard_navigation" />
+
+            <RadioButton
+                android:id="@+id/dashboardMusic"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:text="@string/dashboard_music" />
+
+            <RadioButton
+                android:id="@+id/dashboardMinimal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:text="@string/dashboard_minimal" />
+        </RadioGroup>
+
+        <CheckBox
+            android:id="@+id/checkShowNavCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp"
+            android:text="@string/dashboard_show_navigation" />
+
+        <CheckBox
+            android:id="@+id/checkShowMusicCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp"
+            android:text="@string/dashboard_show_music" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/dashboard_layout_hint"
+            android:textColor="@color/cockpit_text_dim"
+            android:textSize="12sp" />
+
+        <Button
+            android:id="@+id/btnGpsDiagnostics"
+            style="?attr/materialButtonOutlinedStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/dashboard_gps_diagnostics" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="12dp"
+            android:background="@color/cockpit_divider" />
+
+        <TextView
+            style="@style/Text.Caption"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:text="@string/settings_units" />
 
         <RadioGroup

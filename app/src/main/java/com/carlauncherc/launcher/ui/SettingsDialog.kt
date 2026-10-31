@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.NotificationManagerCompat
 import com.carlauncherc.launcher.R
 import com.carlauncherc.launcher.core.Format
+import com.carlauncherc.launcher.core.DashboardPreset
 import com.carlauncherc.launcher.core.Prefs
 import com.carlauncherc.launcher.data.AppRepository
 import com.carlauncherc.launcher.media.MusicStartLink
@@ -25,9 +26,49 @@ object SettingsDialog {
         repository: AppRepository,
         scope: CoroutineScope,
         onDockReset: () -> Unit,
-        onPrefsChanged: () -> Unit
+        onPrefsChanged: () -> Unit,
+        onGpsDiagnostics: () -> Unit
     ) {
         val view = LayoutInflater.from(activity).inflate(R.layout.dialog_settings, null, false)
+
+        val presetGroup = view.findViewById<RadioGroup>(R.id.groupDashboardPreset)
+        val showNav = view.findViewById<CheckBox>(R.id.checkShowNavCard)
+        val showMusic = view.findViewById<CheckBox>(R.id.checkShowMusicCard)
+        presetGroup.check(when (Prefs.dashboardPreset) {
+            DashboardPreset.CLASSIC -> R.id.dashboardClassic
+            DashboardPreset.NAVIGATION -> R.id.dashboardNavigation
+            DashboardPreset.MUSIC -> R.id.dashboardMusic
+            DashboardPreset.MINIMAL -> R.id.dashboardMinimal
+        })
+        showNav.isChecked = Prefs.dashboardShowNav
+        showMusic.isChecked = Prefs.dashboardShowMusic
+        fun updateCardSettings() {
+            val enabled = Prefs.dashboardPreset != DashboardPreset.MINIMAL
+            showNav.isEnabled = enabled
+            showMusic.isEnabled = enabled
+        }
+        updateCardSettings()
+        presetGroup.setOnCheckedChangeListener { _, checkedId ->
+            Prefs.dashboardPreset = when (checkedId) {
+                R.id.dashboardNavigation -> DashboardPreset.NAVIGATION
+                R.id.dashboardMusic -> DashboardPreset.MUSIC
+                R.id.dashboardMinimal -> DashboardPreset.MINIMAL
+                else -> DashboardPreset.CLASSIC
+            }
+            updateCardSettings()
+            onPrefsChanged()
+        }
+        showNav.setOnCheckedChangeListener { _, checked ->
+            Prefs.dashboardShowNav = checked
+            onPrefsChanged()
+        }
+        showMusic.setOnCheckedChangeListener { _, checked ->
+            Prefs.dashboardShowMusic = checked
+            onPrefsChanged()
+        }
+        view.findViewById<Button>(R.id.btnGpsDiagnostics).setOnClickListener {
+            onGpsDiagnostics()
+        }
 
         val themeGroup = view.findViewById<RadioGroup>(R.id.groupTheme)
         val unitGroup = view.findViewById<RadioGroup>(R.id.groupUnits)

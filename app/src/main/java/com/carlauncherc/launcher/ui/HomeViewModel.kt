@@ -9,6 +9,7 @@ import com.carlauncherc.launcher.core.Format
 import com.carlauncherc.launcher.core.Prefs
 import com.carlauncherc.launcher.location.CompassProvider
 import com.carlauncherc.launcher.location.HeadingSource
+import com.carlauncherc.launcher.location.GpsDiagnostics
 import com.carlauncherc.launcher.location.SpeedProvider
 import com.carlauncherc.launcher.location.VehicleState
 import kotlinx.coroutines.Job
@@ -37,6 +38,29 @@ class HomeViewModel(app: Application) : AndroidViewModel(app) {
     val speedUnit: StateFlow<String> = _speedUnit.asStateFlow()
 
     val compassAvailable: Boolean get() = compassProvider.isAvailable
+
+    /**
+     * Return a copied snapshot from the *same GPS fix* driving the speedometer.
+     * Coordinates are intentionally omitted; diagnostics stay on-device.
+     */
+    fun gpsDiagnostics(): GpsDiagnostics {
+        val fix = lastLocation
+        val age = fix?.let(speedProvider::ageMs)
+        return GpsDiagnostics(
+            providerEnabled = speedProvider.isGpsEnabled,
+            permissionGranted = speedProvider.hasPermission,
+            fixAgeMs = age,
+            horizontalAccuracyMeters =
+                fix?.takeIf { it.hasAccuracy() }?.accuracy,
+            speedAccuracyMps =
+                fix?.takeIf { it.hasSpeedAccuracy() }?.speedAccuracyMetersPerSecond,
+            rawSpeedMps = fix?.takeIf { it.hasSpeed() }?.speed,
+            filteredSpeedMps = if (fix != null &&
+                age != null && age in 0..Constants.FIX_STALE_MS
+            ) measuredSpeedMps else null,
+            bearingDegrees = fix?.takeIf { it.hasBearing() }?.bearing
+        )
+    }
 
     private var locationJob: Job? = null
     private var compassJob: Job? = null

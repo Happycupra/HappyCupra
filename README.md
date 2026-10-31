@@ -27,6 +27,23 @@ landscape screens. Kotlin + XML views, `minSdk 29`, no Google Play Services, no 
 └──────────────────────────────────────────┘
 ```
 
+## Dashboard layouts and GNSS troubleshooting (v0.19)
+
+In **Launcher settings → Dashboard layout**, select Classic, Navigation, Music or Focus.
+The gauge order and relative card sizes update immediately. Toggle the navigation/music
+quick cards separately; hiding both removes the quick-card row and frees space for gauges.
+Focus temporarily hides quick cards without erasing their saved visibility choices.
+
+**Long-press the speed gauge** or select GPS diagnostics in Launcher settings to inspect
+the same Android GPS_PROVIDER fix used by the speedometer: fix age, reported accuracy,
+raw GNSS velocity, filtered gauge speed, heading and optional satellite count. Satellite
+counts are provided by the Android GNSS callback only while the dialog is open. No
+coordinates are displayed or retained. Diagnostic quality indicates weak readings
+rather than inventing valid speed.
+
+The next stages, implementation boundaries and device acceptance checks are tracked
+in [the cockpit expansion roadmap](docs/ROADMAP.md).
+
 ## APK
 
 Die jeweils zuletzt erfolgreich gebaute APK wird automatisch im `main`-Branch unter

@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.19 — 2026-10-31
+
+- Added four persisted dashboard layouts: Classic, Navigation-priority, Music-priority and Focus (gauges only); settings apply without Activity restart.
+- Navigation and Music quick cards can be independently hidden or shown outside Focus mode; remaining cards expand to fill unused width.
+- Added live GPS diagnostics opened via long-pressing the speed gauge or from Launcher Settings. Shows Android GPS_PROVIDER raw and filtered speed, fix age, position/speed accuracy, course and available GNSS satellites.
+- GPS callback runs **only while the diagnostic dialog is visible**, with no coordinate display, history or transmission.
+- New pure Kotlin JVM tests cover layout presets and GPS quality flags.
+- Added docs/ROADMAP.md with phased plans for v0.20–v0.25 and signing/hardware requirements.
+
 ## 0.18 — 2026-10-31
 
 - Added **opt-in real-time FFT equalizer** via Android audiofx.Visualizer on global output-mix audio session 0. Unlike the previous synthetic animation, bands respond to frequency energy in the playing audio.
