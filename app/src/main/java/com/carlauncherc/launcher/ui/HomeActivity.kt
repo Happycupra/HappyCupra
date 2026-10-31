@@ -15,6 +15,9 @@ import android.view.MotionEvent
 import android.view.View
 import android.content.res.ColorStateList
 import android.widget.Toast
+import android.widget.TextView
+import android.util.TypedValue
+import kotlin.math.abs
 import androidx.core.app.NotificationManagerCompat
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
@@ -120,6 +123,7 @@ class HomeActivity : AppCompatActivity() {
         bindClockShortcut()
         bindDockActions()
         bindMusicControls()
+        configureResponsiveGauges()
         bindBackBehaviour()
         observe()
 
@@ -153,6 +157,7 @@ class HomeActivity : AppCompatActivity() {
         binding.clockDay.setTextColor(softRed)
         binding.titleNav.setTextColor(red)
         binding.titleMusic.setTextColor(red)
+        binding.playbackEqualizer.setBarColor(red)
         binding.musicProgress.progressTintList = ColorStateList.valueOf(red)
         binding.musicProgress.progressBackgroundTintList = ColorStateList.valueOf(
             getColor(R.color.carbon_red_dark)
@@ -323,6 +328,13 @@ class HomeActivity : AppCompatActivity() {
         val isYMusic = YMusicPackages.isYMusic(selectedPackage) ||
             (selectedPackage == null && YMusicPackages.isYMusic(YMusicMediaBridge.sessionPackageName))
         binding.musicControls.visibility = if (isYMusic) View.VISIBLE else View.GONE
+        // Hide the redundant "Music / app name" heading when a live player is shown:
+        // this recovers two text rows, avoiding collisions with the transport buttons.
+        binding.titleMusic.visibility = if (isYMusic) View.GONE else View.VISIBLE
+        binding.subtitleMusic.visibility = if (isYMusic) View.GONE else View.VISIBLE
+        binding.albumArtContainer.visibility = if (isYMusic) View.VISIBLE else View.GONE
+        binding.playbackEqualizer.visibility = if (isYMusic) View.VISIBLE else View.GONE
+        binding.playbackEqualizer.setPlaying(isYMusic && isPlaying)
 
         if (!isYMusic) {
             binding.textNowPlayingTitle.visibility = View.GONE
@@ -379,6 +391,71 @@ class HomeActivity : AppCompatActivity() {
         val minutes = totalSeconds / 60L
         val seconds = totalSeconds % 60L
         return "%d:%02d".format(minutes, seconds)
+    }
+
+    /**
+     * Android layouts use dp/sp, not physical video pixels. Resize the two largest gauge
+     * strings from the AVAILABLE measured card dimensions so 1024x600, 1280x720 and
+     * 1920x1080 panels (and vendor density/font scaling) cannot draw across cards.
+     * The baseline dimen is never exceeded, so fonts stay consistent on large screens.
+     */
+    private fun configureResponsiveGauges() {
+        binding.gaugeSpeed.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
+            fitGaugeText(
+                binding.textSpeed, binding.gaugeSpeed, R.dimen.speed_text,
+                "888", 0.58f
+            )
+        }
+        binding.gaugeClock.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
+            fitGaugeText(
+                binding.clockTime, binding.gaugeClock, R.dimen.clock_text,
+                "23:59", 0.46f
+            )
+        }
+        binding.musicInfoColumn.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
+            // Text may be enlarged in system font settings. Keep both lines inside
+            // the remaining space above progress, timer and playback controls.
+            val room = binding.musicInfoColumn.height -
+                binding.musicControls.height -
+                binding.musicProgress.height -
+                binding.textElapsed.height -
+                (18f * resources.displayMetrics.density).toInt()
+            if (room > 0) {
+                val titleBase = resources.getDimension(R.dimen.music_title_text)
+                val artistBase = resources.getDimension(R.dimen.music_artist_text)
+                val ratio = (room.toFloat() / (titleBase + artistBase))
+                    .coerceIn(0.52f, 1f)
+                setTextPxIfNeeded(binding.textNowPlayingTitle, titleBase * ratio)
+                setTextPxIfNeeded(binding.textNowPlayingArtist, artistBase * ratio)
+            }
+        }
+    }
+
+    private fun fitGaugeText(
+        text: TextView,
+        container: View,
+        baseRes: Int,
+        widestExample: String,
+        heightRatio: Float
+    ) {
+        if (container.width <= 0 || container.height <= 0) return
+        val baselinePx = resources.getDimension(baseRes)
+        val samplePaint = android.text.TextPaint(text.paint).apply { textSize = baselinePx }
+        val textWidth = samplePaint.measureText(widestExample).coerceAtLeast(1f)
+        val availWidth = (container.width - container.paddingLeft - container.paddingRight -
+            (8f * resources.displayMetrics.density)).coerceAtLeast(1f)
+        val desiredPx = minOf(
+            baselinePx,
+            baselinePx * availWidth / textWidth,
+            container.height * heightRatio
+        ).coerceAtLeast(20f * resources.displayMetrics.density)
+        setTextPxIfNeeded(text, desiredPx)
+    }
+
+    private fun setTextPxIfNeeded(text: TextView, px: Float) {
+        if (abs(text.textSize - px) > 0.75f) {
+            text.setTextSize(TypedValue.COMPLEX_UNIT_PX, px)
+        }
     }
 
     /** A launcher must never finish itself - on some ROMs that leaves a blank screen. */
@@ -454,7 +531,8 @@ class HomeActivity : AppCompatActivity() {
             when {
                 !state.permissionGranted -> R.string.gps_permission_needed
                 !state.gpsEnabled -> R.string.gps_disabled
-                !state.hasFix -> R.string.gps_acquiring
+                !state.gpsFixPresent -> R.string.gps_acquiring
+                !state.hasFix -> R.string.gps_speed_unavailable
                 else -> R.string.gps_ready
             }
         )
@@ -881,6 +959,7 @@ class HomeActivity : AppCompatActivity() {
         // Unregister the moment anything else comes to the foreground - this process is alive
         // for as long as the head unit is powered.
         viewModel.stop()
+        binding.playbackEqualizer.setPlaying(false)
         leftAtElapsedMs = SystemClock.elapsedRealtime()
     }
 

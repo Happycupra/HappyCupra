@@ -282,6 +282,7 @@
                     android:layout_height="match_parent"
                     android:layout_marginStart="8dp"
                     android:layout_weight="1"
+                    android:id="@+id/musicInfoColumn"
                     android:gravity="center_vertical"
                     android:orientation="vertical">
 
@@ -314,7 +315,7 @@
                         android:maxLines="1"
                         android:text="@string/media_title_unavailable"
                         android:textColor="@color/cockpit_text_primary"
-                        android:textSize="21sp"
+                        android:textSize="@dimen/music_title_text"
                         android:textStyle="bold" />
 
                     <TextView
@@ -324,7 +325,7 @@
                         android:ellipsize="end"
                         android:maxLines="1"
                         android:textColor="@color/cockpit_text_secondary"
-                        android:textSize="14sp" />
+                        android:textSize="@dimen/music_artist_text" />
 
                     <ProgressBar
                         android:id="@+id/musicProgress"

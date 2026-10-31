@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.15 — 2026-10-31
+
+- Responsive dashboard for 1024×600, 1280×720 and Full-HD-density Android head units; measured gauge text resizes down to avoid overlaps on vendor ROMs.
+- Compact YMusic player card with scalable controls and animated 5-bar playback-state equalizer (not live audio-frequency sampling).
+- GPS speed comes **only** from `LocationManager.GPS_PROVIDER` / `Location.getSpeed()` (m/s), with speed-accuracy screening, monotonic timestamps, lightweight filtering and a spike gate. No coordinate-distance fallback. Unknown speed is `--`, not a fabricated `0`.
+- GPS speed indication is separate from presence of a GPS position fix; stale fixes disappear automatically.
+- No attempt to alter the physical display resolution; Android device controls screen mode and DPI.
+
 ## 0.14 — 2026-10-31
 
 - Added Android Share target for supported YouTube / YouTube Music track and playlist URLs.

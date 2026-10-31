@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Width qualifier, not smallestWidth: Android 1080p panels at 2x density can be 960dp wide. -->
+<resources>
+    <dimen name="screen_padding">18dp</dimen>
+    <dimen name="gap">14dp</dimen>
+    <dimen name="speed_text">116sp</dimen>
+    <dimen name="clock_text">84sp</dimen>
+    <dimen name="card_height">196dp</dimen>
+    <dimen name="album_art_size">104dp</dimen>
+    <dimen name="music_control_height">46dp</dimen>
+    <dimen name="dock_height">84dp</dimen>
+    <dimen name="music_title_text">20sp</dimen>
+    <dimen name="music_artist_text">14sp</dimen>
+</resources>

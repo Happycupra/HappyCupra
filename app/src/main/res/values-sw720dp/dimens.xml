@@ -13,7 +13,11 @@
 
     <dimen name="card_label_text">26sp</dimen>
     <dimen name="card_icon">52dp</dimen>
-    <dimen name="card_height">192dp</dimen>
+    <dimen name="card_height">204dp</dimen>
+    <dimen name="album_art_size">112dp</dimen>
+    <dimen name="music_control_height">48dp</dimen>
+    <dimen name="music_title_text">21sp</dimen>
+    <dimen name="music_artist_text">15sp</dimen>
 
     <dimen name="dock_height">88dp</dimen>
     <dimen name="dock_icon">52dp</dimen>

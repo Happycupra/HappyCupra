@@ -42,6 +42,12 @@ In launcher settings (long-press the settings icon) choose between **Resume last
 
 YMusic v4 itself resumes the last saved queue through its Play Again history. Its upstream policy resumes within the track only when five minutes or more remain; shorter songs may restart from the beginning. This feature does not add a custom position override. If YMusic is on the **phone** and the launcher is on a **separate Android head unit**, Android Share cannot deliver directly across those devices.
 
+## Full-HD dashboard, equalizer and GPS speed (v0.15)
+
+The dashboard scales its gauge typography to the actual measured card bounds and provides width-aware density resources for 1024×600, 1280×720 and 1920×1080-class displays. The launcher cannot change the display panel’s native resolution or vendor DPI setting. The YMusic player hides redundant app-name rows when displaying track metadata, retains accessible controls, and draws a five-bar indicator only when playback is running. **It is a playback-state animation, not an FFT from the audio stream**; no audio-recording permission is requested.
+
+GPS speed uses only Android’s GPS provider, speed in **m/s** as supplied by `Location.getSpeed()` (usually GNSS Doppler). It never computes speed from two coordinates and never assumes km/h input. Missing speed or poor reported speed accuracy is shown as **--**, not zero. Implausible jumps are ignored and the readout is lightly smoothed; valid updates require fine location permission, enabled GPS and a fresh fix. On some head units the hardware GPS firmware itself may provide inaccurate velocity; if so, log the raw provider speed and compare to a reference GPS app with the same antenna.
+
 ## Features
 
 | Area | Behaviour |
