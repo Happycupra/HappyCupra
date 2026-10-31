@@ -187,6 +187,41 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
+            android:text="@string/music_visualizer_heading" />
+
+        <RadioGroup
+            android:id="@+id/groupMusicVisualizer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <RadioButton
+                android:id="@+id/visualizerEqualizer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:text="@string/music_visualizer_equalizer" />
+
+            <RadioButton
+                android:id="@+id/visualizerDancer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:text="@string/music_visualizer_dancer" />
+        </RadioGroup>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/music_visualizer_hint"
+            android:textColor="@color/cockpit_text_dim"
+            android:textSize="12sp" />
+
+        <TextView
+            style="@style/Text.Caption"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
             android:text="@string/music_start_mode_label" />
 
         <RadioGroup
