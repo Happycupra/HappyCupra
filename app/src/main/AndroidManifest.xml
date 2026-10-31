@@ -69,6 +69,8 @@
 
         <!-- YMusic (ymusic.io): explicit visibility for reliable autostart on Android 11+. -->
         <package android:name="com.kapp.youtube.final" />
+        <package android:name="io.ymusic.android" />
+        <package android:name="io.ymusic.android.debug" />
     </queries>
 
     <application
