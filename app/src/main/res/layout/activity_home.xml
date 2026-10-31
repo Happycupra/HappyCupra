@@ -250,7 +250,7 @@
                 android:layout_width="@dimen/gap"
                 android:layout_height="match_parent" />
 
-            <LinearLayout
+            <FrameLayout
                 android:id="@+id/cardMusic"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
@@ -258,9 +258,15 @@
                 android:background="@drawable/bg_card"
                 android:clickable="true"
                 android:focusable="true"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:padding="10dp">
+                android:padding="9dp">
+
+                <LinearLayout
+                    android:id="@+id/musicTopContent"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="@dimen/music_visualizer_height"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
 
                 <FrameLayout
                     android:id="@+id/albumArtContainer"
@@ -327,14 +333,6 @@
                         android:maxLines="1"
                         android:textColor="@color/cockpit_text_secondary"
                         android:textSize="@dimen/music_artist_text" />
-
-                    <com.carlauncherc.launcher.ui.PlaybackEqualizerView
-                        android:id="@+id/playbackEqualizer"
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/music_visualizer_height"
-                        android:layout_marginTop="3dp"
-                        android:contentDescription="@string/media_visualizer"
-                        android:visibility="gone" />
 
                     <ProgressBar
                         android:id="@+id/musicProgress"
@@ -414,7 +412,16 @@
                             android:src="@drawable/ic_media_next" />
                     </LinearLayout>
                 </LinearLayout>
-            </LinearLayout>
+                </LinearLayout>
+
+                <com.carlauncherc.launcher.ui.PlaybackEqualizerView
+                    android:id="@+id/playbackEqualizer"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/music_visualizer_height"
+                    android:layout_gravity="bottom"
+                    android:contentDescription="@string/media_visualizer"
+                    android:visibility="gone" />
+            </FrameLayout>
         </LinearLayout>
     </LinearLayout>
 
