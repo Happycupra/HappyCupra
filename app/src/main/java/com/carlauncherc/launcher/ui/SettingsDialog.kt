@@ -161,6 +161,13 @@ object SettingsDialog {
             onPrefsChanged()
         }
 
+        val realAudioSync = view.findViewById<CheckBox>(R.id.checkRealAudioSync)
+        realAudioSync.isChecked = Prefs.musicRealAudioSync
+        realAudioSync.setOnCheckedChangeListener { _, enabled ->
+            Prefs.musicRealAudioSync = enabled
+            onPrefsChanged() // HomeActivity requests RECORD_AUDIO only on explicit opt-in.
+        }
+
         // Starting a saved link is a YMusic v4 feature; resume uses its own Play Again history.
         val startGroup = view.findViewById<RadioGroup>(R.id.groupMusicStartMode)
         val savedLink = view.findViewById<TextView>(R.id.textMusicStartLink)

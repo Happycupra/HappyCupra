@@ -231,6 +231,20 @@
             android:textColor="@color/cockpit_text_dim"
             android:textSize="12sp" />
 
+        <CheckBox
+            android:id="@+id/checkRealAudioSync"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp"
+            android:text="@string/music_audio_sync_setting" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/music_audio_sync_hint"
+            android:textColor="@color/cockpit_text_dim"
+            android:textSize="12sp" />
+
         <TextView
             style="@style/Text.Caption"
             android:layout_width="match_parent"

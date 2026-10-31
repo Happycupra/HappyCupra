@@ -25,6 +25,7 @@ object Prefs {
     const val KEY_MUSIC_AUTOSTART = "pref_music_autostart"
     const val KEY_MUSIC_AUTOPLAY = "pref_music_autoplay"
     const val KEY_MUSIC_VISUALIZER_MODE = "pref_music_visualizer_mode"
+    const val KEY_MUSIC_REAL_AUDIO_SYNC = "pref_music_real_audio_sync"
     const val KEY_MUSIC_START_LINK = "pref_music_start_link"
     const val KEY_MUSIC_START_MODE = "pref_music_start_mode"
     const val KEY_MUSIC_START_LINK_USED = "pref_music_start_link_used"
@@ -89,6 +90,14 @@ object Prefs {
     var musicAutoPlay: Boolean
         get() = sp.getBoolean(KEY_MUSIC_AUTOPLAY, true)
         set(value) = sp.edit().putBoolean(KEY_MUSIC_AUTOPLAY, value).apply()
+
+    /**
+     * Opt-in only: this requests RECORD_AUDIO at runtime when enabled.
+     * Existing users keep the synthetic animation until they choose otherwise.
+     */
+    var musicRealAudioSync: Boolean
+        get() = sp.getBoolean(KEY_MUSIC_REAL_AUDIO_SYNC, false)
+        set(value) = sp.edit().putBoolean(KEY_MUSIC_REAL_AUDIO_SYNC, value).apply()
 
     const val VISUALIZER_EQUALIZER = "equalizer"
     const val VISUALIZER_DANCER = "dancer"

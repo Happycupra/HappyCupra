@@ -34,8 +34,8 @@ class AudioSpectrumAnalyzerTest {
 
     @Test fun capturesHighFrequenciesSeparately() {
         val fft = ByteArray(512)
-        fft[2 * 190] = 100
-        fft[2 * 190 + 1] = 50
+        fft[2 * 250] = 100
+        fft[2 * 250 + 1] = 50
         val frame = AudioSpectrumAnalyzer().analyze(fft)
         assertNotNull(frame)
         assertTrue(frame!!.bands.last() > frame.bands.first())
