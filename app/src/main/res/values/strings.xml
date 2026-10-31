@@ -98,7 +98,9 @@
     <string name="first_run_home_role">Next: choose CarLauncher C as your default Home launcher.</string>
     <string name="first_run_done">CarLauncher C setup completed.</string>
     <string name="changelog_title">What’s new in CarLauncher C %1$s</string>
-    <string name="changelog_current">• Autostart made substantially more robust.
+    <string name="changelog_current">• YMusic v4: song title, artist, playback controls and autostart recognise the new app.
+• Legacy YMusic is still supported; stale selections migrate to v4 when possible.
+• Autostart made substantially more robust.
 • YMusic now uses a 30-second playback watchdog and stays in the background.
 • MediaSession, YMusic media-button and system PLAY fallbacks work together.
 • CarLauncher C receives an additional best-effort boot start when already selected as Home.
