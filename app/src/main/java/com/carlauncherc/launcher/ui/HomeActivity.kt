@@ -1,6 +1,8 @@
 package com.carlauncherc.launcher.ui
 
 import android.Manifest
+import android.content.pm.PackageManager
+import androidx.core.content.ContextCompat
 import android.content.Intent
 import android.app.role.RoleManager
 import android.media.AudioManager
@@ -37,6 +39,7 @@ import com.carlauncherc.launcher.databinding.ActivityHomeBinding
 import com.carlauncherc.launcher.location.HeadingSource
 import com.carlauncherc.launcher.location.VehicleState
 import com.carlauncherc.launcher.media.MusicStartLink
+import com.carlauncherc.launcher.media.RealAudioVisualizer
 import com.carlauncherc.launcher.media.YMusicMediaBridge
 import com.carlauncherc.launcher.media.YMusicPackages
 import com.carlauncherc.launcher.update.ApkInstaller
@@ -62,6 +65,16 @@ class HomeActivity : AppCompatActivity() {
 
     private val app: CarLauncherApp get() = application as CarLauncherApp
 
+    private val liveAudio = RealAudioVisualizer { spectrum ->
+        // Listener callbacks may run on a framework audio thread. All View state lives on UI.
+        if (::binding.isInitialized) binding.playbackEqualizer.post {
+            if (lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED) &&
+                Prefs.musicRealAudioSync) {
+                binding.playbackEqualizer.setAudioSpectrum(spectrum)
+            }
+        }
+    }
+    private var audioCaptureUnsupported = false
     private var lastCardinal: String? = null
     private var leftAtElapsedMs = 0L
     private var firstRunSetupActive = false
@@ -73,6 +86,20 @@ class HomeActivity : AppCompatActivity() {
     ) { _ ->
         viewModel.onPermissionResult()
         if (firstRunSetupActive) continueFirstRunSetup()
+    }
+
+    private val realAudioPermission = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { granted ->
+        if (!granted) {
+            Prefs.musicRealAudioSync = false
+            toast(getString(R.string.music_audio_sync_permission_denied))
+        }
+        audioCaptureUnsupported = false
+        YMusicMediaBridge.nowPlaying.value.let { info ->
+            renderNowPlaying(info.title, info.artist, info.isPlaying,
+                info.artwork, info.durationMs, info.positionMs)
+        }
     }
 
     private val mediaAccessSetup = registerForActivityResult(
@@ -340,6 +367,7 @@ class HomeActivity : AppCompatActivity() {
             isYMusic || visualizerMode != Prefs.VISUALIZER_EQUALIZER
         ) View.VISIBLE else View.GONE
         binding.playbackEqualizer.setPlaying(isYMusic && isPlaying)
+        syncRealAudioVisualizer(isYMusic && isPlaying)
 
         if (!isYMusic) {
             binding.textNowPlayingTitle.visibility = View.GONE
@@ -388,6 +416,34 @@ class HomeActivity : AppCompatActivity() {
         binding.btnMusicPlayPause.setImageResource(
             if (isPlaying) R.drawable.ic_media_pause else R.drawable.ic_media_play
         )
+    }
+
+    private fun hasRealAudioPermission(): Boolean =
+        ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) ==
+            PackageManager.PERMISSION_GRANTED
+
+    /**
+     * Use device output-mix FFT only while the launcher is RESUMED, YMusic is PLAYING,
+     * Equalizer is selected and the user opted in. No microphone capture is constructed.
+     * A broken/unsupported head unit falls back to the existing synthetic animation.
+     */
+    private fun syncRealAudioVisualizer(ymusicPlaying: Boolean) {
+        val shouldCapture = Prefs.musicRealAudioSync &&
+            Prefs.musicVisualizerMode == Prefs.VISUALIZER_EQUALIZER &&
+            ymusicPlaying && hasRealAudioPermission() &&
+            lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)
+
+        if (!shouldCapture) {
+            liveAudio.stop()
+            binding.playbackEqualizer.clearAudioSpectrum()
+            audioCaptureUnsupported = false
+            return
+        }
+        if (liveAudio.isRunning || audioCaptureUnsupported) return
+        if (!liveAudio.start()) {
+            audioCaptureUnsupported = true
+            toast(getString(R.string.music_audio_sync_unsupported))
+        }
     }
 
     private fun formatMediaTime(ms: Long): String {
@@ -618,6 +674,10 @@ class HomeActivity : AppCompatActivity() {
                 YMusicMediaBridge.nowPlaying.value.let { info ->
                     renderNowPlaying(info.title, info.artist, info.isPlaying,
                         info.artwork, info.durationMs, info.positionMs)
+                }
+                // Ask only when the person explicitly enabled real FFT in settings.
+                if (Prefs.musicRealAudioSync && !hasRealAudioPermission()) {
+                    realAudioPermission.launch(Manifest.permission.RECORD_AUDIO)
                 }
             }
         )
@@ -987,6 +1047,9 @@ class HomeActivity : AppCompatActivity() {
         // Unregister the moment anything else comes to the foreground - this process is alive
         // for as long as the head unit is powered.
         viewModel.stop()
+        liveAudio.stop()
+        binding.playbackEqualizer.clearAudioSpectrum()
+        audioCaptureUnsupported = false
         binding.playbackEqualizer.setActive(false)
         leftAtElapsedMs = SystemClock.elapsedRealtime()
     }

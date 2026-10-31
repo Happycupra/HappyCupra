@@ -7,6 +7,7 @@ import android.os.SystemClock
 import android.util.AttributeSet
 import android.view.View
 import com.carlauncherc.launcher.R
+import com.carlauncherc.launcher.media.AudioSpectrumFrame
 import kotlin.math.PI
 import kotlin.math.abs
 import kotlin.math.min
@@ -54,6 +55,9 @@ class PlaybackEqualizerView @JvmOverloads constructor(
     private var beforeB: DanceSkeleton? = null
     private var transitionAt = 0L
     private var scheduled = false
+    private var liveSpectrum: AudioSpectrumFrame? = null
+    private var liveSpectrumAtMs = Long.MIN_VALUE
+    private var smoothedBars = FloatArray(0)
 
     private val ticker = object : Runnable {
         override fun run() {
@@ -62,6 +66,23 @@ class PlaybackEqualizerView @JvmOverloads constructor(
             invalidate()
             scheduleFrame()
         }
+    }
+
+    /**
+     * Supply FFT frequency amplitudes from a successful, opt-in platform audio capture.
+     * When frames stop arriving we automatically return to synthetic animation.
+     */
+    fun setAudioSpectrum(frame: AudioSpectrumFrame) {
+        liveSpectrum = frame
+        liveSpectrumAtMs = SystemClock.uptimeMillis()
+        invalidate()
+    }
+
+    fun clearAudioSpectrum() {
+        liveSpectrum = null
+        liveSpectrumAtMs = Long.MIN_VALUE
+        smoothedBars = FloatArray(0)
+        invalidate()
     }
 
     fun setBarColor(color: Int) {
@@ -161,14 +182,33 @@ class PlaybackEqualizerView @JvmOverloads constructor(
         val pitch = w / count
         val bw = pitch * 0.57f
         val radius = bw * 0.33f
+        val spectrum = liveSpectrum?.takeIf {
+            playing && liveSpectrumAtMs > 0L && now - liveSpectrumAtMs in 0L..1_500L
+        }
+        if (smoothedBars.size != count) smoothedBars = FloatArray(count)
         val t = now / 1000.0
         for (i in 0 until count) {
-            val a = sin(i * 0.69 + t * 7.8)
-            val b = sin(i * 0.24 - t * 11.5)
-            val beat = abs(sin(t * PI * 2.0))
-            val power = if (playing) {
-                (0.12 + 0.7 * abs(0.62 * a + 0.38 * b) + 0.12 * beat).coerceIn(0.13, 0.97)
-            } else 0.14
+            val power = if (spectrum != null) {
+                // Log-frequency bands: low bass on the left, treble on the right.
+                val freqIndex = ((i.toFloat() / count) * spectrum.bands.size)
+                    .toInt().coerceIn(0, spectrum.bands.lastIndex)
+                val target = spectrum.bands[freqIndex]
+                val previous = smoothedBars[i]
+                val alpha = if (target > previous) 0.72f else 0.25f
+                val filtered = previous + alpha * (target - previous)
+                smoothedBars[i] = filtered
+                0.07 + filtered * 0.89
+            } else {
+                // Unsupported / denied capture, silence, or a lost audio session.
+                // Keep the familiar fallback, never claim it is a real FFT.
+                val a = sin(i * 0.69 + t * 7.8)
+                val b = sin(i * 0.24 - t * 11.5)
+                val beat = abs(sin(t * PI * 2.0))
+                if (playing) {
+                    (0.12 + 0.7 * abs(0.62 * a + 0.38 * b) + 0.12 * beat)
+                        .coerceIn(0.13, 0.97)
+                } else 0.14
+            }
             val bh = (h * power).toFloat().coerceAtLeast(2f * density)
             val x = pitch * i + (pitch - bw) / 2f
             canvas.drawRoundRect(x, h - bh, x + bw, h, radius, radius, paint)

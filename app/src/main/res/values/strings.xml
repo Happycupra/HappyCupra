@@ -112,6 +112,10 @@
     <string name="media_album_art">Album cover</string>
     <string name="media_visualizer">Animated music indicator</string>
     <string name="music_visualizer_heading">Music visualization</string>
+    <string name="music_audio_sync_setting">Real audio sync / bass beat (beta)</string>
+    <string name="music_audio_sync_hint">Optional, only for Equalizer: analyze the live output mix FFT instead of a simulated wave. Android requests microphone permission for this audio analysis, but CarLauncher does not record from the microphone or save sound. Some radios block playback capture. If no signal is available, the synthetic animation remains.</string>
+    <string name="music_audio_sync_permission_denied">Audio permission denied. Synthetic equalizer remains active.</string>
+    <string name="music_audio_sync_unsupported">Radio blocks real audio visualization. Using synthetic equalizer.</string>
     <string name="music_visualizer_equalizer">Equalizer — full-width animation</string>
     <string name="music_visualizer_dancer">Stick figure — solo</string>
     <string name="music_visualizer_duo_sync">Two dancers — synchronized</string>
@@ -123,7 +127,10 @@
     <string name="first_run_home_role">Next: choose CarLauncher C as your default Home launcher.</string>
     <string name="first_run_done">CarLauncher C setup completed.</string>
     <string name="changelog_title">What’s new in CarLauncher C %1$s</string>
-    <string name="changelog_current">• NEW: 12 dance movements, smooth random changes, solo and synchronized/freestyle duo.
+    <string name="changelog_current">• NEW: Optional real-time frequency equalizer, synchronized to actual playback if supported.
+• Opt-in via Settings → Music visualization → Real audio sync (beta).
+• If unsupported or permission denied, synthetic equalizer remains.
+• NEW: 12 dance movements, smooth random changes, solo and synchronized/freestyle duo.
 • NEW: Two articulated figures span the full-width music card.
 • NEW: Idle figures sit, lie down, stretch or wave.
 • Choose full-width equalizer or dancing stick figure in launcher settings.
