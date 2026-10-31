@@ -16,6 +16,9 @@ object Prefs {
     private const val FILE = "car_launcher"
 
     const val KEY_SPEED_UNIT = "pref_speed_unit"
+    const val KEY_DASHBOARD_PRESET = "pref_dashboard_preset"
+    const val KEY_DASHBOARD_SHOW_NAV = "pref_dashboard_show_nav"
+    const val KEY_DASHBOARD_SHOW_MUSIC = "pref_dashboard_show_music"
     const val KEY_THEME_MODE = "pref_theme_mode"
     const val KEY_COMPASS_SOURCE = "pref_compass_source"
     const val KEY_COMPASS_16 = "pref_compass_16point"
@@ -53,6 +56,18 @@ object Prefs {
     fun init(context: Context) {
         sp = context.applicationContext.getSharedPreferences(FILE, Context.MODE_PRIVATE)
     }
+
+    var dashboardPreset: DashboardPreset
+        get() = DashboardPreset.parse(sp.getString(KEY_DASHBOARD_PRESET, DashboardPreset.CLASSIC.stored))
+        set(value) = sp.edit().putString(KEY_DASHBOARD_PRESET, value.stored).apply()
+
+    var dashboardShowNav: Boolean
+        get() = sp.getBoolean(KEY_DASHBOARD_SHOW_NAV, true)
+        set(value) = sp.edit().putBoolean(KEY_DASHBOARD_SHOW_NAV, value).apply()
+
+    var dashboardShowMusic: Boolean
+        get() = sp.getBoolean(KEY_DASHBOARD_SHOW_MUSIC, true)
+        set(value) = sp.edit().putBoolean(KEY_DASHBOARD_SHOW_MUSIC, value).apply()
 
     var speedUnit: String
         get() = sp.getString(KEY_SPEED_UNIT, Format.UNIT_KMH) ?: Format.UNIT_KMH
