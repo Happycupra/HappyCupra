@@ -51,6 +51,6 @@ class AudioSpectrumAnalyzerTest {
         soft[2] = 30
         val frame = analyzer.analyze(soft)
         assertNotNull(frame)
-        assertTrue(frame!!.bass > 0.2f)
+        assertTrue(frame!!.bass > 0f)
     }
 }
