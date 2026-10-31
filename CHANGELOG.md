@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.18 — 2026-10-31
+
+- Added **opt-in real-time FFT equalizer** via Android audiofx.Visualizer on global output-mix audio session 0. Unlike the previous synthetic animation, bands respond to frequency energy in the playing audio.
+- Requires explicit RECORD_AUDIO runtime consent and MODIFY_AUDIO_SETTINGS manifest permission. CarLauncher **does not record microphone PCM**, save samples, or transmit audio.
+- Settings → Music visualization → Real audio sync / bass beat (beta). **Off by default**. Used only for the Equalizer mode while YMusic is playing and CarLauncher is foreground.
+- Many head-unit ROMs restrict or omit global playback capture. Unsupported effects or silent FFT automatically fall back to the existing synthetic display; reliable real sync cannot be guaranteed on every device.
+- Added pure Kotlin logarithmic FFT frequency-band analysis and unit tests, plus capture lifecycle cleanup.
+
 ## 0.17 — 2026-10-31
 
 - Added twelve articulated stick-figure dance movements with randomized sequencing, eased transitions and no immediate move repetitions.
