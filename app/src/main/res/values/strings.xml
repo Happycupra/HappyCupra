@@ -10,6 +10,7 @@
     <string name="gps_permission_needed">Tap to enable GPS speed</string>
     <string name="gps_precise_needed">Precise location required for speed</string>
     <string name="gps_ready">GPS</string>
+    <string name="gps_speed_unavailable">GPS speed unavailable</string>
     <string name="tap_to_switch_units">Tap to switch units</string>
     <string name="heading">Heading</string>
     <string name="heading_source_gps">GPS</string>
@@ -109,13 +110,28 @@
     <string name="media_play_pause">Play or pause</string>
     <string name="media_next">Next track</string>
     <string name="media_album_art">Album cover</string>
+    <string name="media_visualizer">Animated music indicator</string>
+    <string name="music_visualizer_heading">Music visualization</string>
+    <string name="music_visualizer_equalizer">Equalizer — full-width animation</string>
+    <string name="music_visualizer_dancer">Stick figure — solo</string>
+    <string name="music_visualizer_duo_sync">Two dancers — synchronized</string>
+    <string name="music_visualizer_duo_random">Two dancers — random freestyle</string>
+    <string name="music_visualizer_hint">12 different dance moves with gentle random transitions. The duo dances together or independently. Without music the figures may sit, lie down, stretch or wave. Beat timing is simulated, not detected from the song.</string>
     <string name="media_time_zero">0:00</string>
     <string name="settings_music_autostart_hint">YMusic starts in the background with a startup watchdog: CarLauncher C waits briefly, then retries MediaSession and media-button PLAY until playback is actually detected. Other music apps open normally.</string>
     <string name="first_run_media_access">Next: allow CarLauncher C media access for YMusic title and controls.</string>
     <string name="first_run_home_role">Next: choose CarLauncher C as your default Home launcher.</string>
     <string name="first_run_done">CarLauncher C setup completed.</string>
     <string name="changelog_title">What’s new in CarLauncher C %1$s</string>
-    <string name="changelog_current">• Save a song or playlist link through Android Share → CarLauncher C.
+    <string name="changelog_current">• NEW: 12 dance movements, smooth random changes, solo and synchronized/freestyle duo.
+• NEW: Two articulated figures span the full-width music card.
+• NEW: Idle figures sit, lie down, stretch or wave.
+• Choose full-width equalizer or dancing stick figure in launcher settings.
+• The figure rests, sits and lies down when playback is stopped; animation pauses in background.
+• Responsive Full HD / high-density dashboard with compact music controls and adaptive text.
+• Playback-synchronized animated equalizer (visual indicator, not microphone sampling).
+• GPS-only Doppler speed, no more noisy distance/time fallback; stale and unreliable speed hidden.
+• Save a song or playlist link through Android Share → CarLauncher C.
 • Choose resume, open the saved link once, or open it on every start.
 • YMusic v4 resumes its own last queue; playlist-only links open the playlist page.
 • YMusic v4: song title, artist, playback controls and autostart recognise the new app.

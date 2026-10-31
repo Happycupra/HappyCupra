@@ -42,6 +42,24 @@ In launcher settings (long-press the settings icon) choose between **Resume last
 
 YMusic v4 itself resumes the last saved queue through its Play Again history. Its upstream policy resumes within the track only when five minutes or more remain; shorter songs may restart from the beginning. This feature does not add a custom position override. If YMusic is on the **phone** and the launcher is on a **separate Android head unit**, Android Share cannot deliver directly across those devices.
 
+## Solo and duo choreography (v0.17)
+
+Choose **Equalizer**, **Solo**, **Duo synchronized** or **Duo random freestyle** in Launcher settings → Music visualization. Twelve articulated choreography moves rotate randomly with soft transitions. In synchronized mode both figures follow the same selected move and synthetic beat; in freestyle they use separate seeded choreographers. While paused, each character independently sits, lies down, stretches, waves or stands. The dance floor is full width across the music card, including the area beneath the cover. The earlier Solo preference remains compatible.
+
+The movements are animations, not real beat detection. YMusic's remote MediaSession provides playback status, not an FFT or the raw sound signal. No microphone permission is needed. Rendering stops when the launcher is not visible.
+
+## Full-width equalizer or dancing stick figure (v0.16)
+
+Open **Launcher settings → Music visualization** to switch between the full-width animated equalizer and a dancing stick figure. The character dances while the media session reports playing; when paused or stopped it alternates between standing, sitting and lying down. The equalizer becomes quiet while stopped. The selection is persisted and applies immediately.
+
+The animation follows YMusic's play/pause state, but **does not detect the actual song beat or analyze the PCM audio**: Android's remote MediaSession has no audio-spectrum data. The dancer uses a simulated 120 BPM motion and needs no microphone permission. The animation pauses when the Launcher is in the background.
+
+## Full-HD dashboard, equalizer and GPS speed (v0.15)
+
+The dashboard scales its gauge typography to the actual measured card bounds and provides width-aware density resources for 1024×600, 1280×720 and 1920×1080-class displays. The launcher cannot change the display panel’s native resolution or vendor DPI setting. The YMusic player hides redundant app-name rows when displaying track metadata, retains accessible controls, and draws a five-bar indicator only when playback is running. **It is a playback-state animation, not an FFT from the audio stream**; no audio-recording permission is requested.
+
+GPS speed uses only Android’s GPS provider, speed in **m/s** as supplied by `Location.getSpeed()` (usually GNSS Doppler). It never computes speed from two coordinates and never assumes km/h input. Missing speed or poor reported speed accuracy is shown as **--**, not zero. Implausible jumps are ignored and the readout is lightly smoothed; valid updates require fine location permission, enabled GPS and a fresh fix. On some head units the hardware GPS firmware itself may provide inaccurate velocity; if so, log the raw provider speed and compare to a reference GPS app with the same antenna.
+
 ## Features
 
 | Area | Behaviour |

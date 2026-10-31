@@ -1,5 +1,31 @@
 # Changelog
 
+## 0.17 — 2026-10-31
+
+- Added twelve articulated stick-figure dance movements with randomized sequencing, eased transitions and no immediate move repetitions.
+- Four persistent animation choices: full-width equalizer, solo dancer, synchronized duo and independently choreographed random freestyle duo.
+- The stage now extends across the full music-card width beneath the album cover as well as track metadata.
+- Figures wander sideways while staying in their allotted space; when no music plays they occasionally stand, sit, lie down, stretch or wave.
+- Backward compatible with the previous solo preference and includes all Full-HD and GPS-only improvements prepared in 0.15 and 0.16.
+- MediaSession offers playback state rather than audio PCM, so simulated rhythmic dancing is not actual beat detection. Animations stop repainting while the launcher is in the background.
+
+## 0.16 — 2026-10-31
+
+- Enlarged equalizer into a full-width lane in the player.
+- Added launcher music-visualization setting: **Equalizer** or **Stick figure**.
+- Stick figure dances with a synthetic rhythmic motion while YMusic plays. When stopped, it alternates between standing, sitting and lying down.
+- Audio spectrum and real tempo are not available via YMusic's MediaSession, so this is not a real audio beat detector.
+- Animation scheduling stops when the launcher moves to the background.
+- All previously prepared 0.15 Full-HD layout and GPS-only improvements are included.
+
+## 0.15 — 2026-10-31
+
+- Responsive dashboard for 1024×600, 1280×720 and Full-HD-density Android head units; measured gauge text resizes down to avoid overlaps on vendor ROMs.
+- Compact YMusic player card with scalable controls and animated 5-bar playback-state equalizer (not live audio-frequency sampling).
+- GPS speed comes **only** from `LocationManager.GPS_PROVIDER` / `Location.getSpeed()` (m/s), with speed-accuracy screening, monotonic timestamps, lightweight filtering and a spike gate. No coordinate-distance fallback. Unknown speed is `--`, not a fabricated `0`.
+- GPS speed indication is separate from presence of a GPS position fix; stale fixes disappear automatically.
+- No attempt to alter the physical display resolution; Android device controls screen mode and DPI.
+
 ## 0.14 — 2026-10-31
 
 - Added Android Share target for supported YouTube / YouTube Music track and playlist URLs.

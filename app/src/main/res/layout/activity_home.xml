@@ -50,7 +50,10 @@
                 <TextView
                     android:id="@+id/textSpeed"
                     style="@style/Text.Gauge"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
+                    android:ellipsize="end"
+                    android:gravity="center"
+                    android:maxLines="1"
                     android:layout_height="wrap_content"
                     android:text="@string/speed_placeholder"
                     android:textColor="@color/cockpit_speed"
@@ -59,7 +62,9 @@
                 <TextView
                     android:id="@+id/textSpeedUnit"
                     style="@style/Text.Caption"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
+                    android:ellipsize="end"
+                    android:gravity="center"
                     android:layout_height="wrap_content"
                     android:text="@string/unit_kmh"
                     android:textColor="@color/cockpit_text_secondary"
@@ -68,7 +73,9 @@
                 <TextView
                     android:id="@+id/textSpeedStatus"
                     style="@style/Text.Caption"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
+                    android:ellipsize="end"
+                    android:gravity="center"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:text="@string/gps_acquiring" />
@@ -93,7 +100,9 @@
                 <TextClock
                     android:id="@+id/clockTime"
                     style="@style/Text.Gauge"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
+                    android:ellipsize="end"
+                    android:gravity="center"
                     android:layout_height="wrap_content"
                     android:format12Hour="h:mm"
                     android:format24Hour="HH:mm"
@@ -103,7 +112,9 @@
                 <TextClock
                     android:id="@+id/clockDay"
                     style="@style/Text.Caption"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
+                    android:ellipsize="end"
+                    android:gravity="center"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
                     android:format12Hour="EEEE"
@@ -115,7 +126,9 @@
                 <TextClock
                     android:id="@+id/clockDate"
                     style="@style/Text.Caption"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
+                    android:ellipsize="end"
+                    android:gravity="center"
                     android:layout_height="wrap_content"
                     android:format12Hour="d MMMM yyyy"
                     android:format24Hour="d MMMM yyyy"
@@ -184,6 +197,7 @@
 
         <!-- ========================= QUICK CARDS ========================= -->
         <LinearLayout
+            android:id="@+id/quickCardsRow"
             android:layout_width="match_parent"
             android:layout_height="@dimen/card_height"
             android:baselineAligned="false"
@@ -212,6 +226,7 @@
                     android:id="@+id/titleNav"
                     style="@style/Text.Gauge"
                     android:layout_width="match_parent"
+                    android:maxLines="1"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:ellipsize="end"
@@ -235,7 +250,7 @@
                 android:layout_width="@dimen/gap"
                 android:layout_height="match_parent" />
 
-            <LinearLayout
+            <FrameLayout
                 android:id="@+id/cardMusic"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
@@ -243,13 +258,20 @@
                 android:background="@drawable/bg_card"
                 android:clickable="true"
                 android:focusable="true"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:padding="10dp">
+                android:padding="9dp">
+
+                <LinearLayout
+                    android:id="@+id/musicTopContent"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="@dimen/music_visualizer_height"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
 
                 <FrameLayout
-                    android:layout_width="112dp"
-                    android:layout_height="112dp">
+                    android:id="@+id/albumArtContainer"
+                    android:layout_width="@dimen/album_art_size"
+                    android:layout_height="@dimen/album_art_size">
 
                     <ImageView
                         android:id="@+id/imageAlbumArt"
@@ -265,8 +287,9 @@
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_marginStart="12dp"
+                    android:layout_marginStart="8dp"
                     android:layout_weight="1"
+                    android:id="@+id/musicInfoColumn"
                     android:gravity="center_vertical"
                     android:orientation="vertical">
 
@@ -299,7 +322,7 @@
                         android:maxLines="1"
                         android:text="@string/media_title_unavailable"
                         android:textColor="@color/cockpit_text_primary"
-                        android:textSize="21sp"
+                        android:textSize="@dimen/music_title_text"
                         android:textStyle="bold" />
 
                     <TextView
@@ -309,7 +332,7 @@
                         android:ellipsize="end"
                         android:maxLines="1"
                         android:textColor="@color/cockpit_text_secondary"
-                        android:textSize="14sp" />
+                        android:textSize="@dimen/music_artist_text" />
 
                     <ProgressBar
                         android:id="@+id/musicProgress"
@@ -348,15 +371,17 @@
                     <LinearLayout
                         android:id="@+id/musicControls"
                         android:layout_width="match_parent"
-                        android:layout_height="52dp"
+                        android:layout_height="@dimen/music_control_height"
                         android:layout_marginTop="2dp"
                         android:gravity="center"
                         android:orientation="horizontal">
 
                         <ImageButton
                             android:id="@+id/btnMusicPrevious"
-                            android:layout_width="72dp"
-                            android:layout_height="50dp"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:scaleType="fitCenter"
                             android:background="@drawable/bg_dock_item"
                             android:contentDescription="@string/media_previous"
                             android:padding="10dp"
@@ -364,10 +389,12 @@
 
                         <ImageButton
                             android:id="@+id/btnMusicPlayPause"
-                            android:layout_width="72dp"
-                            android:layout_height="50dp"
-                            android:layout_marginStart="12dp"
-                            android:layout_marginEnd="12dp"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:scaleType="fitCenter"
+                            android:layout_marginStart="6dp"
+                            android:layout_marginEnd="6dp"
                             android:background="@drawable/bg_dock_item"
                             android:contentDescription="@string/media_play_pause"
                             android:padding="10dp"
@@ -375,15 +402,26 @@
 
                         <ImageButton
                             android:id="@+id/btnMusicNext"
-                            android:layout_width="72dp"
-                            android:layout_height="50dp"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:scaleType="fitCenter"
                             android:background="@drawable/bg_dock_item"
                             android:contentDescription="@string/media_next"
                             android:padding="10dp"
                             android:src="@drawable/ic_media_next" />
                     </LinearLayout>
                 </LinearLayout>
-            </LinearLayout>
+                </LinearLayout>
+
+                <com.carlauncherc.launcher.ui.PlaybackEqualizerView
+                    android:id="@+id/playbackEqualizer"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/music_visualizer_height"
+                    android:layout_gravity="bottom"
+                    android:contentDescription="@string/media_visualizer"
+                    android:visibility="gone" />
+            </FrameLayout>
         </LinearLayout>
     </LinearLayout>
 

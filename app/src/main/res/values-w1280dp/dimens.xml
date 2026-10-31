@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- FHD on 1x / 1.5x density panels: use extra pixels without stretching bitmap icons. -->
+<resources>
+    <dimen name="screen_padding">24dp</dimen>
+    <dimen name="gap">16dp</dimen>
+    <dimen name="speed_text">144sp</dimen>
+    <dimen name="speed_unit_text">26sp</dimen>
+    <dimen name="clock_text">106sp</dimen>
+    <dimen name="date_text">23sp</dimen>
+    <dimen name="card_height">258dp</dimen>
+    <dimen name="album_art_size">148dp</dimen>
+    <dimen name="music_control_height">54dp</dimen>
+    <dimen name="music_visualizer_height">90dp</dimen>
+    <dimen name="music_title_text">25sp</dimen>
+    <dimen name="music_artist_text">18sp</dimen>
+    <dimen name="card_icon">58dp</dimen>
+    <dimen name="dock_height">98dp</dimen>
+    <dimen name="dock_icon">56dp</dimen>
+    <dimen name="dock_item_width">90dp</dimen>
+</resources>

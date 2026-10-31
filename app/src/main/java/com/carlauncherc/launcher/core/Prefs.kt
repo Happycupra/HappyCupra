@@ -24,6 +24,7 @@ object Prefs {
     const val KEY_MUSIC_PACKAGE = "pref_music_package"
     const val KEY_MUSIC_AUTOSTART = "pref_music_autostart"
     const val KEY_MUSIC_AUTOPLAY = "pref_music_autoplay"
+    const val KEY_MUSIC_VISUALIZER_MODE = "pref_music_visualizer_mode"
     const val KEY_MUSIC_START_LINK = "pref_music_start_link"
     const val KEY_MUSIC_START_MODE = "pref_music_start_mode"
     const val KEY_MUSIC_START_LINK_USED = "pref_music_start_link_used"
@@ -88,6 +89,24 @@ object Prefs {
     var musicAutoPlay: Boolean
         get() = sp.getBoolean(KEY_MUSIC_AUTOPLAY, true)
         set(value) = sp.edit().putBoolean(KEY_MUSIC_AUTOPLAY, value).apply()
+
+    const val VISUALIZER_EQUALIZER = "equalizer"
+    const val VISUALIZER_DANCER = "dancer"
+    const val VISUALIZER_DUO_SYNC = "duo_sync"
+    const val VISUALIZER_DUO_RANDOM = "duo_random"
+
+    var musicVisualizerMode: String
+        get() = when (val saved = sp.getString(KEY_MUSIC_VISUALIZER_MODE, VISUALIZER_EQUALIZER)) {
+            VISUALIZER_DANCER, VISUALIZER_DUO_SYNC, VISUALIZER_DUO_RANDOM -> saved
+            else -> VISUALIZER_EQUALIZER
+        }
+        set(value) = sp.edit().putString(
+            KEY_MUSIC_VISUALIZER_MODE,
+            when (value) {
+                VISUALIZER_DANCER, VISUALIZER_DUO_SYNC, VISUALIZER_DUO_RANDOM -> value
+                else -> VISUALIZER_EQUALIZER
+            }
+        ).apply()
 
     const val MUSIC_START_RESUME = "resume"
     const val MUSIC_START_ONCE = "once"

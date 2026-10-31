@@ -2,7 +2,6 @@ package com.carlauncherc.launcher.ui
 
 import android.app.Application
 import android.location.Location
-import android.os.SystemClock
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.carlauncherc.launcher.core.Constants
@@ -44,7 +43,7 @@ class HomeViewModel(app: Application) : AndroidViewModel(app) {
     private var tickerJob: Job? = null
 
     private var lastLocation: Location? = null
-    private var lastFixElapsedMs = 0L
+    private var measuredSpeedMps: Float? = null
     private var sensorHeading: Float? = null
 
     /** Called from onResume. Nothing is registered while another app is in the foreground. */
@@ -52,8 +51,13 @@ class HomeViewModel(app: Application) : AndroidViewModel(app) {
         if (locationJob == null && speedProvider.hasPermission) {
             locationJob = viewModelScope.launch {
                 speedProvider.locations().collect { location ->
+                    // Ignore delayed/out-of-order callbacks and old cached GPS fixes.
+                    if (speedProvider.ageMs(location) !in 0..Constants.FIX_STALE_MS ||
+                        (lastLocation != null &&
+                            location.elapsedRealtimeNanos <= lastLocation!!.elapsedRealtimeNanos)
+                    ) return@collect
                     lastLocation = location
-                    lastFixElapsedMs = SystemClock.elapsedRealtime()
+                    measuredSpeedMps = speedProvider.speedOf(location)
                     publish()
                 }
             }
@@ -82,6 +86,9 @@ class HomeViewModel(app: Application) : AndroidViewModel(app) {
     /** Called from onPause. */
     fun stop() {
         locationJob?.cancel(); locationJob = null
+        lastLocation = null
+        measuredSpeedMps = null
+        speedProvider.reset()
         compassJob?.cancel(); compassJob = null
         tickerJob?.cancel(); tickerJob = null
     }
@@ -106,10 +113,11 @@ class HomeViewModel(app: Application) : AndroidViewModel(app) {
 
     private fun publish() {
         val location = lastLocation
-        val ageMs = SystemClock.elapsedRealtime() - lastFixElapsedMs
-        val hasFix = location != null && ageMs in 0..Constants.FIX_STALE_MS
-
-        val speedMps = if (hasFix && location != null) speedProvider.speedOf(location) else 0f
+        // Age is based on the GPS fix itself, not when its callback reached our UI.
+        val gpsFresh = location != null &&
+            speedProvider.ageMs(location) in 0..Constants.FIX_STALE_MS
+        val hasFix = gpsFresh && measuredSpeedMps != null
+        val speedMps = if (hasFix) measuredSpeedMps ?: 0f else 0f
 
         var heading: Float? = null
         var source = HeadingSource.NONE
@@ -117,7 +125,7 @@ class HomeViewModel(app: Application) : AndroidViewModel(app) {
 
         // GPS course-over-ground wins whenever the vehicle is actually moving: a magnetometer
         // inside a metal dash, next to speaker magnets, is routinely tens of degrees out.
-        val gpsUsable = hasFix && location != null &&
+        val gpsUsable = gpsFresh && location != null &&
             location.hasBearing() && speedMps > Constants.GPS_BEARING_MIN_MPS
 
         if (gpsUsable && preference != Prefs.COMPASS_SENSOR) {
@@ -137,7 +145,8 @@ class HomeViewModel(app: Application) : AndroidViewModel(app) {
             headingSource = source,
             gpsEnabled = speedProvider.isGpsEnabled,
             permissionGranted = speedProvider.hasPermission,
-            preciseLocation = speedProvider.hasPermission
+            preciseLocation = speedProvider.hasPermission,
+            gpsFixPresent = gpsFresh
         )
     }
 

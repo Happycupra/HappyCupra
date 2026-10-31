@@ -141,6 +141,26 @@ object SettingsDialog {
             Prefs.musicAutoPlay = checked
         }
 
+        // Music visualization selection is saved and applies to the dashboard instantly.
+        val visualizerGroup = view.findViewById<RadioGroup>(R.id.groupMusicVisualizer)
+        visualizerGroup.check(
+            when (Prefs.musicVisualizerMode) {
+                Prefs.VISUALIZER_DANCER -> R.id.visualizerDancer
+                Prefs.VISUALIZER_DUO_SYNC -> R.id.visualizerDuoSync
+                Prefs.VISUALIZER_DUO_RANDOM -> R.id.visualizerDuoRandom
+                else -> R.id.visualizerEqualizer
+            }
+        )
+        visualizerGroup.setOnCheckedChangeListener { _, selected ->
+            Prefs.musicVisualizerMode = when (selected) {
+                R.id.visualizerDancer -> Prefs.VISUALIZER_DANCER
+                R.id.visualizerDuoSync -> Prefs.VISUALIZER_DUO_SYNC
+                R.id.visualizerDuoRandom -> Prefs.VISUALIZER_DUO_RANDOM
+                else -> Prefs.VISUALIZER_EQUALIZER
+            }
+            onPrefsChanged()
+        }
+
         // Starting a saved link is a YMusic v4 feature; resume uses its own Play Again history.
         val startGroup = view.findViewById<RadioGroup>(R.id.groupMusicStartMode)
         val savedLink = view.findViewById<TextView>(R.id.textMusicStartLink)
