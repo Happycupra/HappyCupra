@@ -11,106 +11,137 @@ import kotlin.math.PI
 import kotlin.math.abs
 import kotlin.math.min
 import kotlin.math.sin
-import kotlin.math.cos
 
 /**
- * Full-width visualizer. Animations mimic a rhythm but DO NOT sample the music:
- * the remote YMusic MediaSession cannot expose PCM or frequency data.
- * Supports quiet equalizer or an idle figure which occasionally sits / lies down.
+ * Full music-card-width stage:
+ *  - equalizer: many bars,
+ *  - solo: one articulated stick figure roams across the stage,
+ *  - duo sync: two mirrored figures share one choreography and beat phase,
+ *  - duo freestyle: two independently seeded random directors.
+ *
+ * Play/pause is read from YMusic MediaSession. Rhythm is SYNTHETIC, not measured audio:
+ * remote MediaSession does not provide song PCM, FFT or actual BPM data.
  */
 class PlaybackEqualizerView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null
 ) : View(context, attrs) {
     private val density = resources.displayMetrics.density
-    private val bars = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+    private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = context.getColor(R.color.cockpit_accent)
         style = Paint.Style.FILL
     }
-    private val lines = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = bars.color
+    private val stroke = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = paint.color
         style = Paint.Style.STROKE
         strokeCap = Paint.Cap.ROUND
         strokeJoin = Paint.Join.ROUND
     }
+    private val stagePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = paint.color
+        alpha = 65
+        strokeWidth = density
+    }
+
     private var playing = false
     private var active = true
     private var mode = VisualizerMotion.EQUALIZER
-    private var idleStartedAt = SystemClock.uptimeMillis()
+    private val startSeed = SystemClock.elapsedRealtime().toInt()
+    private val solo = DanceDirector(startSeed xor 0x1a3b3)
+    private val partner = DanceDirector(startSeed xor 0x72519)
+    private var lastA: DanceSkeleton? = null
+    private var lastB: DanceSkeleton? = null
+    private var beforeA: DanceSkeleton? = null
+    private var beforeB: DanceSkeleton? = null
+    private var transitionAt = 0L
     private var scheduled = false
 
     private val ticker = object : Runnable {
         override fun run() {
             scheduled = false
-            if (shouldAnimate()) {
-                invalidate()
-                scheduleNext()
-            }
+            if (!shouldAnimate()) return
+            invalidate()
+            scheduleFrame()
         }
     }
 
     fun setBarColor(color: Int) {
-        bars.color = color
-        lines.color = color
+        paint.color = color
+        stroke.color = color
+        stagePaint.color = color
+        stagePaint.alpha = 65
         invalidate()
     }
 
     fun setMode(raw: String) {
         val next = VisualizerMotion.normalizeMode(raw)
         if (mode == next) return
+        captureTransition()
         mode = next
-        if (!playing) idleStartedAt = SystemClock.uptimeMillis()
-        updateAnimation()
+        updateFrames()
     }
 
     fun setPlaying(value: Boolean) {
         if (playing == value) return
+        captureTransition()
         playing = value
-        if (!value) idleStartedAt = SystemClock.uptimeMillis()
-        updateAnimation()
+        if (value) {
+            val now = SystemClock.uptimeMillis()
+            solo.reset(now)
+            partner.reset(now)
+        }
+        updateFrames()
     }
 
+    /** Stop ALL scheduled frames when the HOME activity is not foreground. */
     fun setActive(value: Boolean) {
         if (active == value) return
         active = value
-        updateAnimation()
+        updateFrames()
+    }
+
+    private fun captureTransition() {
+        beforeA = lastA
+        beforeB = lastB
+        transitionAt = SystemClock.uptimeMillis()
     }
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        updateAnimation()
+        updateFrames()
     }
 
     override fun onDetachedFromWindow() {
-        stopTicker()
+        stopFrames()
         super.onDetachedFromWindow()
     }
 
     override fun onVisibilityChanged(changedView: View, visibility: Int) {
         super.onVisibilityChanged(changedView, visibility)
-        updateAnimation()
+        updateFrames()
     }
 
     override fun onWindowVisibilityChanged(visibility: Int) {
         super.onWindowVisibilityChanged(visibility)
-        updateAnimation()
+        updateFrames()
     }
 
-    private fun shouldAnimate() =
+    private fun shouldAnimate(): Boolean =
         active && isAttachedToWindow && isShown && windowVisibility == VISIBLE &&
-            (playing || mode == VisualizerMotion.DANCER)
+            (playing || VisualizerMotion.isDancer(mode))
 
-    private fun updateAnimation() {
-        if (shouldAnimate()) scheduleNext() else stopTicker()
+    private fun updateFrames() {
+        if (shouldAnimate()) scheduleFrame() else stopFrames()
         invalidate()
     }
 
-    private fun scheduleNext() {
+    private fun scheduleFrame() {
         if (scheduled || !shouldAnimate()) return
         scheduled = true
-        postDelayed(ticker, if (playing) 33L else 155L)
+        // 30 fps in playback, ~7 fps in idle; no timer while view is hidden.
+        postDelayed(ticker, if (playing) 33L else 145L)
     }
 
-    private fun stopTicker() {
+    private fun stopFrames() {
         removeCallbacks(ticker)
         scheduled = false
     }
@@ -118,103 +149,115 @@ class PlaybackEqualizerView @JvmOverloads constructor(
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         if (width <= 0 || height <= 0) return
-        if (mode == VisualizerMotion.DANCER) drawFigure(canvas) else drawBars(canvas)
+        val now = SystemClock.uptimeMillis()
+        if (mode == VisualizerMotion.EQUALIZER) drawBars(canvas, now)
+        else drawStage(canvas, now)
     }
 
-    private fun drawBars(canvas: Canvas) {
+    private fun drawBars(canvas: Canvas, now: Long) {
         val w = width.toFloat()
         val h = height.toFloat()
-        val preferredPitch = 5.9f * density
-        val count = (w / preferredPitch).toInt().coerceIn(1, 140)
+        val count = (w / (5.9f * density)).toInt().coerceIn(1, 160)
         val pitch = w / count
-        val barW = pitch * 0.57f
-        val radius = barW * 0.33f
-        val time = SystemClock.uptimeMillis() / 1000.0
+        val bw = pitch * 0.57f
+        val radius = bw * 0.33f
+        val t = now / 1000.0
         for (i in 0 until count) {
-            val waveA = sin(i * 0.69 + time * 7.8)
-            val waveB = sin(i * 0.24 - time * 11.5)
-            val fauxBeat = abs(sin(time * PI * 2))
-            val strength = if (playing) {
-                (0.12 + 0.70 * abs(0.62 * waveA + 0.38 * waveB) + 0.12 * fauxBeat)
-                    .coerceIn(0.13, 0.96)
+            val a = sin(i * 0.69 + t * 7.8)
+            val b = sin(i * 0.24 - t * 11.5)
+            val beat = abs(sin(t * PI * 2.0))
+            val power = if (playing) {
+                (0.12 + 0.7 * abs(0.62 * a + 0.38 * b) + 0.12 * beat).coerceIn(0.13, 0.97)
             } else 0.14
-            val barHeight = (h * strength).toFloat().coerceAtLeast(2f * density)
-            val x = i * pitch + (pitch - barW) / 2f
-            canvas.drawRoundRect(x, h - barHeight, x + barW, h, radius, radius, bars)
+            val bh = (h * power).toFloat().coerceAtLeast(2f * density)
+            val x = pitch * i + (pitch - bw) / 2f
+            canvas.drawRoundRect(x, h - bh, x + bw, h, radius, radius, paint)
         }
     }
 
-    private fun drawFigure(canvas: Canvas) {
-        val now = SystemClock.uptimeMillis()
-        val phase = now / 500.0 * PI * 2.0 // synthetic 120 BPM visual tempo
-        val pose = VisualizerMotion.pose(playing, now - idleStartedAt)
+    private fun drawStage(canvas: Canvas, now: Long) {
         val w = width.toFloat()
         val h = height.toFloat()
-        val s = min(h / 110f, w / 180f)
-        val sway = if (playing) sin(phase * 0.5) * min(w * 0.20f, 70f * s) else 0.0
-        val bottom = h - 2f * density
+        val baseline = h - 3f * density
+        stagePaint.strokeWidth = density
+        canvas.drawLine(3f * density, baseline, w - 3f * density, baseline, stagePaint)
 
-        lines.strokeWidth = 1f * density
-        lines.alpha = 70
-        canvas.drawLine(4f * density, bottom, w - 4f * density, bottom, lines)
-        lines.alpha = 255
+        val duo = VisualizerMotion.numberOfDancers(mode) == 2
+        val sync = mode == VisualizerMotion.DUO_SYNC
+        val dancerA = figureFor(solo, now, sync)
+        val dancerB = if (duo) {
+            figureFor(if (sync) solo else partner, now, sync)
+        } else null
 
+        val blending = DanceDirector.ease(((now - transitionAt) / 550f).coerceIn(0f, 1f))
+        val shownA = beforeA?.takeIf { blending < 1f }?.mixed(dancerA, blending) ?: dancerA
+        lastA = shownA
+        if (blending >= 1f) beforeA = null
+
+        val scale = min(h / 106f, w / (if (duo) 280f else 145f))
+        val slowRoam = sin(now / 3_500.0)
+        val centerA = if (duo) w * (0.24 + 0.15 * slowRoam).toFloat()
+            else w * (0.50 + 0.37 * slowRoam).toFloat()
+        drawSkeleton(canvas, shownA, centerA, baseline, scale, mirrored = false)
+
+        if (dancerB != null) {
+            val shownB = beforeB?.takeIf { blending < 1f }?.mixed(dancerB, blending) ?: dancerB
+            lastB = shownB
+            if (blending >= 1f) beforeB = null
+            val partnerRoam = sin(now / 4_100.0 + if (sync) PI else 1.3)
+            val centerB = w * (0.76 + 0.15 * partnerRoam).toFloat()
+            drawSkeleton(canvas, shownB, centerB, baseline, scale, mirrored = sync)
+        } else {
+            lastB = null
+            beforeB = null
+        }
+    }
+
+    private fun figureFor(director: DanceDirector, now: Long, sync: Boolean): DanceSkeleton {
+        if (playing) {
+            val frame = director.dance(now, synchronizedPhase = sync)
+            val old = DancePose.dance(frame.from, frame.phase)
+            val new = DancePose.dance(frame.move, frame.phase)
+            return old.mixed(new, frame.blend)
+        }
+        val frame = director.rest(now)
+        val phase = now / 900.0
+        val old = DancePose.rest(frame.from, phase)
+        val new = DancePose.rest(frame.pose, phase)
+        return old.mixed(new, frame.blend)
+    }
+
+    private fun drawSkeleton(
+        canvas: Canvas,
+        p: DanceSkeleton,
+        x: Float,
+        bottom: Float,
+        size: Float,
+        mirrored: Boolean
+    ) {
         canvas.save()
-        canvas.translate(w * 0.5f + sway.toFloat(), bottom)
-        canvas.scale(s, s)
-        lines.strokeWidth = (2.5f * density / s).coerceIn(2.5f, 5.5f)
-        when (pose) {
-            StickFigurePose.DANCE -> {
-                val kick = sin(phase).toFloat()
-                val bounce = abs(cos(phase)).toFloat() * 7f
-                val lean = kick * 5f
-                circle(canvas, lean, -77f - bounce, 9f)
-                line(canvas, lean, -66f - bounce, lean - 2f, -34f - bounce)
-                line(canvas, lean, -61f - bounce, -23f, -49f - bounce - kick * 20f)
-                line(canvas, lean, -61f - bounce, 23f, -49f - bounce + kick * 20f)
-                line(canvas, lean - 2f, -34f - bounce, -16f - kick * 6f, -16f + kick * 7f)
-                line(canvas, -16f - kick * 6f, -16f + kick * 7f, -24f - kick * 13f, -2f)
-                line(canvas, lean - 2f, -34f - bounce, 14f + kick * 6f, -19f - kick * 5f)
-                line(canvas, 14f + kick * 6f, -19f - kick * 5f, 23f + kick * 12f, -2f)
-            }
-            StickFigurePose.STAND -> {
-                val swayIdle = sin((now - idleStartedAt) / 1900.0).toFloat() * 1.5f
-                circle(canvas, swayIdle, -76f, 9f)
-                line(canvas, swayIdle, -66f, swayIdle, -33f)
-                line(canvas, swayIdle, -61f, -15f, -38f)
-                line(canvas, swayIdle, -61f, 15f, -38f)
-                line(canvas, swayIdle, -33f, -16f, -2f)
-                line(canvas, swayIdle, -33f, 16f, -2f)
-            }
-            StickFigurePose.SIT -> {
-                lines.alpha = 120
-                line(canvas, -30f, -25f, 19f, -25f)
-                line(canvas, -26f, -25f, -26f, -2f)
-                lines.alpha = 255
-                circle(canvas, -8f, -73f, 9f)
-                line(canvas, -8f, -63f, -13f, -28f)
-                line(canvas, -8f, -57f, 10f, -40f)
-                line(canvas, -8f, -57f, -25f, -38f)
-                line(canvas, -13f, -28f, 24f, -26f)
-                line(canvas, 24f, -26f, 24f, -2f)
-                line(canvas, -13f, -28f, 10f, -24f)
-                line(canvas, 10f, -24f, 9f, -2f)
-            }
-            StickFigurePose.LIE -> {
-                circle(canvas, -47f, -19f, 9f)
-                line(canvas, -37f, -18f, 15f, -19f)
-                line(canvas, -28f, -18f, -8f, -5f)
-                line(canvas, -28f, -18f, -8f, -28f)
-                line(canvas, 15f, -19f, 48f, -5f)
-                line(canvas, 15f, -19f, 47f, -19f)
-            }
+        canvas.translate(x, bottom)
+        canvas.scale(if (mirrored) -size else size, size)
+        stroke.strokeWidth = (2.6f * density / size).coerceIn(2.3f, 5.0f)
+        val neck = p.head.shifted(0f, 10f)
+        segment(canvas, neck, p.shoulder)
+        segment(canvas, p.shoulder, p.hip)
+        segment(canvas, p.shoulder, p.leftElbow)
+        segment(canvas, p.leftElbow, p.leftHand)
+        segment(canvas, p.shoulder, p.rightElbow)
+        segment(canvas, p.rightElbow, p.rightHand)
+        segment(canvas, p.hip, p.leftKnee)
+        segment(canvas, p.leftKnee, p.leftFoot)
+        segment(canvas, p.hip, p.rightKnee)
+        segment(canvas, p.rightKnee, p.rightFoot)
+        canvas.drawCircle(p.head.x, p.head.y, 8.1f, stroke)
+        // Tiny hands/feet, especially helpful to read the pose at head-unit sizes.
+        for (j in arrayOf(p.leftHand, p.rightHand, p.leftFoot, p.rightFoot)) {
+            canvas.drawCircle(j.x, j.y, 2f, paint)
         }
         canvas.restore()
     }
 
-    private fun line(c: Canvas, x1: Float, y1: Float, x2: Float, y2: Float) =
-        c.drawLine(x1, y1, x2, y2, lines)
-
-    private fun circle(c: Canvas, x: Float, y: Float, radius: Float) =
-        c.drawCircle(x, y, radius, lines)
+    private fun segment(canvas: Canvas, a: Joint, b: Joint) =
+        canvas.drawLine(a.x, a.y, b.x, b.y, stroke)
 }
