@@ -16,6 +16,13 @@ class YMusicPackagesTest {
         assertFalse(YMusicPackages.isYMusic(null))
     }
 
+    @Test fun v4HelperDoesNotMistakeLegacyForV4() {
+        assertTrue(YMusicPackages.isV4(YMusicPackages.V4))
+        assertTrue(YMusicPackages.isV4(YMusicPackages.V4_DEBUG))
+        assertFalse(YMusicPackages.isV4(YMusicPackages.LEGACY))
+        assertFalse(YMusicPackages.isV4(null))
+    }
+
     @Test fun followsSelectedSessionWhenActive() {
         assertEquals(
             YMusicPackages.LEGACY,
