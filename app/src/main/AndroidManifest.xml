@@ -109,6 +109,21 @@
             </intent-filter>
         </activity>
 
+        <!-- Share a YouTube/YouTube Music song or playlist into CarLauncher C. -->
+        <activity
+            android:name=".media.MusicShareActivity"
+            android:exported="true"
+            android:excludeFromRecents="true"
+            android:noHistory="true"
+            android:label="@string/music_share_target"
+            android:theme="@style/Theme.AppCompat.Dialog.Alert">
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+        </activity>
+
         <receiver
             android:name=".boot.BootReceiver"
             android:enabled="true"

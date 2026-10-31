@@ -34,6 +34,14 @@ Die jeweils zuletzt erfolgreich gebaute APK wird automatisch im `main`-Branch un
 GitHub-Actions-Artefakt `carlauncher-c-debug` verfügbar.
 
 
+## Share a song or playlist as startup music (v0.14)
+
+On the **same Android device where CarLauncher C and YMusic v4 are installed**, open a song or playlist in YouTube/YouTube Music, tap **Share → CarLauncher C — Save as start music**, and confirm. CarLauncher C saves the URL, selects YMusic v4 when installed, enables music autostart and sets **Open once, then resume** as the default.
+
+In launcher settings (long-press the settings icon) choose between **Resume last YMusic queue**, **Open saved link once, then resume**, and **Always open saved link**. Clearing the saved link restores resume mode. For a shared song, YMusic v4 opens and starts the song; a song link with a `v` plus `list` parameter keeps its playlist context. **A playlist-only link opens the playlist page, but does not autoplay**, because this upstream YMusic v4 build handles playlist deeplinks as navigation, not as playback; press Play in YMusic once. The Launcher never sends a generic PLAY command while the link is resolving, since that might start the previous queue instead.
+
+YMusic v4 itself resumes the last saved queue through its Play Again history. Its upstream policy resumes within the track only when five minutes or more remain; shorter songs may restart from the beginning. This feature does not add a custom position override. If YMusic is on the **phone** and the launcher is on a **separate Android head unit**, Android Share cannot deliver directly across those devices.
+
 ## Features
 
 | Area | Behaviour |
