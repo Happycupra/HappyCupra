@@ -18,6 +18,8 @@ import android.view.View
 import android.content.res.ColorStateList
 import android.widget.Toast
 import android.widget.TextView
+import android.widget.LinearLayout
+import android.widget.Space
 import android.util.TypedValue
 import kotlin.math.abs
 import androidx.core.app.NotificationManagerCompat
@@ -34,6 +36,7 @@ import com.carlauncherc.launcher.BuildConfig
 import com.carlauncherc.launcher.CarLauncherApp
 import com.carlauncherc.launcher.R
 import com.carlauncherc.launcher.core.Format
+import com.carlauncherc.launcher.core.DashboardLayouts
 import com.carlauncherc.launcher.core.Prefs
 import com.carlauncherc.launcher.databinding.ActivityHomeBinding
 import com.carlauncherc.launcher.location.HeadingSource
@@ -144,6 +147,7 @@ class HomeActivity : AppCompatActivity() {
         dock.bind()
         drawer.bind()
         cards.bind()
+        applyDashboardLayout()
 
         bindDashboardClicks()
         bindCompassThemeCycle()
@@ -194,6 +198,11 @@ class HomeActivity : AppCompatActivity() {
     // ------------------------------------------------------------------ wiring
 
     private fun bindDashboardClicks() {
+        binding.gaugeSpeed.setOnLongClickListener {
+            it.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
+            GpsDiagnosticsDialog.show(this, viewModel)
+            true
+        }
         binding.gaugeSpeed.setOnClickListener { view ->
             val state = viewModel.vehicle.value
             when {
@@ -460,6 +469,57 @@ class HomeActivity : AppCompatActivity() {
      * 1920x1080 panels (and vendor density/font scaling) cannot draw across cards.
      * The baseline dimen is never exceeded, so fonts stay consistent on large screens.
      */
+    /**
+     * Rebuild only the container order; the original View instances are retained, so
+     * compass sensors, TextClock, music callbacks and click listeners keep working.
+     * Quick cards may be independently hidden, or both hidden in Focus preset.
+     */
+    private fun applyDashboardLayout() {
+        val arrangement = DashboardLayouts.arrange(
+            Prefs.dashboardPreset, Prefs.dashboardShowNav, Prefs.dashboardShowMusic
+        )
+        val gauges = mapOf(
+            "speed" to binding.gaugeSpeed,
+            "clock" to binding.gaugeClock,
+            "compass" to binding.gaugeCompass
+        )
+        val gap = resources.getDimensionPixelSize(R.dimen.gap)
+        val row = binding.dashboardGaugeRow
+        row.removeAllViews()
+        arrangement.gaugeOrder.forEachIndexed { index, id ->
+            if (index > 0) row.addView(
+                Space(this), LinearLayout.LayoutParams(gap, LinearLayout.LayoutParams.MATCH_PARENT)
+            )
+            row.addView(
+                gauges.getValue(id),
+                LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT,
+                    arrangement.gaugeWeights[index])
+            )
+        }
+
+        val quick = binding.quickCardsRow
+        quick.removeAllViews()
+        val items = listOfNotNull(
+            binding.cardNav.takeIf { Prefs.dashboardShowNav && arrangement.quickCardsVisible },
+            binding.cardMusic.takeIf { Prefs.dashboardShowMusic && arrangement.quickCardsVisible }
+        )
+        items.forEachIndexed { index, card ->
+            if (index > 0) quick.addView(
+                Space(this), LinearLayout.LayoutParams(gap, LinearLayout.LayoutParams.MATCH_PARENT)
+            )
+            val weight = if (items.size == 1) 1f
+                else if (card === binding.cardNav) arrangement.navWeight
+                else arrangement.musicWeight
+            quick.addView(card, LinearLayout.LayoutParams(
+                0, LinearLayout.LayoutParams.MATCH_PARENT, weight
+            ))
+        }
+        val visible = arrangement.quickCardsVisible
+        quick.visibility = if (visible) View.VISIBLE else View.GONE
+        binding.quickCardsSpacer.visibility = if (visible) View.VISIBLE else View.GONE
+        row.requestLayout()
+    }
+
     private fun configureResponsiveGauges() {
         binding.dashboard.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
             // A 1080-pixel head unit may advertise only ~360dp height at 3x
@@ -666,7 +726,9 @@ class HomeActivity : AppCompatActivity() {
             repository = app.appRepository,
             scope = lifecycleScope,
             onDockReset = { dock.reset() },
+            onGpsDiagnostics = { GpsDiagnosticsDialog.show(this, viewModel) },
             onPrefsChanged = {
+                applyDashboardLayout()
                 viewModel.refreshPrefs()
                 lastCardinal = null
                 render(viewModel.vehicle.value)
@@ -796,6 +858,7 @@ class HomeActivity : AppCompatActivity() {
         binding.playbackEqualizer.setActive(true)
         viewModel.start()
         viewModel.refreshPrefs()
+        applyDashboardLayout()
         migrateLegacyYMusicPreference()
         cards.refreshLabels()
         render(viewModel.vehicle.value)
