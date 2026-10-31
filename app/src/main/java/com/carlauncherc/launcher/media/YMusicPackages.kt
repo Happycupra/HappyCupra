@@ -9,6 +9,9 @@ object YMusicPackages {
     fun isYMusic(packageName: String?): Boolean =
         packageName == V4 || packageName == V4_DEBUG || packageName == LEGACY
 
+    /** Only the YMusic v4 app understands the direct start-link behaviour. */
+    fun isV4(packageName: String?): Boolean = packageName == V4 || packageName == V4_DEBUG
+
     /** Match the user's music selection first; otherwise prefer the newer media session. */
     fun selectSessionPackage(activePackages: List<String>, selectedPackage: String?): String? {
         if (selectedPackage != null &&
