@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: carlauncher-c-main
+  group: carlauncher-c-${{ github.ref }}
   cancel-in-progress: true
 
 permissions:
