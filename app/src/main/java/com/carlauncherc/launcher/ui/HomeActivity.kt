@@ -400,6 +400,23 @@ class HomeActivity : AppCompatActivity() {
      * The baseline dimen is never exceeded, so fonts stay consistent on large screens.
      */
     private fun configureResponsiveGauges() {
+        binding.dashboard.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
+            // A 1080-pixel head unit may advertise only ~360dp height at 3x
+            // vendor density. Keep enough space for the gauges instead of letting
+            // a fixed-height quick-card row push their labels on top of each other.
+            val available = binding.dashboard.height -
+                binding.dashboard.paddingTop - binding.dashboard.paddingBottom
+            val density = resources.displayMetrics.density
+            val maxCard = (available -
+                (110f * density).toInt() -
+                resources.getDimensionPixelSize(R.dimen.gap))
+                .coerceAtLeast((132f * density).toInt())
+            val desired = minOf(resources.getDimensionPixelSize(R.dimen.card_height), maxCard)
+            if (binding.quickCardsRow.layoutParams.height != desired) {
+                binding.quickCardsRow.layoutParams =
+                    binding.quickCardsRow.layoutParams.apply { height = desired }
+            }
+        }
         binding.gaugeSpeed.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
             fitGaugeText(
                 binding.textSpeed, binding.gaugeSpeed, R.dimen.speed_text,
