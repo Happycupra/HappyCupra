@@ -144,13 +144,20 @@ object SettingsDialog {
         // Music visualization selection is saved and applies to the dashboard instantly.
         val visualizerGroup = view.findViewById<RadioGroup>(R.id.groupMusicVisualizer)
         visualizerGroup.check(
-            if (Prefs.musicVisualizerMode == Prefs.VISUALIZER_DANCER)
-                R.id.visualizerDancer else R.id.visualizerEqualizer
+            when (Prefs.musicVisualizerMode) {
+                Prefs.VISUALIZER_DANCER -> R.id.visualizerDancer
+                Prefs.VISUALIZER_DUO_SYNC -> R.id.visualizerDuoSync
+                Prefs.VISUALIZER_DUO_RANDOM -> R.id.visualizerDuoRandom
+                else -> R.id.visualizerEqualizer
+            }
         )
         visualizerGroup.setOnCheckedChangeListener { _, selected ->
-            Prefs.musicVisualizerMode =
-                if (selected == R.id.visualizerDancer) Prefs.VISUALIZER_DANCER
-                else Prefs.VISUALIZER_EQUALIZER
+            Prefs.musicVisualizerMode = when (selected) {
+                R.id.visualizerDancer -> Prefs.VISUALIZER_DANCER
+                R.id.visualizerDuoSync -> Prefs.VISUALIZER_DUO_SYNC
+                R.id.visualizerDuoRandom -> Prefs.VISUALIZER_DUO_RANDOM
+                else -> Prefs.VISUALIZER_EQUALIZER
+            }
             onPrefsChanged()
         }
 

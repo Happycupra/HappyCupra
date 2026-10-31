@@ -208,6 +208,20 @@
                 android:layout_height="wrap_content"
                 android:minHeight="48dp"
                 android:text="@string/music_visualizer_dancer" />
+
+            <RadioButton
+                android:id="@+id/visualizerDuoSync"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:text="@string/music_visualizer_duo_sync" />
+
+            <RadioButton
+                android:id="@+id/visualizerDuoRandom"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:text="@string/music_visualizer_duo_random" />
         </RadioGroup>
 
         <TextView

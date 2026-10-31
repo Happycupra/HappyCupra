@@ -92,13 +92,20 @@ object Prefs {
 
     const val VISUALIZER_EQUALIZER = "equalizer"
     const val VISUALIZER_DANCER = "dancer"
+    const val VISUALIZER_DUO_SYNC = "duo_sync"
+    const val VISUALIZER_DUO_RANDOM = "duo_random"
 
     var musicVisualizerMode: String
-        get() = sp.getString(KEY_MUSIC_VISUALIZER_MODE, VISUALIZER_EQUALIZER)
-            ?.takeIf { it == VISUALIZER_DANCER } ?: VISUALIZER_EQUALIZER
+        get() = when (val saved = sp.getString(KEY_MUSIC_VISUALIZER_MODE, VISUALIZER_EQUALIZER)) {
+            VISUALIZER_DANCER, VISUALIZER_DUO_SYNC, VISUALIZER_DUO_RANDOM -> saved
+            else -> VISUALIZER_EQUALIZER
+        }
         set(value) = sp.edit().putString(
             KEY_MUSIC_VISUALIZER_MODE,
-            if (value == VISUALIZER_DANCER) VISUALIZER_DANCER else VISUALIZER_EQUALIZER
+            when (value) {
+                VISUALIZER_DANCER, VISUALIZER_DUO_SYNC, VISUALIZER_DUO_RANDOM -> value
+                else -> VISUALIZER_EQUALIZER
+            }
         ).apply()
 
     const val MUSIC_START_RESUME = "resume"

@@ -333,8 +333,12 @@ class HomeActivity : AppCompatActivity() {
         binding.titleMusic.visibility = if (isYMusic) View.GONE else View.VISIBLE
         binding.subtitleMusic.visibility = if (isYMusic) View.GONE else View.VISIBLE
         binding.albumArtContainer.visibility = if (isYMusic) View.VISIBLE else View.GONE
-        binding.playbackEqualizer.visibility = if (isYMusic) View.VISIBLE else View.GONE
-        binding.playbackEqualizer.setMode(Prefs.musicVisualizerMode)
+        val visualizerMode = Prefs.musicVisualizerMode
+        binding.playbackEqualizer.setMode(visualizerMode)
+        // Dancing characters still rest on the stage without an active music session.
+        binding.playbackEqualizer.visibility = if (
+            isYMusic || visualizerMode != Prefs.VISUALIZER_EQUALIZER
+        ) View.VISIBLE else View.GONE
         binding.playbackEqualizer.setPlaying(isYMusic && isPlaying)
 
         if (!isYMusic) {
@@ -436,7 +440,6 @@ class HomeActivity : AppCompatActivity() {
             val room = binding.musicInfoColumn.height -
                 binding.musicControls.height -
                 binding.musicProgress.height -
-                binding.playbackEqualizer.height -
                 binding.textElapsed.height -
                 (18f * resources.displayMetrics.density).toInt()
             if (room > 0) {
