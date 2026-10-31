@@ -20,7 +20,8 @@ data class NowPlayingInfo(
 )
 
 object YMusicMediaBridge {
-    const val YMUSIC_PACKAGE = "com.kapp.youtube.final"
+    /** Package owning the attached media session (YMusic v4 or legacy). */
+    val sessionPackageName: String? get() = controller?.packageName
 
     private val _nowPlaying = MutableStateFlow(NowPlayingInfo())
     val nowPlaying = _nowPlaying.asStateFlow()
