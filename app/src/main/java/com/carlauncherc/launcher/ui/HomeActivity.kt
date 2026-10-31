@@ -334,6 +334,7 @@ class HomeActivity : AppCompatActivity() {
         binding.subtitleMusic.visibility = if (isYMusic) View.GONE else View.VISIBLE
         binding.albumArtContainer.visibility = if (isYMusic) View.VISIBLE else View.GONE
         binding.playbackEqualizer.visibility = if (isYMusic) View.VISIBLE else View.GONE
+        binding.playbackEqualizer.setMode(Prefs.musicVisualizerMode)
         binding.playbackEqualizer.setPlaying(isYMusic && isPlaying)
 
         if (!isYMusic) {
@@ -435,6 +436,7 @@ class HomeActivity : AppCompatActivity() {
             val room = binding.musicInfoColumn.height -
                 binding.musicControls.height -
                 binding.musicProgress.height -
+                binding.playbackEqualizer.height -
                 binding.textElapsed.height -
                 (18f * resources.displayMetrics.density).toInt()
             if (room > 0) {
@@ -609,6 +611,11 @@ class HomeActivity : AppCompatActivity() {
                 viewModel.refreshPrefs()
                 lastCardinal = null
                 render(viewModel.vehicle.value)
+                binding.playbackEqualizer.setMode(Prefs.musicVisualizerMode)
+                YMusicMediaBridge.nowPlaying.value.let { info ->
+                    renderNowPlaying(info.title, info.artist, info.isPlaying,
+                        info.artwork, info.durationMs, info.positionMs)
+                }
             }
         )
     }
@@ -723,6 +730,7 @@ class HomeActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        binding.playbackEqualizer.setActive(true)
         viewModel.start()
         viewModel.refreshPrefs()
         migrateLegacyYMusicPreference()
@@ -976,7 +984,7 @@ class HomeActivity : AppCompatActivity() {
         // Unregister the moment anything else comes to the foreground - this process is alive
         // for as long as the head unit is powered.
         viewModel.stop()
-        binding.playbackEqualizer.setPlaying(false)
+        binding.playbackEqualizer.setActive(false)
         leftAtElapsedMs = SystemClock.elapsedRealtime()
     }
 

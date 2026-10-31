@@ -20,6 +20,7 @@
     <dimen name="card_height">168dp</dimen>
     <dimen name="album_art_size">92dp</dimen>
     <dimen name="music_control_height">44dp</dimen>
+    <dimen name="music_visualizer_height">26dp</dimen>
     <dimen name="music_title_text">18sp</dimen>
     <dimen name="music_artist_text">13sp</dimen>
 

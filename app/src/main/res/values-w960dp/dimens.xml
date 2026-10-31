@@ -8,6 +8,7 @@
     <dimen name="card_height">196dp</dimen>
     <dimen name="album_art_size">104dp</dimen>
     <dimen name="music_control_height">46dp</dimen>
+    <dimen name="music_visualizer_height">29dp</dimen>
     <dimen name="dock_height">84dp</dimen>
     <dimen name="music_title_text">20sp</dimen>
     <dimen name="music_artist_text">14sp</dimen>

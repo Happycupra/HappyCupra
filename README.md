@@ -42,6 +42,12 @@ In launcher settings (long-press the settings icon) choose between **Resume last
 
 YMusic v4 itself resumes the last saved queue through its Play Again history. Its upstream policy resumes within the track only when five minutes or more remain; shorter songs may restart from the beginning. This feature does not add a custom position override. If YMusic is on the **phone** and the launcher is on a **separate Android head unit**, Android Share cannot deliver directly across those devices.
 
+## Full-width equalizer or dancing stick figure (v0.16)
+
+Open **Launcher settings → Music visualization** to switch between the full-width animated equalizer and a dancing stick figure. The character dances while the media session reports playing; when paused or stopped it alternates between standing, sitting and lying down. The equalizer becomes quiet while stopped. The selection is persisted and applies immediately.
+
+The animation follows YMusic's play/pause state, but **does not detect the actual song beat or analyze the PCM audio**: Android's remote MediaSession has no audio-spectrum data. The dancer uses a simulated 120 BPM motion and needs no microphone permission. The animation pauses when the Launcher is in the background.
+
 ## Full-HD dashboard, equalizer and GPS speed (v0.15)
 
 The dashboard scales its gauge typography to the actual measured card bounds and provides width-aware density resources for 1024×600, 1280×720 and 1920×1080-class displays. The launcher cannot change the display panel’s native resolution or vendor DPI setting. The YMusic player hides redundant app-name rows when displaying track metadata, retains accessible controls, and draws a five-bar indicator only when playback is running. **It is a playback-state animation, not an FFT from the audio stream**; no audio-recording permission is requested.

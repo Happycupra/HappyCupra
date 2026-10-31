@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.16 — 2026-10-31
+
+- Enlarged equalizer into a full-width lane in the player.
+- Added launcher music-visualization setting: **Equalizer** or **Stick figure**.
+- Stick figure dances with a synthetic rhythmic motion while YMusic plays. When stopped, it alternates between standing, sitting and lying down.
+- Audio spectrum and real tempo are not available via YMusic's MediaSession, so this is not a real audio beat detector.
+- Animation scheduling stops when the launcher moves to the background.
+- All previously prepared 0.15 Full-HD layout and GPS-only improvements are included.
+
 ## 0.15 — 2026-10-31
 
 - Responsive dashboard for 1024×600, 1280×720 and Full-HD-density Android head units; measured gauge text resizes down to avoid overlaps on vendor ROMs.
