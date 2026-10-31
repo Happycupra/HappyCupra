@@ -33,6 +33,7 @@ import com.carlauncherc.launcher.databinding.ActivityHomeBinding
 import com.carlauncherc.launcher.location.HeadingSource
 import com.carlauncherc.launcher.location.VehicleState
 import com.carlauncherc.launcher.media.YMusicMediaBridge
+import com.carlauncherc.launcher.media.YMusicPackages
 import com.carlauncherc.launcher.update.ApkInstaller
 import com.carlauncherc.launcher.update.UpdateState
 import com.carlauncherc.launcher.util.IntentUtil
@@ -316,7 +317,9 @@ class HomeActivity : AppCompatActivity() {
         positionMs: Long
     ) {
         val selectedPackage = Prefs.musicPackage?.let(IntentUtil::packageOf)
-        val isYMusic = selectedPackage == YMUSIC_PACKAGE
+        // Show an active v4 session even when uninstalling legacy YMusic cleared the old shortcut.
+        val isYMusic = YMusicPackages.isYMusic(selectedPackage) ||
+            (selectedPackage == null && YMusicPackages.isYMusic(YMusicMediaBridge.sessionPackageName))
         binding.musicControls.visibility = if (isYMusic) View.VISIBLE else View.GONE
 
         if (!isYMusic) {
@@ -625,6 +628,7 @@ class HomeActivity : AppCompatActivity() {
         super.onResume()
         viewModel.start()
         viewModel.refreshPrefs()
+        migrateLegacyYMusicPreference()
         cards.refreshLabels()
         render(viewModel.vehicle.value)
         YMusicMediaBridge.nowPlaying.value.let { info ->
@@ -639,6 +643,17 @@ class HomeActivity : AppCompatActivity() {
         }
         maybeAutoStartDashcam()
         maybeAutoStartMusic()
+    }
+
+    /** Redirect a saved legacy shortcut to v4 when the old app is no longer installed. */
+    private fun migrateLegacyYMusicPreference() {
+        val stored = Prefs.musicPackage ?: return
+        if (IntentUtil.packageOf(stored) != YMusicPackages.LEGACY ||
+            app.appRepository.isInstalled(YMusicPackages.LEGACY)
+        ) return
+        val replacement = listOf(YMusicPackages.V4, YMusicPackages.V4_DEBUG)
+            .firstOrNull(app.appRepository::isInstalled)
+        if (replacement != null) Prefs.musicPackage = replacement
     }
 
     /**
@@ -678,7 +693,7 @@ class HomeActivity : AppCompatActivity() {
 
         app.musicAutoStartInProgress = true
 
-        if (packageName == YMUSIC_PACKAGE) {
+        if (YMusicPackages.isYMusic(packageName)) {
             if (!app.appRepository.isInstalled(packageName)) {
                 app.musicAutoStartInProgress = false
                 Prefs.musicPackage = null
@@ -765,7 +780,7 @@ class HomeActivity : AppCompatActivity() {
         val handler = Handler(Looper.getMainLooper())
         MUSIC_PLAY_RETRY_DELAYS_MS.forEach { delayMs ->
             handler.postDelayed({
-                if (packageName == YMUSIC_PACKAGE) {
+                if (YMusicPackages.isYMusic(packageName)) {
                     if (!YMusicMediaBridge.play()) {
                         dispatchYMusicPlay()
                     }
@@ -781,6 +796,9 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun dispatchYMusicMediaKey(keyCode: Int) {
+        val targetPackage = YMusicMediaBridge.sessionPackageName
+            ?: Prefs.musicPackage?.let(IntentUtil::packageOf)?.takeIf(YMusicPackages::isYMusic)
+            ?: YMusicPackages.V4
         val eventTime = SystemClock.uptimeMillis()
         val down = KeyEvent(eventTime, eventTime, KeyEvent.ACTION_DOWN, keyCode, 0)
         val up = KeyEvent(eventTime, eventTime, KeyEvent.ACTION_UP, keyCode, 0)
@@ -788,13 +806,13 @@ class HomeActivity : AppCompatActivity() {
         runCatching {
             sendBroadcast(
                 Intent(Intent.ACTION_MEDIA_BUTTON)
-                    .setPackage(YMUSIC_PACKAGE)
+                    .setPackage(targetPackage)
                     .addFlags(Intent.FLAG_RECEIVER_FOREGROUND)
                     .putExtra(Intent.EXTRA_KEY_EVENT, down)
             )
             sendBroadcast(
                 Intent(Intent.ACTION_MEDIA_BUTTON)
-                    .setPackage(YMUSIC_PACKAGE)
+                    .setPackage(targetPackage)
                     .addFlags(Intent.FLAG_RECEIVER_FOREGROUND)
                     .putExtra(Intent.EXTRA_KEY_EVENT, up)
             )
@@ -853,7 +871,6 @@ class HomeActivity : AppCompatActivity() {
         const val DASHCAM_START_DELAY_MS = 1_500L
         const val DASHCAM_RETURN_DELAY_MS = 3_000L
         const val MUSIC_START_DELAY_MS = 3_000L
-        const val YMUSIC_PACKAGE = "com.kapp.youtube.final"
         const val THEME_HOLD_MS = 1_500L
         const val YMUSIC_WATCHDOG_INTERVAL_MS = 2_000L
         const val YMUSIC_WATCHDOG_MAX_ATTEMPTS = 15
