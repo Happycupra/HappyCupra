@@ -42,6 +42,12 @@ In launcher settings (long-press the settings icon) choose between **Resume last
 
 YMusic v4 itself resumes the last saved queue through its Play Again history. Its upstream policy resumes within the track only when five minutes or more remain; shorter songs may restart from the beginning. This feature does not add a custom position override. If YMusic is on the **phone** and the launcher is on a **separate Android head unit**, Android Share cannot deliver directly across those devices.
 
+## Solo and duo choreography (v0.17)
+
+Choose **Equalizer**, **Solo**, **Duo synchronized** or **Duo random freestyle** in Launcher settings → Music visualization. Twelve articulated choreography moves rotate randomly with soft transitions. In synchronized mode both figures follow the same selected move and synthetic beat; in freestyle they use separate seeded choreographers. While paused, each character independently sits, lies down, stretches, waves or stands. The dance floor is full width across the music card, including the area beneath the cover. The earlier Solo preference remains compatible.
+
+The movements are animations, not real beat detection. YMusic's remote MediaSession provides playback status, not an FFT or the raw sound signal. No microphone permission is needed. Rendering stops when the launcher is not visible.
+
 ## Full-width equalizer or dancing stick figure (v0.16)
 
 Open **Launcher settings → Music visualization** to switch between the full-width animated equalizer and a dancing stick figure. The character dances while the media session reports playing; when paused or stopped it alternates between standing, sitting and lying down. The equalizer becomes quiet while stopped. The selection is persisted and applies immediately.

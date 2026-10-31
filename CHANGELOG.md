@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.17 — 2026-10-31
+
+- Added twelve articulated stick-figure dance movements with randomized sequencing, eased transitions and no immediate move repetitions.
+- Four persistent animation choices: full-width equalizer, solo dancer, synchronized duo and independently choreographed random freestyle duo.
+- The stage now extends across the full music-card width beneath the album cover as well as track metadata.
+- Figures wander sideways while staying in their allotted space; when no music plays they occasionally stand, sit, lie down, stretch or wave.
+- Backward compatible with the previous solo preference and includes all Full-HD and GPS-only improvements prepared in 0.15 and 0.16.
+- MediaSession offers playback state rather than audio PCM, so simulated rhythmic dancing is not actual beat detection. Animations stop repainting while the launcher is in the background.
+
 ## 0.16 — 2026-10-31
 
 - Enlarged equalizer into a full-width lane in the player.
