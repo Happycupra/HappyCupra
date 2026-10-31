@@ -151,7 +151,7 @@ class PlaybackEqualizerView @JvmOverloads constructor(
         val w = width.toFloat()
         val h = height.toFloat()
         val s = min(h / 110f, w / 180f)
-        val sway = if (playing) sin(phase * 0.5) * min(w * 0.20, 70f * s) else 0.0
+        val sway = if (playing) sin(phase * 0.5) * min(w * 0.20f, 70f * s) else 0.0
         val bottom = h - 2f * density
 
         lines.strokeWidth = 1f * density
