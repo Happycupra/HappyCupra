@@ -61,7 +61,7 @@ class PlaybackEqualizerView @JvmOverloads constructor(
 
     private fun updateAnimator() {
         val active = playing && isAttachedToWindow &&
-            visibility == VISIBLE && windowVisibility == VISIBLE
+            isShown && windowVisibility == VISIBLE
         if (!active) {
             stopAnimator()
             return
